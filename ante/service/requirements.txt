@@ -1,0 +1,12 @@
+# Ante model/AI service (PRD 3.2) — optional, online-only.
+# The core desktop app does NOT need any of these; it scores with AI off.
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+# Optional, for richer model training/eval (the in-process models are
+# dependency-free; these enable scikit-learn baselines if you want them):
+scikit-learn>=1.4
+numpy>=1.26
+# AI provider SDK (set ANTHROPIC_API_KEY to enable Claude; offline fallback
+# otherwise):
+anthropic>=0.34

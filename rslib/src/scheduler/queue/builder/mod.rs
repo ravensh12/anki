@@ -475,6 +475,64 @@ mod test {
         Ok(())
     }
 
+    #[test]
+    fn points_at_stake_orders_by_topic_weight() -> Result<()> {
+        use std::collections::HashMap;
+
+        use crate::scheduler::topics::topic_weight;
+        use crate::scheduler::topics::DEFAULT_TOPIC_PREFIX;
+
+        let mut col = Collection::new();
+        let mut deck = col.get_or_create_normal_deck("Default").unwrap();
+        let nt = col.get_notetype_by_name("Basic")?.unwrap();
+
+        // Alternating low-value (cars, 0.80) and high-value (bio_biochem, 1.30)
+        // topics. No FSRS memory state, so weakness is uniform and ordering is
+        // driven purely by topic weight.
+        let topics = [
+            "mcat::cars",
+            "mcat::bio_biochem::x",
+            "mcat::cars",
+            "mcat::bio_biochem::y",
+            "mcat::cars",
+            "mcat::bio_biochem::z",
+        ];
+        let mut cards = vec![];
+        let mut tag_by_cid: HashMap<CardId, String> = HashMap::new();
+        for topic in topics {
+            let mut note = nt.new_note();
+            note.set_field(0, "foo")?;
+            note.tags = vec![topic.to_string()];
+            note.id.0 = 0;
+            col.add_note(&mut note, deck.id)?;
+            let mut card = col.storage.get_card_by_ordinal(note.id, 0)?.unwrap();
+            card.interval = 10;
+            card.due = 0;
+            card.ctype = CardType::Review;
+            card.queue = CardQueue::Review;
+            tag_by_cid.insert(card.id, topic.to_string());
+            cards.push(card);
+        }
+        col.update_cards_maybe_undoable(cards, false)?;
+        col.set_deck_review_order(&mut deck, ReviewCardOrder::PointsAtStake);
+
+        let weights: Vec<f64> = col
+            .build_queues(deck.id)?
+            .iter()
+            .map(|entry| topic_weight(&tag_by_cid[&entry.card_id()], DEFAULT_TOPIC_PREFIX))
+            .collect();
+
+        // Weights must be non-increasing: all bio_biochem (1.30) then all cars
+        // (0.80).
+        let mut expected = weights.clone();
+        expected.sort_by(|a, b| b.partial_cmp(a).unwrap());
+        assert_eq!(weights, expected);
+        assert!(weights.iter().take(3).all(|w| (*w - 1.30).abs() < 1e-9));
+        assert!(weights.iter().skip(3).all(|w| (*w - 0.80).abs() < 1e-9));
+
+        Ok(())
+    }
+
     impl Collection {
         fn card_queue_len(&mut self) -> usize {
             self.get_queued_cards(5, false).unwrap().cards.len()

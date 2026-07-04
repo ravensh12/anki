@@ -1,0 +1,1724 @@
+{
+    "note": "Exam-style APPLICATION / transfer items (PRD 4.1 PerformanceItem, 7.2, reviewer push). These are scenario/reasoning questions that apply a topic's idea in new words — NOT 'what is X' recall. Mastery gates on accuracy here, so clearing a topic means you can USE it, the way the MCAT tests. 'paraphrase_of' marks the topic idea it re-tests, powering the paraphrase gap (memory vs application). Hand-authored to cover every topic in data/mcat_outline.json (~2 items/topic).",
+    "items": {
+        "mcat::bio_biochem::amino_acids": [
+            {
+                "id": "aa_pi_env",
+                "stem": "A peptide is placed in a buffer at pH 1. A glutamate side chain (pKa ≈ 4.1) will most likely be:",
+                "choices": [
+                    "Protonated and neutral (–COOH)",
+                    "Deprotonated and negative (–COO⁻)",
+                    "Positively charged",
+                    "Unaffected by pH"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "amino acid charge vs pH/pKa",
+                "difficulty": 0.5
+            },
+            {
+                "id": "aa_glycine",
+                "stem": "A researcher needs the one amino acid that will NOT introduce a stereocenter at its alpha carbon. They should choose:",
+                "choices": ["Alanine", "Glycine", "Valine", "Serine"],
+                "correct_index": 1,
+                "paraphrase_of": "glycine achirality",
+                "difficulty": 0.4
+            },
+            {
+                "id": "aa_hydrophobic",
+                "stem": "A membrane-spanning stretch of a protein sits in the lipid bilayer's oily core. It is most likely enriched in:",
+                "choices": [
+                    "Lysine and arginine (charged)",
+                    "Leucine and valine (nonpolar)",
+                    "Aspartate and glutamate (acidic)",
+                    "Serine and threonine (polar)"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "nonpolar residues favor hydrophobic environments",
+                "difficulty": 0.55
+            },
+            {
+                "id": "aa_pI",
+                "stem": "At a pH exactly equal to an amino acid's isoelectric point (pI), the molecule carries:",
+                "choices": [
+                    "A net positive charge",
+                    "No net charge (zwitterion)",
+                    "A net negative charge",
+                    "No charges at all"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "net charge is zero at the pI",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::bio_biochem::protein_structure": [
+            {
+                "id": "prot_disulfide",
+                "stem": "Adding a reducing agent that breaks disulfide bonds unfolds a protein, and removing it lets the protein refold and regain function. The disrupted bonds mainly stabilized which level of structure?",
+                "choices": [
+                    "Primary structure",
+                    "Secondary structure (backbone H-bonds)",
+                    "Tertiary structure (disulfide crosslinks)",
+                    "The peptide bonds themselves"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "disulfide bonds stabilize tertiary structure",
+                "difficulty": 0.55
+            },
+            {
+                "id": "prot_sickle",
+                "stem": "A single point mutation swaps a surface glutamate for valine, and the protein now aggregates through hydrophobic contacts (as in sickle-cell hemoglobin). This is best explained as:",
+                "choices": [
+                    "A primary-sequence change that creates a new hydrophobic patch altering higher-order structure",
+                    "Loss of peptide bonds",
+                    "A change affecting only secondary structure",
+                    "Increased solubility of the protein"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "primary sequence change drives higher-order structure",
+                "difficulty": 0.6
+            },
+            {
+                "id": "prot_denature_temp",
+                "stem": "Heating an enzyme far above its optimal temperature destroys its activity, yet its peptide bonds stay intact. The heat most directly disrupted:",
+                "choices": [
+                    "The primary structure",
+                    "The noncovalent interactions holding the 3-D fold",
+                    "The covalent backbone",
+                    "The genetic code"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "denaturation breaks noncovalent 3-D structure",
+                "difficulty": 0.55
+            },
+            {
+                "id": "prot_quaternary",
+                "stem": "Hemoglobin's cooperative oxygen binding depends on interactions among its four separate polypeptide subunits. This requires which level of structure?",
+                "choices": ["Primary", "Secondary", "Tertiary", "Quaternary"],
+                "correct_index": 3,
+                "paraphrase_of": "quaternary structure enables subunit cooperativity",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::bio_biochem::enzymes": [
+            {
+                "id": "enz_comp",
+                "stem": "A drug slows an enzyme, but adding more substrate fully restores the original Vmax. On a Lineweaver–Burk plot the drug's line, versus control, will:",
+                "choices": [
+                    "Intersect on the y-axis (same Vmax)",
+                    "Intersect on the x-axis (same Km)",
+                    "Be parallel to control",
+                    "Shift Vmax downward"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "competitive inhibition Km/Vmax",
+                "difficulty": 0.6
+            },
+            {
+                "id": "enz_noncomp",
+                "stem": "An inhibitor lowers an enzyme's Vmax and cannot be overcome by more substrate. This inhibitor most likely binds:",
+                "choices": [
+                    "The active site only",
+                    "An allosteric site (non-competitive)",
+                    "The substrate itself",
+                    "A coenzyme in solution"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "noncompetitive inhibition",
+                "difficulty": 0.55
+            },
+            {
+                "id": "enz_km_affinity",
+                "stem": "Enzyme A has Km = 0.1 mM and enzyme B has Km = 5 mM for the same substrate. Compared with B, enzyme A has:",
+                "choices": [
+                    "Lower affinity for the substrate",
+                    "Higher affinity for the substrate",
+                    "Exactly the same affinity",
+                    "A necessarily higher Vmax"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "low Km means high substrate affinity",
+                "difficulty": 0.6
+            },
+            {
+                "id": "enz_optimum_ph",
+                "stem": "A stomach protease works best at pH 2 but loses activity in the small intestine at pH 8. The most likely reason is that:",
+                "choices": [
+                    "It ran out of substrate",
+                    "Its active-site shape depends on pH",
+                    "It was simply diluted",
+                    "Enzymes work only once"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "enzyme activity depends on optimal pH",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::bio_biochem::carbohydrates": [
+            {
+                "id": "carb_cellulose",
+                "stem": "Humans digest starch (α-1,4 links) but not cellulose, though both are glucose polymers. Human enzymes cannot hydrolyze:",
+                "choices": [
+                    "α-1,4 glycosidic bonds",
+                    "β-1,4 glycosidic bonds",
+                    "The glucose rings",
+                    "Hydrogen bonds between chains"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "glycosidic bond stereochemistry sets digestibility",
+                "difficulty": 0.5
+            },
+            {
+                "id": "carb_epimer",
+                "stem": "Glucose and galactose have identical formulas and differ only in the configuration at a single chiral carbon. They are best described as:",
+                "choices": ["Enantiomers", "Epimers", "Anomers", "Unrelated compounds"],
+                "correct_index": 1,
+                "paraphrase_of": "epimers differ at one chiral center",
+                "difficulty": 0.5
+            },
+            {
+                "id": "carb_glycogen",
+                "stem": "The body stores glucose for rapid mobilization mainly in the form of:",
+                "choices": ["Cellulose", "Glycogen", "Sucrose", "Chitin"],
+                "correct_index": 1,
+                "paraphrase_of": "glycogen is the animal glucose store",
+                "difficulty": 0.4
+            },
+            {
+                "id": "carb_anomer",
+                "stem": "α- and β-glucose differ only in the configuration at the new stereocenter formed when the ring closes (the anomeric carbon). They are:",
+                "choices": ["Enantiomers", "Anomers", "Structural isomers", "Identical molecules"],
+                "correct_index": 1,
+                "paraphrase_of": "anomers differ at the anomeric carbon",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::bio_biochem::lipids": [
+            {
+                "id": "lipid_bilayer",
+                "stem": "Phospholipids dropped into water spontaneously form a bilayer with tails inward. The main thermodynamic driver is:",
+                "choices": [
+                    "Covalent bonding between the tails",
+                    "The hydrophobic effect (increased water entropy)",
+                    "A decrease in the system's total entropy",
+                    "Electrostatic attraction between tails"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "hydrophobic effect drives membrane assembly",
+                "difficulty": 0.55
+            },
+            {
+                "id": "lipid_unsat",
+                "stem": "Replacing a membrane's saturated phospholipid tails with tails containing cis double bonds will most likely make the membrane, at a given temperature:",
+                "choices": ["More rigid", "More fluid", "Impermeable to water", "Thicker"],
+                "correct_index": 1,
+                "paraphrase_of": "unsaturation increases membrane fluidity",
+                "difficulty": 0.55
+            },
+            {
+                "id": "lipid_soluble_vitamin",
+                "stem": "Which vitamin is most likely absorbed along with dietary fat and stored in the body's fat tissue?",
+                "choices": ["Vitamin C", "Vitamin D", "Vitamin B12", "Folate"],
+                "correct_index": 1,
+                "paraphrase_of": "fat-soluble vitamins partition with lipids",
+                "difficulty": 0.5
+            },
+            {
+                "id": "lipid_amphipathic",
+                "stem": "Soap lifts grease from a plate because each soap molecule has:",
+                "choices": [
+                    "Only a hydrophobic part",
+                    "A hydrophilic head and a hydrophobic tail",
+                    "Only a hydrophilic part",
+                    "A permanent net positive charge"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "amphipathic molecules emulsify fats",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::bio_biochem::nucleic_acids": [
+            {
+                "id": "nuc_tm",
+                "stem": "Two DNA samples are heated until the strands separate. The sample that requires a higher temperature to melt most likely has:",
+                "choices": [
+                    "More A–T base pairs",
+                    "More G–C base pairs",
+                    "A shorter total length",
+                    "More single-stranded regions"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "GC content raises DNA melting temperature",
+                "difficulty": 0.5
+            },
+            {
+                "id": "nuc_complement",
+                "stem": "One DNA strand reads 5'-ATGC-3'. Read in the 5'→3' direction, its complementary strand is:",
+                "choices": ["5'-TACG-3'", "5'-GCAT-3'", "5'-CGTA-3'", "5'-ATGC-3'"],
+                "correct_index": 1,
+                "paraphrase_of": "antiparallel complementary base pairing",
+                "difficulty": 0.55
+            },
+            {
+                "id": "nuc_chargaff",
+                "stem": "In a sample of double-stranded DNA, 30% of the bases are adenine. The percentage that are cytosine is about:",
+                "choices": ["30%", "20%", "70%", "Cannot be determined"],
+                "correct_index": 1,
+                "paraphrase_of": "Chargaff's rule: A=T, G=C",
+                "difficulty": 0.6
+            },
+            {
+                "id": "nuc_backbone",
+                "stem": "The two strands of a DNA duplex are held to each other by ___, while the sugar-phosphate backbone within one strand is held together by ___:",
+                "choices": [
+                    "Covalent bonds; hydrogen bonds",
+                    "Hydrogen bonds; covalent bonds",
+                    "Ionic bonds; hydrogen bonds",
+                    "Hydrogen bonds; ionic bonds"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "H-bonds pair strands; covalent bonds form the backbone",
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::dna_replication": [
+            {
+                "id": "repl_okazaki",
+                "stem": "DNA polymerase synthesizes only 5'→3'. On the lagging strand this constraint forces:",
+                "choices": [
+                    "One continuous strand",
+                    "Short Okazaki fragments later sealed by ligase",
+                    "RNA-only synthesis",
+                    "No replication at all"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "lagging strand made in Okazaki fragments",
+                "difficulty": 0.55
+            },
+            {
+                "id": "repl_topo",
+                "stem": "A drug lets the replication fork open but replication stalls from unrelieved supercoiling tension ahead of it. The drug most likely inhibits:",
+                "choices": ["Helicase", "Topoisomerase", "Ligase", "Primase"],
+                "correct_index": 1,
+                "paraphrase_of": "topoisomerase relieves replication supercoiling",
+                "difficulty": 0.6
+            },
+            {
+                "id": "repl_semiconservative",
+                "stem": "After one round of replication, each daughter DNA molecule has one original strand and one newly made strand. Replication is therefore:",
+                "choices": ["Conservative", "Semiconservative", "Dispersive", "Random"],
+                "correct_index": 1,
+                "paraphrase_of": "replication is semiconservative",
+                "difficulty": 0.45
+            },
+            {
+                "id": "repl_primer",
+                "stem": "DNA polymerase cannot begin a new strand from nothing; it needs an existing 3'-OH to extend. That starting 3'-OH is provided by:",
+                "choices": ["A short RNA primer", "DNA ligase", "A second polymerase", "Helicase"],
+                "correct_index": 0,
+                "paraphrase_of": "RNA primer supplies the 3'-OH for polymerase",
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::transcription_translation": [
+            {
+                "id": "tt_silent",
+                "stem": "A mutation changes a codon from GAA to GAG, yet the same amino acid (Glu) is still inserted. This is possible because:",
+                "choices": [
+                    "The genetic code is degenerate (redundant)",
+                    "Each tRNA reads exactly one codon",
+                    "The change fell in an intron",
+                    "Translation was skipped"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "degeneracy of the genetic code (silent mutation)",
+                "difficulty": 0.5
+            },
+            {
+                "id": "tt_frameshift",
+                "stem": "A single-nucleotide insertion early in a gene usually has a more severe effect than a single-nucleotide substitution because it:",
+                "choices": [
+                    "Changes only one amino acid",
+                    "Shifts the downstream reading frame",
+                    "Cannot be transcribed",
+                    "Affects only the promoter"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "frameshift vs point-mutation severity",
+                "difficulty": 0.55
+            },
+            {
+                "id": "tt_nonsense",
+                "stem": "A point mutation turns an internal codon into a premature stop codon. The resulting protein is most likely:",
+                "choices": ["Longer than normal", "Truncated (shortened)", "Completely unchanged", "Duplicated"],
+                "correct_index": 1,
+                "paraphrase_of": "nonsense mutation truncates the protein",
+                "difficulty": 0.55
+            },
+            {
+                "id": "tt_direction",
+                "stem": "As the ribosome translates an mRNA, it builds the polypeptide beginning at:",
+                "choices": [
+                    "The 3' end, C-terminus first",
+                    "The 5' end, adding from the N-terminus",
+                    "A random internal codon",
+                    "The poly-A tail"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "translation proceeds 5'→3', N→C",
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::gene_regulation": [
+            {
+                "id": "gr_catabolite",
+                "stem": "In the lac operon, adding glucose lowers cAMP, weakening CAP binding, so transcription falls even when lactose is present. Glucose therefore acts through:",
+                "choices": [
+                    "Positive control via the CAP–cAMP complex",
+                    "Direct binding to the operator",
+                    "Permanently inducing the repressor",
+                    "Degrading lactose"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "catabolite repression via CAP-cAMP",
+                "difficulty": 0.65
+            },
+            {
+                "id": "gr_enhancer",
+                "stem": "A transcription factor boosts expression of a gene located thousands of base pairs away. This is best explained by the factor:",
+                "choices": [
+                    "Binding an enhancer and looping the DNA to the promoter",
+                    "Changing the gene's DNA sequence",
+                    "Physically blocking RNA polymerase",
+                    "Acting only during translation"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "enhancers act at a distance via DNA looping",
+                "difficulty": 0.6
+            },
+            {
+                "id": "gr_methylation",
+                "stem": "Heavy methylation of a gene's promoter region is most commonly associated with:",
+                "choices": [
+                    "Increased transcription",
+                    "Silenced (reduced) transcription",
+                    "Faster translation",
+                    "A higher mutation rate"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "promoter methylation silences transcription",
+                "difficulty": 0.6
+            },
+            {
+                "id": "gr_operon_repressor",
+                "stem": "In the lac operon with no lactose present, the lac repressor binds the operator and:",
+                "choices": [
+                    "Boosts transcription of the lac genes",
+                    "Blocks transcription of the lac genes",
+                    "Digests glucose",
+                    "Adds a poly-A tail"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "repressor blocks the operator without inducer",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::bio_biochem::glycolysis": [
+            {
+                "id": "gly_anaerobic",
+                "stem": "In vigorously exercising muscle with little oxygen, glycolysis continues because NADH is reoxidized to NAD⁺ by:",
+                "choices": [
+                    "The electron transport chain",
+                    "Converting pyruvate to lactate",
+                    "The citric acid cycle",
+                    "Beta-oxidation"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "anaerobic regeneration of NAD+",
+                "difficulty": 0.6
+            },
+            {
+                "id": "gly_pfk",
+                "stem": "A cell with abundant ATP down-regulates glucose breakdown mainly by inhibiting:",
+                "choices": [
+                    "Hexokinase via glucose",
+                    "Phosphofructokinase-1",
+                    "Pyruvate kinase only",
+                    "Lactate dehydrogenase"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "PFK-1 rate-limiting regulation",
+                "difficulty": 0.6
+            },
+            {
+                "id": "gly_net_atp",
+                "stem": "The NET ATP produced by substrate-level phosphorylation from one glucose through glycolysis is:",
+                "choices": ["0", "2", "4", "36"],
+                "correct_index": 1,
+                "paraphrase_of": "glycolysis nets 2 ATP",
+                "difficulty": 0.5
+            },
+            {
+                "id": "gly_location",
+                "stem": "Unlike the citric acid cycle, glycolysis takes place in the:",
+                "choices": ["Mitochondrial matrix", "Cytoplasm (cytosol)", "Nucleus", "Endoplasmic reticulum"],
+                "correct_index": 1,
+                "paraphrase_of": "glycolysis is cytosolic",
+                "difficulty": 0.45
+            }
+        ],
+        "mcat::bio_biochem::citric_acid_cycle": [
+            {
+                "id": "cac_products",
+                "stem": "Per acetyl-CoA entering it, the citric acid cycle's main DIRECT products are:",
+                "choices": ["A large amount of ATP directly", "NADH, FADH2, and GTP (plus CO2)", "Lactate", "Glucose"],
+                "correct_index": 1,
+                "paraphrase_of": "TCA yields reduced carriers, little direct ATP",
+                "difficulty": 0.5
+            },
+            {
+                "id": "cac_etc_dep",
+                "stem": "When the electron transport chain is blocked, the citric acid cycle also slows sharply because:",
+                "choices": [
+                    "It runs out of CO2",
+                    "NAD⁺ and FAD are no longer regenerated",
+                    "Glucose is depleted",
+                    "GTP directly inhibits it"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "TCA depends on ETC to regenerate NAD+/FAD",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cac_location",
+                "stem": "In a eukaryotic cell, the citric acid cycle operates in the:",
+                "choices": ["Cytosol", "Mitochondrial matrix", "Nucleus", "Ribosome"],
+                "correct_index": 1,
+                "paraphrase_of": "TCA runs in the mitochondrial matrix",
+                "difficulty": 0.45
+            },
+            {
+                "id": "cac_co2",
+                "stem": "The carbon atoms released as CO2 during the citric acid cycle originate from:",
+                "choices": ["Water", "Acetyl-CoA (derived from pyruvate)", "Molecular O2", "ATP"],
+                "correct_index": 1,
+                "paraphrase_of": "TCA exhales carbons that came from acetyl-CoA",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::bio_biochem::oxidative_phosphorylation": [
+            {
+                "id": "oxphos_uncoupler",
+                "stem": "A toxin makes the inner mitochondrial membrane leaky to protons. The immediate effect is:",
+                "choices": [
+                    "More ATP per glucose",
+                    "Continued electron transport but little ATP; energy lost as heat",
+                    "Complete stop of oxygen consumption",
+                    "Increased proton gradient"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "proton-motive force drives ATP synthase",
+                "difficulty": 0.65
+            },
+            {
+                "id": "oxphos_cyanide",
+                "stem": "Cyanide blocks Complex IV of the electron transport chain. The immediate consequence is that:",
+                "choices": [
+                    "ATP synthesis increases",
+                    "Electron flow halts, the proton gradient collapses, and ATP synthesis stops",
+                    "Only heat output rises while ATP is unchanged",
+                    "The citric acid cycle speeds up"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "ETC inhibition stops oxidative ATP synthesis",
+                "difficulty": 0.6
+            },
+            {
+                "id": "oxphos_o2_role",
+                "stem": "In oxidative phosphorylation, molecular oxygen functions as:",
+                "choices": [
+                    "The first electron donor",
+                    "The final electron acceptor",
+                    "A proton pump",
+                    "A structural cofactor only"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "O2 is the terminal electron acceptor",
+                "difficulty": 0.5
+            },
+            {
+                "id": "oxphos_atp_yield",
+                "stem": "When one glucose is fully oxidized aerobically, the largest share of ATP is generated during:",
+                "choices": ["Glycolysis", "The citric acid cycle", "Oxidative phosphorylation", "Fermentation"],
+                "correct_index": 2,
+                "paraphrase_of": "oxidative phosphorylation yields most ATP",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::bio_biochem::cell_biology": [
+            {
+                "id": "cell_osmosis",
+                "stem": "A red blood cell is placed in a hypertonic solution. Water will:",
+                "choices": [
+                    "Move into the cell, making it swell",
+                    "Move out of the cell, making it shrink",
+                    "Not move at all",
+                    "Move only if ATP is spent"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "osmosis direction set by tonicity",
+                "difficulty": 0.45
+            },
+            {
+                "id": "cell_rough_er",
+                "stem": "A protein destined to be secreted from the cell is synthesized on ribosomes that are:",
+                "choices": [
+                    "Free in the cytosol",
+                    "Bound to the rough endoplasmic reticulum",
+                    "Inside the nucleus",
+                    "Attached to the mitochondria"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "secretory proteins made on rough ER",
+                "difficulty": 0.5
+            },
+            {
+                "id": "cell_mito_atp",
+                "stem": "A cell type with very high ATP demand (such as cardiac muscle) is most likely to contain an unusually large number of:",
+                "choices": ["Lysosomes", "Mitochondria", "Ribosomes only", "Vacuoles"],
+                "correct_index": 1,
+                "paraphrase_of": "mitochondrial density tracks ATP demand",
+                "difficulty": 0.45
+            },
+            {
+                "id": "cell_active_transport",
+                "stem": "Moving ions across a membrane AGAINST their concentration gradient requires:",
+                "choices": [
+                    "Simple diffusion",
+                    "Energy input via active transport",
+                    "Osmosis alone",
+                    "Facilitated diffusion alone"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "active transport uses energy to move up a gradient",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::atomic_structure": [
+            {
+                "id": "atom_isotope",
+                "stem": "Two atoms have the same number of protons but different numbers of neutrons. They are:",
+                "choices": ["Ions of each other", "Isotopes", "Structural isomers", "Different elements"],
+                "correct_index": 1,
+                "paraphrase_of": "isotopes differ in neutron number",
+                "difficulty": 0.4
+            },
+            {
+                "id": "atom_photon",
+                "stem": "An electron falling from n=3 to n=2 emits light. A fall from n=4 to n=2 instead emits a photon of:",
+                "choices": [
+                    "Lower energy (longer wavelength)",
+                    "Higher energy (shorter wavelength)",
+                    "Exactly the same energy",
+                    "No photon at all"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "energy gap sets photon energy/wavelength",
+                "difficulty": 0.6
+            },
+            {
+                "id": "atom_valence",
+                "stem": "An element's chemical reactivity is governed mainly by its number of:",
+                "choices": ["Neutrons", "Valence (outer-shell) electrons", "Total protons only", "Isotopes"],
+                "correct_index": 1,
+                "paraphrase_of": "valence electrons drive reactivity",
+                "difficulty": 0.5
+            },
+            {
+                "id": "atom_quantum",
+                "stem": "Electrons occupy only discrete energy levels rather than any arbitrary energy. This is a direct consequence of:",
+                "choices": [
+                    "Classical mechanics",
+                    "The quantization of energy",
+                    "Radioactive decay",
+                    "Ideal-gas behavior"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "electron energies are quantized",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::periodic_trends": [
+            {
+                "id": "pt_radius",
+                "stem": "Across a period from left to right, atomic radius generally decreases mainly because:",
+                "choices": [
+                    "Electrons fill new shells",
+                    "Effective nuclear charge rises, pulling electrons inward",
+                    "Shielding grows faster than nuclear charge",
+                    "Atomic mass increases"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "effective nuclear charge shrinks radius across a period",
+                "difficulty": 0.5
+            },
+            {
+                "id": "pt_ie",
+                "stem": "Among Na, Mg, Al, and Cl, which has the highest first ionization energy?",
+                "choices": ["Na", "Mg", "Al", "Cl"],
+                "correct_index": 3,
+                "paraphrase_of": "ionization energy rises across a period",
+                "difficulty": 0.5
+            },
+            {
+                "id": "pt_electronegativity",
+                "stem": "Which element is the most electronegative?",
+                "choices": ["Fluorine", "Oxygen", "Carbon", "Cesium"],
+                "correct_index": 0,
+                "paraphrase_of": "electronegativity peaks at the upper right (F)",
+                "difficulty": 0.45
+            },
+            {
+                "id": "pt_anion_radius",
+                "stem": "A chloride ion (Cl⁻) compared with a neutral chlorine atom is:",
+                "choices": ["Smaller", "Larger", "Exactly the same size", "Uncharged"],
+                "correct_index": 1,
+                "paraphrase_of": "anions are larger than their parent atoms",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::bonding": [
+            {
+                "id": "bond_co2",
+                "stem": "CO2 has two polar C=O bonds yet is nonpolar overall. This is because:",
+                "choices": [
+                    "Oxygen is not electronegative",
+                    "Its linear geometry cancels the two bond dipoles",
+                    "The bonds are actually ionic",
+                    "Carbon carries lone pairs"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "molecular geometry determines net polarity",
+                "difficulty": 0.6
+            },
+            {
+                "id": "bond_vsepr",
+                "stem": "A molecule AX4 with no lone pairs on the central atom adopts which geometry?",
+                "choices": ["Square planar", "Tetrahedral", "Trigonal planar", "Bent"],
+                "correct_index": 1,
+                "paraphrase_of": "VSEPR: four bonding pairs give tetrahedral",
+                "difficulty": 0.5
+            },
+            {
+                "id": "bond_ionic_vs_covalent",
+                "stem": "A compound formed from two elements with a very large electronegativity difference (e.g., Na and Cl) is best described as:",
+                "choices": ["Nonpolar covalent", "Polar covalent", "Ionic", "Metallic"],
+                "correct_index": 2,
+                "paraphrase_of": "large electronegativity difference gives ionic bonding",
+                "difficulty": 0.5
+            },
+            {
+                "id": "bond_hbond",
+                "stem": "Water boils at an unusually high temperature for such a small molecule mainly because of:",
+                "choices": [
+                    "Ionic bonds",
+                    "Hydrogen bonding between molecules",
+                    "London dispersion forces only",
+                    "Breaking covalent bonds"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "hydrogen bonding raises boiling point",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::stoichiometry": [
+            {
+                "id": "stoich_limiting",
+                "stem": "For 2 H2 + O2 → 2 H2O, you mix 4 mol H2 with 1 mol O2. The limiting reactant is:",
+                "choices": ["H2", "O2", "Neither; they are stoichiometric", "Water"],
+                "correct_index": 1,
+                "paraphrase_of": "identifying the limiting reactant from mole ratio",
+                "difficulty": 0.6
+            },
+            {
+                "id": "stoich_scale",
+                "stem": "With the other reactant in large excess, doubling the amount of the limiting reactant will:",
+                "choices": [
+                    "Roughly double the product formed",
+                    "Have no effect on product",
+                    "Halve the product",
+                    "Stop the reaction"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "product yield scales with limiting reactant",
+                "difficulty": 0.5
+            },
+            {
+                "id": "stoich_mole_ratio",
+                "stem": "For N2 + 3 H2 → 2 NH3, completely reacting 3 mol of H2 (with N2 in excess) produces how many moles of NH3?",
+                "choices": ["1", "2", "3", "6"],
+                "correct_index": 1,
+                "paraphrase_of": "applying mole ratios from a balanced equation",
+                "difficulty": 0.55
+            },
+            {
+                "id": "stoich_percent_yield",
+                "stem": "A reaction with a theoretical yield of 10 g actually produces 8 g of product. The percent yield is:",
+                "choices": ["20%", "80%", "125%", "8%"],
+                "correct_index": 1,
+                "paraphrase_of": "percent yield = actual / theoretical",
+                "difficulty": 0.45
+            }
+        ],
+        "mcat::chem_phys::thermodynamics": [
+            {
+                "id": "thermo_sign",
+                "stem": "A reaction is nonspontaneous at low temperature but becomes spontaneous when heated. This implies:",
+                "choices": ["ΔH < 0 and ΔS < 0", "ΔH > 0 and ΔS > 0", "ΔH < 0 and ΔS > 0", "ΔH > 0 and ΔS < 0"],
+                "correct_index": 1,
+                "paraphrase_of": "ΔG = ΔH − TΔS sign reasoning",
+                "difficulty": 0.7
+            },
+            {
+                "id": "thermo_melt",
+                "stem": "Ice melting at room temperature is spontaneous even though it absorbs heat (ΔH > 0). The reason is that:",
+                "choices": [
+                    "ΔS < 0 dominates the process",
+                    "The entropy increase (ΔS > 0) makes ΔG negative at that temperature",
+                    "ΔG is positive but it happens anyway",
+                    "Temperature has no role"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "entropy-driven spontaneity via ΔG=ΔH−TΔS",
+                "difficulty": 0.6
+            },
+            {
+                "id": "thermo_exo_endo",
+                "stem": "A reaction releases heat to its surroundings. It is:",
+                "choices": [
+                    "Endothermic, ΔH > 0",
+                    "Exothermic, ΔH < 0",
+                    "Always nonspontaneous",
+                    "Necessarily at equilibrium"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "exothermic means ΔH < 0",
+                "difficulty": 0.45
+            },
+            {
+                "id": "thermo_entropy",
+                "stem": "Which process involves the LARGEST increase in entropy?",
+                "choices": [
+                    "A gas condensing to a liquid",
+                    "A liquid freezing to a solid",
+                    "A solid subliming directly to a gas",
+                    "A reaction with no phase change"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "entropy rises solid → liquid → gas",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::kinetics": [
+            {
+                "id": "kin_catalyst",
+                "stem": "A catalyst speeds a reaction by:",
+                "choices": [
+                    "Increasing the equilibrium constant",
+                    "Lowering the activation energy",
+                    "Making the reaction more exothermic",
+                    "Raising the temperature"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "catalysts lower activation energy, not ΔG",
+                "difficulty": 0.5
+            },
+            {
+                "id": "kin_order",
+                "stem": "A reaction is first order in reactant A. Doubling [A] changes the rate by a factor of:",
+                "choices": ["1 (no change)", "2", "4", "8"],
+                "correct_index": 1,
+                "paraphrase_of": "reaction order and concentration dependence",
+                "difficulty": 0.55
+            },
+            {
+                "id": "kin_temp",
+                "stem": "Raising the temperature speeds up most reactions mainly because it:",
+                "choices": [
+                    "Lowers the activation energy",
+                    "Increases the fraction of molecules with enough energy to react",
+                    "Changes only the equilibrium constant",
+                    "Acts as a catalyst"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "temperature raises the fraction above the activation barrier",
+                "difficulty": 0.6
+            },
+            {
+                "id": "kin_rate_limiting",
+                "stem": "In a reaction that proceeds through several steps, the overall rate is set by:",
+                "choices": [
+                    "The fastest step",
+                    "The slowest (rate-determining) step",
+                    "The final step, always",
+                    "The total number of steps"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "the slowest step is rate-determining",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::equilibrium": [
+            {
+                "id": "eq_lechat_temp",
+                "stem": "For an exothermic reaction at equilibrium, raising the temperature will:",
+                "choices": [
+                    "Shift toward products",
+                    "Shift toward reactants",
+                    "Not shift the equilibrium",
+                    "Leave K unchanged"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "Le Chatelier: heat as a product of exothermic reaction",
+                "difficulty": 0.6
+            },
+            {
+                "id": "eq_inert_gas",
+                "stem": "Adding an inert gas at constant VOLUME to a gas-phase equilibrium will:",
+                "choices": [
+                    "Shift toward fewer moles of gas",
+                    "Shift toward more moles of gas",
+                    "Not shift the equilibrium",
+                    "Double the value of K"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "inert gas at constant volume leaves partial pressures unchanged",
+                "difficulty": 0.65
+            },
+            {
+                "id": "eq_add_reactant",
+                "stem": "Adding more reactant to a system already at equilibrium shifts it:",
+                "choices": [
+                    "Toward the reactants",
+                    "Toward the products",
+                    "Not at all",
+                    "Only if temperature also changes"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "Le Chatelier: added reactant shifts toward products",
+                "difficulty": 0.45
+            },
+            {
+                "id": "eq_keq_meaning",
+                "stem": "A reaction has an equilibrium constant K = 1×10⁶. At equilibrium the mixture is:",
+                "choices": [
+                    "Mostly reactants",
+                    "Mostly products",
+                    "Equal parts reactants and products",
+                    "Impossible to characterize"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "a large K favors products",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::acids_bases": [
+            {
+                "id": "ab_halfeq",
+                "stem": "Titrating a weak acid with strong base, the pH at the half-equivalence point is 4.8. The acid's Ka is closest to:",
+                "choices": ["10⁻4.8", "10⁻9.6", "4.8", "10⁻7"],
+                "correct_index": 0,
+                "paraphrase_of": "pH = pKa at half-equivalence",
+                "difficulty": 0.55
+            },
+            {
+                "id": "ab_buffer",
+                "stem": "A buffer must resist pH change near pH 7.2. The best weak-acid component has a pKa of about:",
+                "choices": ["3.1", "5.0", "7.2", "10.4"],
+                "correct_index": 2,
+                "paraphrase_of": "buffer pKa selection",
+                "difficulty": 0.5
+            },
+            {
+                "id": "ab_ph_calc",
+                "stem": "A solution has [H⁺] = 1×10⁻³ M. Its pH is:",
+                "choices": ["3", "−3", "11", "7"],
+                "correct_index": 0,
+                "paraphrase_of": "pH = −log[H⁺]",
+                "difficulty": 0.45
+            },
+            {
+                "id": "ab_conjugate",
+                "stem": "For a weak acid HA, its conjugate base is:",
+                "choices": ["H⁺", "A⁻", "H2A", "OH⁻"],
+                "correct_index": 1,
+                "paraphrase_of": "conjugate base is the acid minus a proton",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::kinematics": [
+            {
+                "id": "kin_apex",
+                "stem": "A ball is thrown straight up. At the very highest point of its path, its velocity and acceleration are:",
+                "choices": [
+                    "Both zero",
+                    "Velocity zero, acceleration g downward",
+                    "Velocity maximum, acceleration zero",
+                    "Both equal to g"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "at the apex v=0 but a=g",
+                "difficulty": 0.55
+            },
+            {
+                "id": "kin_freefall",
+                "stem": "Ignoring air resistance, a heavy ball and a light ball dropped from the same height hit the ground:",
+                "choices": ["Heavier one first", "Lighter one first", "At the same time", "Depending on their color"],
+                "correct_index": 2,
+                "paraphrase_of": "free-fall is independent of mass",
+                "difficulty": 0.45
+            },
+            {
+                "id": "kin_proj_horiz",
+                "stem": "A ball rolls off a table and becomes a projectile. Ignoring air resistance, during the fall its horizontal velocity:",
+                "choices": ["Increases steadily", "Stays constant", "Decreases to zero", "Reverses direction"],
+                "correct_index": 1,
+                "paraphrase_of": "horizontal velocity is constant in projectile motion",
+                "difficulty": 0.55
+            },
+            {
+                "id": "kin_accel_meaning",
+                "stem": "A car speeds up from 10 m/s to 20 m/s over 5 s. Its average acceleration is:",
+                "choices": ["2 m/s²", "0.5 m/s²", "10 m/s²", "50 m/s²"],
+                "correct_index": 0,
+                "paraphrase_of": "acceleration = Δv / Δt",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::force_energy": [
+            {
+                "id": "fe_constant_v",
+                "stem": "A box slides across a floor at constant velocity while friction acts on it. The NET force on the box is:",
+                "choices": ["In the direction of motion", "Zero", "Opposite to the motion", "Equal to its weight"],
+                "correct_index": 1,
+                "paraphrase_of": "constant velocity means zero net force (Newton's 1st law)",
+                "difficulty": 0.5
+            },
+            {
+                "id": "fe_work",
+                "stem": "You lift a box 2 m upward, then carry it 5 m horizontally at constant height. Work is done against gravity:",
+                "choices": [
+                    "During both the lift and the carry",
+                    "Only during the vertical lift",
+                    "Only during the horizontal carry",
+                    "At no point"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "work requires displacement along the force",
+                "difficulty": 0.6
+            },
+            {
+                "id": "fe_newton3",
+                "stem": "A book rests on a table. The Newton's-third-law reaction partner to the book pushing down on the table is:",
+                "choices": [
+                    "The table pushing up on the book",
+                    "Gravity acting on the book",
+                    "The book's weight increasing",
+                    "Friction on the book"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "action-reaction pairs act on different objects",
+                "difficulty": 0.6
+            },
+            {
+                "id": "fe_ke",
+                "stem": "If a car doubles its speed, its kinetic energy:",
+                "choices": ["Doubles", "Quadruples", "Stays the same", "Is halved"],
+                "correct_index": 1,
+                "paraphrase_of": "kinetic energy scales with v²",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::fluids": [
+            {
+                "id": "fluid_bernoulli",
+                "stem": "An ideal fluid flows through a pipe that narrows. In the narrow section the fluid's speed and pressure, respectively:",
+                "choices": ["Increase; increase", "Increase; decrease", "Decrease; increase", "Decrease; decrease"],
+                "correct_index": 1,
+                "paraphrase_of": "continuity + Bernoulli: faster flow, lower pressure",
+                "difficulty": 0.6
+            },
+            {
+                "id": "fluid_buoyancy",
+                "stem": "An object floats with 90% of its volume submerged. Its density is about:",
+                "choices": [
+                    "0.1× the fluid's density",
+                    "0.9× the fluid's density",
+                    "Equal to the fluid's density",
+                    "1.1× the fluid's density"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "fraction submerged equals density ratio",
+                "difficulty": 0.6
+            },
+            {
+                "id": "fluid_pressure_depth",
+                "stem": "In a static fluid, the pressure as you go deeper:",
+                "choices": ["Decreases", "Increases", "Stays constant", "Depends on the container's shape"],
+                "correct_index": 1,
+                "paraphrase_of": "hydrostatic pressure increases with depth",
+                "difficulty": 0.45
+            },
+            {
+                "id": "fluid_continuity",
+                "stem": "An incompressible fluid flows steadily from a wide pipe into a narrow one. The volume flow rate in the narrow section is:",
+                "choices": [
+                    "Larger than in the wide pipe",
+                    "The same as in the wide pipe",
+                    "Smaller than in the wide pipe",
+                    "Zero"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "continuity: volume flow rate is conserved",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::circuits": [
+            {
+                "id": "circ_parallel",
+                "stem": "Two identical resistors are connected in parallel. Their combined resistance, compared with one resistor alone, is:",
+                "choices": ["Double", "Half", "The same", "Zero"],
+                "correct_index": 1,
+                "paraphrase_of": "parallel resistors lower total resistance",
+                "difficulty": 0.5
+            },
+            {
+                "id": "circ_series",
+                "stem": "Adding more resistors in series across a battery of fixed voltage causes the total current to:",
+                "choices": ["Increase", "Decrease", "Stay exactly the same", "Become infinite"],
+                "correct_index": 1,
+                "paraphrase_of": "more series resistance lowers current (Ohm's law)",
+                "difficulty": 0.5
+            },
+            {
+                "id": "circ_ohms",
+                "stem": "A 12 V battery drives current through a single 4 Ω resistor. The current is:",
+                "choices": ["3 A", "48 A", "0.33 A", "16 A"],
+                "correct_index": 0,
+                "paraphrase_of": "Ohm's law: I = V / R",
+                "difficulty": 0.45
+            },
+            {
+                "id": "circ_power",
+                "stem": "Which expression gives the electrical power dissipated by a resistor carrying current I at voltage V?",
+                "choices": ["V / I", "I × V", "V − I", "I / V"],
+                "correct_index": 1,
+                "paraphrase_of": "electrical power P = IV",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::sensation_perception": [
+            {
+                "id": "sp_adaptation",
+                "stem": "You stop noticing the feel of your clothes soon after getting dressed. This best illustrates:",
+                "choices": ["Sensory adaptation", "Signal detection", "Bottom-up processing", "Absolute threshold"],
+                "correct_index": 0,
+                "paraphrase_of": "sensory adaptation to constant stimuli",
+                "difficulty": 0.5
+            },
+            {
+                "id": "sp_topdown",
+                "stem": "You read a smudged word easily once you know the sentence's topic. Using expectations to interpret ambiguous input is:",
+                "choices": ["Bottom-up processing", "Top-down processing", "Transduction", "Sensory adaptation"],
+                "correct_index": 1,
+                "paraphrase_of": "top-down processing driven by expectation",
+                "difficulty": 0.55
+            },
+            {
+                "id": "sp_absolute_threshold",
+                "stem": "The minimum stimulus intensity a person can detect 50% of the time is called the:",
+                "choices": ["Difference threshold", "Absolute threshold", "Adaptation point", "Weber fraction"],
+                "correct_index": 1,
+                "paraphrase_of": "absolute threshold definition applied",
+                "difficulty": 0.5
+            },
+            {
+                "id": "sp_weber",
+                "stem": "You can just barely tell a 100 g weight from a 110 g weight. By Weber's law, to just notice a change from a 200 g weight you would need to add about:",
+                "choices": ["10 g", "20 g", "5 g", "110 g"],
+                "correct_index": 1,
+                "paraphrase_of": "Weber's law: constant proportional difference",
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::psych_soc::cognition": [
+            {
+                "id": "cog_representativeness",
+                "stem": "Told a quiet man who likes poetry is 'either a librarian or a salesman,' a student guesses librarian—ignoring that salesmen are far more numerous. This error reflects:",
+                "choices": [
+                    "The availability heuristic",
+                    "The representativeness heuristic",
+                    "Confirmation bias",
+                    "Anchoring"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "representativeness heuristic ignoring base rates",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cog_fixedness",
+                "stem": "A person can't solve a puzzle because they fail to see that a box of tacks could also be emptied and used as a shelf. This illustrates:",
+                "choices": [
+                    "Functional fixedness",
+                    "The framing effect",
+                    "The availability heuristic",
+                    "Confirmation bias"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "functional fixedness in problem solving",
+                "difficulty": 0.55
+            },
+            {
+                "id": "cog_availability",
+                "stem": "After heavy news coverage of a shark attack, beachgoers wildly overestimate the risk of one. This overestimate reflects:",
+                "choices": [
+                    "The availability heuristic",
+                    "The representativeness heuristic",
+                    "Functional fixedness",
+                    "The framing effect"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "availability heuristic from vivid, recalled examples",
+                "difficulty": 0.55
+            },
+            {
+                "id": "cog_confirmation",
+                "stem": "A researcher notices only the data that support her hypothesis and disregards results that contradict it. This is:",
+                "choices": ["Confirmation bias", "Anchoring", "The availability heuristic", "The framing effect"],
+                "correct_index": 0,
+                "paraphrase_of": "confirmation bias",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::memory": [
+            {
+                "id": "mem_interference",
+                "stem": "After learning French, a student struggles to recall Spanish words learned earlier. This is best explained by:",
+                "choices": ["Retroactive interference", "Proactive interference", "Encoding failure", "Source amnesia"],
+                "correct_index": 0,
+                "paraphrase_of": "interference in memory",
+                "difficulty": 0.55
+            },
+            {
+                "id": "mem_hippo",
+                "stem": "A patient with bilateral hippocampal damage can hold a phone number briefly but cannot form new long-term memories. This dissociation implicates the hippocampus in:",
+                "choices": [
+                    "Working memory storage",
+                    "Consolidation of new long-term memories",
+                    "Motor skill learning",
+                    "Sensory memory"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "hippocampus consolidation",
+                "difficulty": 0.6
+            },
+            {
+                "id": "mem_spacing",
+                "stem": "Reviewing material in short sessions spread over two weeks produces better long-term retention than one long cram. This is the:",
+                "choices": [
+                    "Serial position effect",
+                    "Spacing effect",
+                    "Tip-of-the-tongue phenomenon",
+                    "Misinformation effect"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "spacing effect improves retention",
+                "difficulty": 0.5
+            },
+            {
+                "id": "mem_serial_position",
+                "stem": "Shown a long list once, people best recall the first and last items. The strong recall of the LAST few items is the:",
+                "choices": ["Primacy effect", "Recency effect", "Von Restorff effect", "Chunking"],
+                "correct_index": 1,
+                "paraphrase_of": "recency effect within serial position",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::learning": [
+            {
+                "id": "learn_schedule",
+                "stem": "A slot machine pays out unpredictably. Gamblers keep playing at a high, steady rate and resist quitting. This reflects which reinforcement schedule?",
+                "choices": ["Fixed ratio", "Variable ratio", "Fixed interval", "Variable interval"],
+                "correct_index": 1,
+                "paraphrase_of": "variable-ratio resistance to extinction",
+                "difficulty": 0.5
+            },
+            {
+                "id": "learn_extinction",
+                "stem": "A dog salivates to a bell that has repeatedly preceded food. The bell is then rung many times with NO food, and salivation gradually fades. This fading is:",
+                "choices": ["Acquisition", "Extinction", "Spontaneous recovery", "Stimulus generalization"],
+                "correct_index": 1,
+                "paraphrase_of": "extinction in classical conditioning",
+                "difficulty": 0.5
+            },
+            {
+                "id": "learn_neg_reinforcement",
+                "stem": "Taking aspirin makes a headache go away, so you become more likely to take aspirin next time. Removing the unpleasant headache is an example of:",
+                "choices": [
+                    "Positive reinforcement",
+                    "Negative reinforcement",
+                    "Positive punishment",
+                    "Negative punishment"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "negative reinforcement removes an aversive stimulus",
+                "difficulty": 0.65
+            },
+            {
+                "id": "learn_shaping",
+                "stem": "A trainer rewards a dog for closer and closer approximations of rolling over until it performs the full trick. This technique is:",
+                "choices": ["Shaping", "Extinction", "Stimulus generalization", "Latent learning"],
+                "correct_index": 0,
+                "paraphrase_of": "shaping via successive approximations",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::motivation_emotion": [
+            {
+                "id": "me_yerkes",
+                "stem": "By the Yerkes–Dodson law, performance on a difficult task is best at:",
+                "choices": [
+                    "The highest possible arousal",
+                    "A moderate level of arousal",
+                    "The lowest possible arousal",
+                    "Any level; arousal is irrelevant"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "Yerkes-Dodson inverted-U of arousal and performance",
+                "difficulty": 0.55
+            },
+            {
+                "id": "me_cannonbard",
+                "stem": "A theory holds that seeing a bear triggers bodily arousal and the conscious feeling of fear simultaneously and independently, via a thalamic relay. This is:",
+                "choices": [
+                    "James–Lange theory",
+                    "Cannon–Bard theory",
+                    "Schachter–Singer two-factor theory",
+                    "Drive-reduction theory"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "Cannon-Bard simultaneous emotion theory",
+                "difficulty": 0.65
+            },
+            {
+                "id": "me_james_lange",
+                "stem": "A theory holds that you feel afraid BECAUSE you notice your heart pounding — the bodily response comes first and the emotion is your reading of it. This is:",
+                "choices": [
+                    "James–Lange theory",
+                    "Cannon–Bard theory",
+                    "The Yerkes–Dodson law",
+                    "Drive-reduction theory"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "James-Lange: emotion follows physiological arousal",
+                "difficulty": 0.6
+            },
+            {
+                "id": "me_maslow",
+                "stem": "By Maslow's hierarchy of needs, a person who is starving is LEAST likely to be motivated at that moment by:",
+                "choices": ["Finding food", "Finding water", "Pursuing self-actualization", "Finding shelter"],
+                "correct_index": 2,
+                "paraphrase_of": "lower needs precede self-actualization",
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::identity": [
+            {
+                "id": "id_erikson",
+                "stem": "A teenager tries out different peer groups, values, and career ideas before settling on a sense of self. Erikson would place this in the stage of:",
+                "choices": [
+                    "Trust vs. mistrust",
+                    "Identity vs. role confusion",
+                    "Integrity vs. despair",
+                    "Autonomy vs. shame"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "Erikson identity vs role confusion",
+                "difficulty": 0.55
+            },
+            {
+                "id": "id_roles",
+                "stem": "The same person acts solemn at a funeral and boisterous at a ballgame, shifting behavior to fit each setting. This is best described as:",
+                "choices": [
+                    "A single fixed personality trait",
+                    "Different role-related identities across contexts",
+                    "The fundamental attribution error",
+                    "Cognitive dissonance"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "role-based identity varies by social context",
+                "difficulty": 0.55
+            },
+            {
+                "id": "id_looking_glass",
+                "stem": "A student gradually thinks of himself as 'the funny one' because peers keep laughing at his jokes and treating him that way. This self-concept built from others' reactions is the:",
+                "choices": ["Looking-glass self", "Fundamental attribution error", "Role strain", "Social loafing"],
+                "correct_index": 0,
+                "paraphrase_of": "looking-glass self from others' appraisals",
+                "difficulty": 0.6
+            },
+            {
+                "id": "id_role_conflict",
+                "stem": "A medical resident feels torn because being a present parent and being an on-call doctor make incompatible demands at the same time. This is:",
+                "choices": ["Role conflict", "Role strain", "Role exit", "Status inconsistency"],
+                "correct_index": 0,
+                "paraphrase_of": "role conflict between two statuses",
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::psych_soc::social_thinking": [
+            {
+                "id": "st_fae",
+                "stem": "You judge a stranger who trips as 'clumsy' but explain your own trip as 'the floor was wet.' This asymmetry illustrates:",
+                "choices": [
+                    "The fundamental attribution error",
+                    "The just-world hypothesis",
+                    "Social facilitation",
+                    "Groupthink"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "fundamental attribution error / actor-observer bias",
+                "difficulty": 0.55
+            },
+            {
+                "id": "st_polarization",
+                "stem": "After discussion, a committee of mildly cautious people makes a decision more cautious than any individual started with. This is:",
+                "choices": ["Group polarization", "Social loafing", "Deindividuation", "The bystander effect"],
+                "correct_index": 0,
+                "paraphrase_of": "group polarization amplifies initial leanings",
+                "difficulty": 0.6
+            },
+            {
+                "id": "st_groupthink",
+                "stem": "A tight-knit team silences its doubters and makes a bad call because members value harmony over honestly weighing options. This is:",
+                "choices": ["Groupthink", "Group polarization", "Social facilitation", "Deindividuation"],
+                "correct_index": 0,
+                "paraphrase_of": "groupthink from a drive for consensus",
+                "difficulty": 0.55
+            },
+            {
+                "id": "st_bystander",
+                "stem": "A person collapses on a busy sidewalk and no one helps, each pedestrian assuming someone else will. This is:",
+                "choices": ["The bystander effect", "Social loafing", "In-group bias", "Altruism"],
+                "correct_index": 0,
+                "paraphrase_of": "bystander effect / diffusion of responsibility",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::social_structure": [
+            {
+                "id": "ss_formal_org",
+                "stem": "A hospital has written rules, a hierarchy of doctors and nurses, and an explicit shared purpose of care. Sociologically it is best classified as a(n):",
+                "choices": ["Primary group", "Formal organization", "Reference group", "Aggregate"],
+                "correct_index": 1,
+                "paraphrase_of": "features of a formal organization",
+                "difficulty": 0.55
+            },
+            {
+                "id": "ss_sdoh",
+                "stem": "Researchers find health outcomes track people's education, income, and occupation. This pattern is captured by the idea of:",
+                "choices": [
+                    "Socioeconomic status as a social determinant of health",
+                    "Purely random variation",
+                    "Biological determinism alone",
+                    "The sick role"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "SES as a social determinant of health",
+                "difficulty": 0.55
+            },
+            {
+                "id": "ss_primary_group",
+                "stem": "Your immediate family and two lifelong friends, bound by deep and enduring personal ties, form a:",
+                "choices": ["Secondary group", "Primary group", "Formal organization", "Bureaucracy"],
+                "correct_index": 1,
+                "paraphrase_of": "primary groups have intimate, enduring ties",
+                "difficulty": 0.5
+            },
+            {
+                "id": "ss_meritocracy",
+                "stem": "A society in which people advance according to demonstrated ability and achievement rather than birth is best described as a:",
+                "choices": ["Caste system", "Meritocracy", "Aristocracy", "Theocracy"],
+                "correct_index": 1,
+                "paraphrase_of": "meritocracy rewards achievement",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::demographics": [
+            {
+                "id": "demo_aging",
+                "stem": "A country's population pyramid is top-heavy: many older adults, few children. A likely consequence is:",
+                "choices": [
+                    "Explosive population growth",
+                    "Rising demand on pensions and healthcare",
+                    "A large youth bulge",
+                    "A falling median age"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "consequences of an aging population",
+                "difficulty": 0.55
+            },
+            {
+                "id": "demo_urbanization",
+                "stem": "The steady movement of people from rural areas into cities over time is called:",
+                "choices": ["Emigration", "Urbanization", "The demographic transition", "Fertility decline"],
+                "correct_index": 1,
+                "paraphrase_of": "urbanization as a demographic shift",
+                "difficulty": 0.45
+            },
+            {
+                "id": "demo_transition",
+                "stem": "As a country industrializes, its death rate falls first and its birth rate falls later, producing a population surge that eventually levels off. This pattern is the:",
+                "choices": ["Malthusian catastrophe", "Demographic transition", "Baby boom", "Population pyramid"],
+                "correct_index": 1,
+                "paraphrase_of": "demographic transition model",
+                "difficulty": 0.6
+            },
+            {
+                "id": "demo_push_pull",
+                "stem": "War drives people out of a region while abundant city jobs draw them in. These two forces are known as:",
+                "choices": [
+                    "Push and pull factors of migration",
+                    "Natural increase",
+                    "Fertility and mortality rates",
+                    "Urban decay"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "push and pull factors in migration",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::biological_behavior": [
+            {
+                "id": "bb_broca",
+                "stem": "After a stroke, a patient understands speech normally but can no longer produce fluent speech. The damaged region is most likely:",
+                "choices": ["Wernicke's area", "Broca's area", "The cerebellum", "The amygdala"],
+                "correct_index": 1,
+                "paraphrase_of": "Broca's area and speech production",
+                "difficulty": 0.6
+            },
+            {
+                "id": "bb_sympathetic",
+                "stem": "During acute stress the heart races and pupils dilate (fight-or-flight). This response is driven mainly by:",
+                "choices": [
+                    "The parasympathetic nervous system",
+                    "The sympathetic nervous system",
+                    "The somatic motor system",
+                    "The enteric nervous system"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "sympathetic activation in the stress response",
+                "difficulty": 0.5
+            },
+            {
+                "id": "bb_dopamine",
+                "stem": "A drug that raises dopamine activity in the brain's reward pathways is most likely to increase:",
+                "choices": ["Reward-seeking behavior", "Digestion", "Bone growth", "Blood clotting"],
+                "correct_index": 0,
+                "paraphrase_of": "dopamine drives reward-seeking",
+                "difficulty": 0.55
+            },
+            {
+                "id": "bb_parasympathetic",
+                "stem": "Once a stressful event has passed, the branch of the nervous system that slows the heart and promotes 'rest and digest' is the:",
+                "choices": [
+                    "Sympathetic nervous system",
+                    "Parasympathetic nervous system",
+                    "Somatic nervous system",
+                    "Endocrine system"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "parasympathetic system handles rest-and-digest",
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::cars": [
+            {
+                "id": "cars_main_idea",
+                "stem": "Passage: 'Public monuments do not so much preserve history as freeze a single interpretation of it, discouraging the very reexamination that keeps a society's memory alive.' The author would most likely AGREE that:",
+                "choices": [
+                    "Monuments should never be built at all",
+                    "Reinterpreting the past has value, and monuments can impede it",
+                    "History has exactly one correct interpretation",
+                    "A society's memory does not matter"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "inferring an author's main argument (CARS)",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cars_sentence_role",
+                "stem": "Passage: 'Critics blame the program's failure on underfunding. Yet comparable programs with far larger budgets fared no better, suggesting the flaw lay in the design, not the money.' The second sentence primarily functions to:",
+                "choices": [
+                    "Restate the critics' claim",
+                    "Offer evidence that challenges the critics' explanation",
+                    "Introduce an unrelated new topic",
+                    "Concede that the critics are correct"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "role of a sentence within an argument (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_tone",
+                "stem": "Passage: 'The committee's so-called reforms, trumpeted in every press release, amounted to little more than rearranging the deck chairs.' The author's attitude toward the reforms is best described as:",
+                "choices": ["Enthusiastic", "Skeptical and critical", "Neutral and detached", "Confused"],
+                "correct_index": 1,
+                "paraphrase_of": "identifying an author's tone (CARS)",
+                "difficulty": 0.55
+            },
+            {
+                "id": "cars_assumption",
+                "stem": "Passage: 'Because the new drug reduced symptoms in the trial, it should be approved for use nationwide.' This argument most depends on the unstated assumption that:",
+                "choices": [
+                    "The trial's results generalize to the wider population",
+                    "The drug is inexpensive to make",
+                    "Symptoms are unpleasant",
+                    "No competing drugs exist"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "identifying an unstated assumption (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_primary_purpose",
+                "stem": "Passage: 'Sociologists once cast the modern city as an engine of anomie, dissolving the tight bonds of village life. Yet recent ethnographies uncover dense webs of mutual aid in urban neighborhoods\u2014ties that are simply harder for outsiders to see than a crowded village square.' The primary purpose of the passage is to:",
+                "choices": [
+                    "Argue that villages will always sustain stronger bonds than cities",
+                    "Claim that modern city neighborhoods are free of social problems",
+                    "Revise an older view by arguing that urban social bonds exist but are less visible",
+                    "Recommend that sociologists stop studying rural villages"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "identifying the primary purpose of a passage (CARS)",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cars_strengthen",
+                "stem": "Passage: 'The flattened space of early medieval painting was no lapse in skill but a deliberate choice: artists muted worldly depth to foreground spiritual hierarchy, scaling figures by holiness rather than by distance.' Which finding, if true, would most STRENGTHEN the author's claim?",
+                "choices": [
+                    "Medieval pigments were costly and difficult to obtain",
+                    "Renaissance painters a century later perfected linear perspective",
+                    "Most surviving medieval panels depict non-religious subjects",
+                    "The same artists rendered convincing depth in their secular sketchbooks"
+                ],
+                "correct_index": 3,
+                "paraphrase_of": "recognizing evidence that strengthens an argument (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_weaken",
+                "stem": "Passage: 'The germ theory's history is usually told as a triumph of reason: once Pasteur produced decisive evidence, the medical establishment promptly abandoned belief in spontaneous generation.' Which of the following, if true, would most WEAKEN the author's characterization?",
+                "choices": [
+                    "Prominent physicians resisted germ theory for over two decades, relenting only as a new generation replaced them",
+                    "Pasteur was later awarded numerous scientific honors",
+                    "Germ theory is today accepted by essentially all scientists",
+                    "Belief in spontaneous generation dated back to Aristotle"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "recognizing evidence that weakens an argument (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_agree",
+                "stem": "Passage: 'To judge an act courageous we must know what the person feared and why they pressed on regardless; the very same outward deed may be reckless in one agent and brave in another.' The author would most likely AGREE that:",
+                "choices": [
+                    "An act's visible consequences alone determine whether it was brave",
+                    "Assessing a virtue requires weighing the agent's motives and fears, not just the deed",
+                    "Courage and recklessness are ultimately indistinguishable",
+                    "Feeling fear disqualifies an act from being courageous"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "inferring what an author would agree with (CARS)",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cars_unstated_assumption",
+                "stem": "Passage: 'A representative serves the public good only by voting exactly as a majority of constituents instructs; to do otherwise is to substitute one's private judgment for the will of the people.' The argument most depends on the unstated assumption that:",
+                "choices": [
+                    "Constituents never disagree with one another",
+                    "Legislators are less educated than the people they represent",
+                    "The majority's expressed preference reliably tracks the public good",
+                    "Representatives should be limited to a single term"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "identifying an unstated assumption (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_attitude",
+                "stem": "Passage: 'Her debut novel has been praised as fearlessly experimental. In truth, its scrambled timelines and vanishing narrators feel less like daring than like a writer hiding a thin plot behind a curtain of tricks.' The reviewer's attitude toward the novel is best described as:",
+                "choices": [
+                    "Admiring and enthusiastic",
+                    "Neutral and purely descriptive",
+                    "Nostalgic for earlier novels",
+                    "Dismissive of its experimentation as a cover for weak substance"
+                ],
+                "correct_index": 3,
+                "paraphrase_of": "identifying an author's tone/attitude (CARS)",
+                "difficulty": 0.55
+            },
+            {
+                "id": "cars_claim_function",
+                "stem": "Passage: 'Gift-giving looks like pure generosity, yet anthropologists note that a lavish gift can quietly bind the receiver to repay. In this light the gift is not merely kindness\u2014it is also a claim on the future.' The phrase 'a claim on the future' primarily functions to:",
+                "choices": [
+                    "Reframe apparent generosity as also creating an obligation to reciprocate",
+                    "Prove that every gift is fundamentally selfish",
+                    "Introduce an unrelated theory of market pricing",
+                    "Concede that gift-giving serves no social role at all"
+                ],
+                "correct_index": 0,
+                "paraphrase_of": "the function of a phrase within an argument (CARS)",
+                "difficulty": 0.6
+            },
+            {
+                "id": "cars_apply_logic",
+                "stem": "Passage: 'A promise binds only because both parties share the expectation that such words will be kept; strip away that shared expectation and the words are merely sounds.' Applying the author's reasoning, a promise spoken to a listener who does not understand the language would:",
+                "choices": [
+                    "Remain fully binding, because the words were still uttered",
+                    "Not be binding, because no shared expectation of keeping it was created",
+                    "Become binding only once it is put in writing",
+                    "Show that promises never generate any obligation"
+                ],
+                "correct_index": 1,
+                "paraphrase_of": "applying an author's logic to a new situation (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_weaken_causal",
+                "stem": "Passage: 'Towns that opened public libraries in the 1890s later recorded higher literacy than towns without them. Clearly, building the libraries raised literacy.' Which finding, if true, would most WEAKEN this causal conclusion?",
+                "choices": [
+                    "The new libraries stocked mostly popular fiction",
+                    "Literacy is widely regarded as socially valuable",
+                    "Several of the library buildings were architecturally grand",
+                    "The towns that built libraries were already wealthier and better schooled beforehand"
+                ],
+                "correct_index": 3,
+                "paraphrase_of": "spotting a confound that weakens a causal claim (CARS)",
+                "difficulty": 0.65
+            },
+            {
+                "id": "cars_central_thesis",
+                "stem": "Passage: 'We love to praise musical originality, yet every composer works within inherited scales, forms, and expectations. What we hear as new is really a fresh rearrangement of the familiar, not creation from nothing.' The central thesis of the passage is that:",
+                "choices": [
+                    "Genuine originality in music is impossible for listeners to perceive",
+                    "Composers ought to abandon traditional forms entirely",
+                    "Musical originality is a novel recombination of inherited materials rather than creation from nothing",
+                    "Shared scales inevitably make all music sound alike"
+                ],
+                "correct_index": 2,
+                "paraphrase_of": "identifying the central thesis of a passage (CARS)",
+                "difficulty": 0.6
+            }
+        ]
+    }
+}

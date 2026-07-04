@@ -382,6 +382,13 @@ impl crate::services::SchedulerService for Collection {
             delta_days: self.get_fuzz_delta(input.card_id.into(), input.interval)?,
         })
     }
+
+    fn get_topic_mastery(
+        &mut self,
+        input: scheduler::GetTopicMasteryRequest,
+    ) -> Result<scheduler::GetTopicMasteryResponse> {
+        self.get_topic_mastery(input)
+    }
 }
 
 impl crate::services::BackendSchedulerService for Backend {

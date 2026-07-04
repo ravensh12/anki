@@ -107,6 +107,10 @@ export function reviewOrderChoices(
                 value: DeckConfig_Config_ReviewCardOrder.RANDOM,
             },
             {
+                label: tr.deckConfigSortOrderPointsAtStake(),
+                value: DeckConfig_Config_ReviewCardOrder.POINTS_AT_STAKE,
+            },
+            {
                 label: tr.decksOrderAdded(),
                 value: DeckConfig_Config_ReviewCardOrder.ADDED,
             },

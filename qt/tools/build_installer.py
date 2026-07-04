@@ -208,10 +208,28 @@ def build(args: argparse.Namespace) -> None:
         ],
         cwd=out_dir,
     )
+    bundle_ante(out_dir)
     prune_webengine_locales(out_dir)
     compile_sources(out_dir, version)
     if not args.skip_fcitx:
         bundle_fcitx(out_dir)  # pragma: no cover
+
+
+def bundle_ante(out_dir: Path) -> None:
+    """Copy the Ante (ante) package into the bundle so the custom UI is
+    importable in the packaged app (it is not part of the aqt/anki wheels)."""
+    src = Path("ante")
+    if not src.exists():
+        return
+    dest = get_briefcase_sources_path(out_dir) / "app_packages" / "ante"
+    shutil.copytree(
+        src,
+        dest,
+        dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns(
+            "__pycache__", "tests", "*.pyc", "service", "*.map"
+        ),
+    )
 
 
 def get_platform_suffix() -> str:

@@ -84,6 +84,7 @@ fn open_or_create_collection_db(path: &Path) -> Result<Connection> {
     add_extract_fsrs_variable(&db)?;
     add_extract_fsrs_retrievability(&db)?;
     add_extract_fsrs_relative_retrievability(&db)?;
+    add_points_at_stake_function(&db)?;
 
     db.create_collation("unicase", unicase_compare)?;
 
@@ -366,6 +367,70 @@ fn add_extract_fsrs_retrievability(db: &Connection) -> rusqlite::Result<()> {
                 )
             });
             Ok(retrievability)
+        },
+    )
+}
+
+/// Shared FSRS retrievability computation used by the Speedrun points-at-stake
+/// ordering. Returns None when the card has no FSRS memory state.
+fn card_retrievability(
+    card_data: &CardData,
+    due: i64,
+    ivl: i64,
+    today: i64,
+    now: i64,
+) -> Option<f32> {
+    // Mirrors add_extract_fsrs_retrievability; see the comments there about the
+    // deliberate (x as u32).saturating_sub(y as u32) ordering.
+    let seconds_elapsed = if let Some(last_review_time) = card_data.last_review_time {
+        (now as u32).saturating_sub(last_review_time.0 as u32)
+    } else if due > 365_000 {
+        let last_review_time = (due as u32).saturating_sub(ivl as u32);
+        (now as u32).saturating_sub(last_review_time)
+    } else {
+        let review_day = (due as u32).saturating_sub(ivl as u32);
+        (today as u32).saturating_sub(review_day) * 86_400
+    };
+    let decay = card_data.decay.unwrap_or(FSRS5_DEFAULT_DECAY);
+    card_data.memory_state().map(|state| {
+        FSRS::new(None).unwrap().current_retrievability_seconds(
+            state.into(),
+            seconds_elapsed,
+            decay,
+        )
+    })
+}
+
+/// Speedrun: points_at_stake(tags, data, due, ivl, today, next_day_at, now)
+/// -> float. Returns topic exam-weight * weakness, where weakness is
+/// (1 - retrievability), or 1.0 when the card has no FSRS memory state. Higher
+/// is more urgent, so callers sort descending.
+fn add_points_at_stake_function(db: &Connection) -> rusqlite::Result<()> {
+    db.create_scalar_function(
+        "points_at_stake",
+        7,
+        FunctionFlags::SQLITE_DETERMINISTIC,
+        move |ctx| {
+            assert_eq!(ctx.len(), 7, "called with unexpected number of arguments");
+            let tags = ctx.get_raw(0).as_str().unwrap_or("");
+            let weight = crate::scheduler::topics::card_weight_from_tags(
+                tags,
+                crate::scheduler::topics::DEFAULT_TOPIC_PREFIX,
+            );
+            let weakness = match ctx.get_raw(1).as_str() {
+                Ok(card_data) if !card_data.is_empty() => {
+                    let card_data = CardData::from_str(card_data);
+                    let due = ctx.get_raw(2).as_i64().unwrap_or(0);
+                    let ivl = ctx.get_raw(3).as_i64().unwrap_or(0);
+                    let today = ctx.get_raw(4).as_i64().unwrap_or(0);
+                    let now = ctx.get_raw(6).as_i64().unwrap_or(0);
+                    card_retrievability(&card_data, due, ivl, today, now)
+                        .map(|r| 1.0 - r as f64)
+                        .unwrap_or(1.0)
+                }
+                _ => 1.0,
+            };
+            Ok(weight * weakness)
         },
     )
 }

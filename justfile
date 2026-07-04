@@ -30,6 +30,46 @@ rebuild-web:
 wheels:
     {{ ninja }} wheels
 
+# Ante: benchmark engine actions (p50/p95/worst) on a deck
+bench deck="out/mcat_seed.anki2" iters="200":
+    PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.bench --deck {{ deck }} --iters {{ iters }}
+
+# Ante: generate a topic-tagged MCAT seed deck
+seed-deck per_topic="5" out="out/mcat_seed.anki2":
+    PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.generate_seed_deck --out {{ out }} --per-topic {{ per_topic }} --apkg out/mcat_seed.apkg
+
+# Ante: run the AI eval harness (offline by default; set ANTHROPIC_API_KEY for Claude)
+ai-eval *args:
+    PYTHONPATH=. out/pyenv/bin/python -m ante.ai.eval {{ args }}
+
+# Ante: run the study-feature experiment (mastery-gating vs ablation vs plain)
+experiment *args:
+    PYTHONPATH=. out/pyenv/bin/python -m ante.experiment {{ args }}
+
+# Ante: set up the optional model/AI service venv (one-time; PRD 3.2 stack)
+ante-service-setup:
+    {{ uv }} venv out/ante-svc
+    {{ uv }} pip install --python out/ante-svc/bin/python -r ante/service/requirements.txt
+
+# Ante: run the model/AI service (run ante-service-setup once first)
+ante-service port="8723":
+    out/ante-svc/bin/uvicorn ante.service.app:app --port {{ port }}
+
+# Ante: run a self-hosted Anki sync server (shared by desktop + phone)
+sync-server port="27701" user="ante" password="ante123":
+    SYNC_HOST=0.0.0.0 SYNC_PORT={{ port }} SYNC_BASE="$PWD/out/syncbase" \
+      SYNC_USER1={{ user }}:{{ password }} PYTHONPATH=out/pylib:pylib \
+      out/pyenv/bin/python -c "from anki._backend import RustBackend; RustBackend.syncserver()"
+
+# Ante: re-runnable two-way sync test (PRD 11 / 7b); needs sync-server running
+sync-test endpoint="http://127.0.0.1:27701/" user="ante" password="ante123":
+    PYTHONPATH=out/pylib:pylib:. SYNC_ENDPOINT={{ endpoint }} SYNC_USER={{ user }} \
+      SYNC_PASS={{ password }} out/pyenv/bin/python ante/tools/sync_test.py
+
+# Ante: run the dependency-free Ante unit tests (fast; no Anki build)
+test-ante *args:
+    PYTHONPATH=. out/pyenv/bin/pytest ante/tests {{ args }}
+
 # Build and run all checks (lint + test) - lets ninja handle dependencies
 check:
     {{ ninja }} pylib qt check

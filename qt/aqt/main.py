@@ -1448,6 +1448,13 @@ title="{}" {}>{}</button>""".format(
         qconnect(m.action_check_for_updates.triggered, self.on_check_for_updates)
         qconnect(m.actionPreferences.triggered, self.onPrefs)
 
+        # Ante: apply the editorial theme to every web view (reviewer,
+        # toolbars, congrats, dialogs) so the whole app matches the home screen.
+        from aqt.ante import register_theme
+
+        register_theme()
+        self._setup_ante_reminders()
+
         # View
         qconnect(
             m.actionZoomIn.triggered,
@@ -1464,6 +1471,18 @@ title="{}" {}>{}</button>""".format(
             QKeySequence("F11") if is_lin else QKeySequence.StandardKey.FullScreen
         )
         m.actionFullScreen.setShortcutContext(Qt.ShortcutContext.ApplicationShortcut)
+
+    def _setup_ante_reminders(self) -> None:
+        # Start the learning-science study-reminder scheduler (native
+        # notifications timed to the recalibrated plan; no-op if reminders are
+        # off). The scheduler also keeps the OS-level (app-closed) jobs in step
+        # with the plan once a day.
+        try:
+            from aqt import ante_reminders
+
+            ante_reminders.start(self)
+        except Exception:
+            pass
 
     def updateTitleBar(self) -> None:
         self.setWindowTitle("Anki")

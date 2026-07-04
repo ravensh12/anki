@@ -1,0 +1,156 @@
+{
+    "exam": "MCAT",
+    "scale": {
+        "total_min": 472,
+        "total_max": 528,
+        "section_min": 118,
+        "section_max": 132
+    },
+    "topic_prefix": "mcat::",
+    "note": "AAMC content-outline taxonomy with a prerequisite/unlock graph (PRD Section 4). Topics are note tags 'mcat::<section>::<id>'. 'exam_weight' is the topic's share of emphasis WITHIN its section (normalized to 1.0 per section). Section 'weight' is the relative cross-section exam-value multiplier and mirrors rslib/src/scheduler/topics.rs::section_weight. 'prereqs' are topic ids (same section unless namespaced) that must be mastered before a topic unlocks. CARS is a skills section with one bucket and no prerequisites. Imported decks (e.g. MilesDown) tag cards to these sections via mcat::<section>::<subtopic>; the engine derives value from the section, so scheduling and scores work even for subtopics outside this curated graph.",
+    "sections": [
+        {
+            "id": "bio_biochem",
+            "code": "B/B",
+            "name": "Biological and Biochemical Foundations of Living Systems",
+            "weight": 1.30,
+            "topics": [
+                { "id": "amino_acids", "name": "Amino acids, peptides, proteins", "exam_weight": 0.12, "prereqs": [] },
+                {
+                    "id": "protein_structure",
+                    "name": "Protein structure & function",
+                    "exam_weight": 0.10,
+                    "prereqs": ["amino_acids"]
+                },
+                {
+                    "id": "enzymes",
+                    "name": "Enzymes & kinetics",
+                    "exam_weight": 0.12,
+                    "prereqs": ["protein_structure"]
+                },
+                { "id": "carbohydrates", "name": "Carbohydrates", "exam_weight": 0.06, "prereqs": [] },
+                { "id": "lipids", "name": "Lipids", "exam_weight": 0.06, "prereqs": [] },
+                { "id": "nucleic_acids", "name": "Nucleic acids", "exam_weight": 0.08, "prereqs": [] },
+                {
+                    "id": "dna_replication",
+                    "name": "DNA replication",
+                    "exam_weight": 0.06,
+                    "prereqs": ["nucleic_acids"]
+                },
+                {
+                    "id": "transcription_translation",
+                    "name": "Transcription & translation",
+                    "exam_weight": 0.08,
+                    "prereqs": ["nucleic_acids", "protein_structure"]
+                },
+                {
+                    "id": "gene_regulation",
+                    "name": "Gene expression & regulation",
+                    "exam_weight": 0.06,
+                    "prereqs": ["transcription_translation"]
+                },
+                {
+                    "id": "glycolysis",
+                    "name": "Glycolysis",
+                    "exam_weight": 0.07,
+                    "prereqs": ["enzymes", "carbohydrates"]
+                },
+                {
+                    "id": "citric_acid_cycle",
+                    "name": "Citric acid cycle",
+                    "exam_weight": 0.05,
+                    "prereqs": ["glycolysis"]
+                },
+                {
+                    "id": "oxidative_phosphorylation",
+                    "name": "Oxidative phosphorylation",
+                    "exam_weight": 0.06,
+                    "prereqs": ["citric_acid_cycle"]
+                },
+                { "id": "cell_biology", "name": "Cell biology & membranes", "exam_weight": 0.08, "prereqs": [] }
+            ]
+        },
+        {
+            "id": "chem_phys",
+            "code": "C/P",
+            "name": "Chemical and Physical Foundations of Biological Systems",
+            "weight": 1.10,
+            "topics": [
+                { "id": "atomic_structure", "name": "Atomic structure", "exam_weight": 0.10, "prereqs": [] },
+                {
+                    "id": "periodic_trends",
+                    "name": "Periodic trends",
+                    "exam_weight": 0.07,
+                    "prereqs": ["atomic_structure"]
+                },
+                {
+                    "id": "bonding",
+                    "name": "Bonding & molecular structure",
+                    "exam_weight": 0.10,
+                    "prereqs": ["periodic_trends"]
+                },
+                { "id": "stoichiometry", "name": "Stoichiometry", "exam_weight": 0.07, "prereqs": ["bonding"] },
+                { "id": "thermodynamics", "name": "Thermodynamics", "exam_weight": 0.10, "prereqs": ["stoichiometry"] },
+                { "id": "kinetics", "name": "Kinetics", "exam_weight": 0.08, "prereqs": ["stoichiometry"] },
+                { "id": "equilibrium", "name": "Equilibrium", "exam_weight": 0.09, "prereqs": ["kinetics"] },
+                { "id": "acids_bases", "name": "Acids & bases", "exam_weight": 0.10, "prereqs": ["equilibrium"] },
+                { "id": "kinematics", "name": "Kinematics", "exam_weight": 0.08, "prereqs": [] },
+                {
+                    "id": "force_energy",
+                    "name": "Forces, work & energy",
+                    "exam_weight": 0.09,
+                    "prereqs": ["kinematics"]
+                },
+                { "id": "fluids", "name": "Fluids", "exam_weight": 0.06, "prereqs": ["force_energy"] },
+                {
+                    "id": "circuits",
+                    "name": "Electrostatics & circuits",
+                    "exam_weight": 0.06,
+                    "prereqs": ["force_energy"]
+                }
+            ]
+        },
+        {
+            "id": "psych_soc",
+            "code": "P/S",
+            "name": "Psychological, Social, and Biological Foundations of Behavior",
+            "weight": 1.20,
+            "topics": [
+                { "id": "sensation_perception", "name": "Sensation & perception", "exam_weight": 0.12, "prereqs": [] },
+                { "id": "cognition", "name": "Cognition", "exam_weight": 0.10, "prereqs": ["sensation_perception"] },
+                { "id": "memory", "name": "Memory", "exam_weight": 0.10, "prereqs": ["cognition"] },
+                { "id": "learning", "name": "Learning", "exam_weight": 0.10, "prereqs": [] },
+                { "id": "motivation_emotion", "name": "Motivation & emotion", "exam_weight": 0.09, "prereqs": [] },
+                { "id": "identity", "name": "Identity & self", "exam_weight": 0.09, "prereqs": [] },
+                { "id": "social_thinking", "name": "Social thinking", "exam_weight": 0.10, "prereqs": ["identity"] },
+                {
+                    "id": "social_structure",
+                    "name": "Social structure & institutions",
+                    "exam_weight": 0.10,
+                    "prereqs": []
+                },
+                {
+                    "id": "demographics",
+                    "name": "Demographics & social change",
+                    "exam_weight": 0.10,
+                    "prereqs": ["social_structure"]
+                },
+                {
+                    "id": "biological_behavior",
+                    "name": "Biological bases of behavior",
+                    "exam_weight": 0.10,
+                    "prereqs": []
+                }
+            ]
+        },
+        {
+            "id": "cars",
+            "code": "CARS",
+            "name": "Critical Analysis and Reasoning Skills",
+            "weight": 0.80,
+            "topics": [
+                { "id": "cars", "name": "Critical analysis & reasoning", "exam_weight": 1.0, "prereqs": [] }
+            ]
+        }
+    ]
+}

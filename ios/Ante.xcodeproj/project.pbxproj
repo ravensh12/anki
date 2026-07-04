@@ -1,0 +1,351 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B64719E22A29B1B2EFA745A /* AtlasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */; };
+		1BC961460BC7EACC5FE194A5 /* EngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */; };
+		28A7199C951AE036BBC88A85 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF718BA8E43ECB5F8F73C /* OnboardingView.swift */; };
+		74F52753F5AB7F12BE27FD87 /* AnteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91031C03526E51587B9E76BB /* AnteApp.swift */; };
+		7E23CBBB992AA7DBDE6A6F58 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6712FF25311D44161C69A988 /* Models.swift */; };
+		89F560EDC74C49BAF5D946C7 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927042F77B01FF6D4C93534B /* AppModel.swift */; };
+		8FD31852DEFBD2BE2DB5DC1A /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9181C925AA80A9F164970E7B /* NotificationScheduler.swift */; };
+		AD21E854CDA1C8CEA57BE765 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E114A6E91C1CB38038A91351 /* MainTabView.swift */; };
+		B0A5ED3D750E5158A54B3936 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E67177BB106617044CE797 /* Theme.swift */; };
+		B16C043F5726BB6A19B83D91 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E0669F03554236C3784896 /* SessionView.swift */; };
+		C1C2A22F14AA954DC37EF187 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59090820C306CD469236DFC6 /* TodayView.swift */; };
+		D9E4ECD31BB73C5A54EBFB7F /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F5F8E395BC18192265C3AE7 /* PlanView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		15E0669F03554236C3784896 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		59090820C306CD469236DFC6 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		6712FF25311D44161C69A988 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineClient.swift; sourceTree = "<group>"; };
+		7F5F8E395BC18192265C3AE7 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		91031C03526E51587B9E76BB /* AnteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnteApp.swift; sourceTree = "<group>"; };
+		9181C925AA80A9F164970E7B /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		927042F77B01FF6D4C93534B /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtlasView.swift; sourceTree = "<group>"; };
+		C7BEF718BA8E43ECB5F8F73C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		D2E67177BB106617044CE797 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		E114A6E91C1CB38038A91351 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		E6C95E01449980045E6A50D7 /* Ante.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ante.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		41DF23A44FE31756A12ACDAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E6C95E01449980045E6A50D7 /* Ante.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF12D9A0C28BE9DC4B37D186 /* Ante */ = {
+			isa = PBXGroup;
+			children = (
+				91031C03526E51587B9E76BB /* AnteApp.swift */,
+				927042F77B01FF6D4C93534B /* AppModel.swift */,
+				A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */,
+				75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */,
+				E114A6E91C1CB38038A91351 /* MainTabView.swift */,
+				6712FF25311D44161C69A988 /* Models.swift */,
+				9181C925AA80A9F164970E7B /* NotificationScheduler.swift */,
+				C7BEF718BA8E43ECB5F8F73C /* OnboardingView.swift */,
+				7F5F8E395BC18192265C3AE7 /* PlanView.swift */,
+				15E0669F03554236C3784896 /* SessionView.swift */,
+				D2E67177BB106617044CE797 /* Theme.swift */,
+				59090820C306CD469236DFC6 /* TodayView.swift */,
+			);
+			path = Ante;
+			sourceTree = "<group>";
+		};
+		E5F946B9D2EF3632A3BC8C8A = {
+			isa = PBXGroup;
+			children = (
+				DF12D9A0C28BE9DC4B37D186 /* Ante */,
+				41DF23A44FE31756A12ACDAE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		474654DD2AC68682F65C5266 /* Ante */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96F4DB19218EEA3E4BC1831F /* Build configuration list for PBXNativeTarget "Ante" */;
+			buildPhases = (
+				AD85F243800E4368C8E41FA4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Ante;
+			packageProductDependencies = (
+			);
+			productName = Ante;
+			productReference = E6C95E01449980045E6A50D7 /* Ante.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		34C271AEC55381C8EFB63981 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					474654DD2AC68682F65C5266 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 065EE13067CF9FDE89A60F16 /* Build configuration list for PBXProject "Ante" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E5F946B9D2EF3632A3BC8C8A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 41DF23A44FE31756A12ACDAE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				474654DD2AC68682F65C5266 /* Ante */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AD85F243800E4368C8E41FA4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74F52753F5AB7F12BE27FD87 /* AnteApp.swift in Sources */,
+				89F560EDC74C49BAF5D946C7 /* AppModel.swift in Sources */,
+				0B64719E22A29B1B2EFA745A /* AtlasView.swift in Sources */,
+				1BC961460BC7EACC5FE194A5 /* EngineClient.swift in Sources */,
+				AD21E854CDA1C8CEA57BE765 /* MainTabView.swift in Sources */,
+				7E23CBBB992AA7DBDE6A6F58 /* Models.swift in Sources */,
+				8FD31852DEFBD2BE2DB5DC1A /* NotificationScheduler.swift in Sources */,
+				28A7199C951AE036BBC88A85 /* OnboardingView.swift in Sources */,
+				D9E4ECD31BB73C5A54EBFB7F /* PlanView.swift in Sources */,
+				B16C043F5726BB6A19B83D91 /* SessionView.swift in Sources */,
+				B0A5ED3D750E5158A54B3936 /* Theme.swift in Sources */,
+				C1C2A22F14AA954DC37EF187 /* TodayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		25F5DFE232DBBD2B4DDDE251 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		537431D0CFDBAEB3AEA49BC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		6D9017526796D4BF3A58F4DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ante;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.ante.ios;
+				PRODUCT_NAME = Ante;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E55E66878ED1E1D6AAE3A675 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Ante;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.ante.ios;
+				PRODUCT_NAME = Ante;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		065EE13067CF9FDE89A60F16 /* Build configuration list for PBXProject "Ante" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				537431D0CFDBAEB3AEA49BC3 /* Debug */,
+				25F5DFE232DBBD2B4DDDE251 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		96F4DB19218EEA3E4BC1831F /* Build configuration list for PBXNativeTarget "Ante" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D9017526796D4BF3A58F4DF /* Debug */,
+				E55E66878ED1E1D6AAE3A675 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 34C271AEC55381C8EFB63981 /* Project object */;
+}

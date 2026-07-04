@@ -211,6 +211,8 @@ deck-config-sort-order-card-template-then-random = Card type, then random
 deck-config-sort-order-random-note-then-template = Random note, then card type
 # Sort the cards randomly.
 deck-config-sort-order-random = Random
+# Ante: sort the due cards by "points at stake" (topic exam-weight times the student's weakness), highest first.
+deck-config-sort-order-points-at-stake = Points at stake (Ante)
 # Sort the cards first by their type, in ascending order (alphabetically), then by the order they were gathered, in ascending order (oldest to newest).
 deck-config-sort-order-template-then-gather = Card type, then order gathered
 # Sort the cards by the order they were gathered, in ascending order (oldest to newest).

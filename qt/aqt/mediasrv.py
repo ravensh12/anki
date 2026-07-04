@@ -704,6 +704,32 @@ def save_custom_colours() -> bytes:
     return b""
 
 
+def ante_tutor() -> bytes:
+    "One turn of the table tutor: JSON {front, back, topic, history, question}."
+    import json as _json
+
+    from aqt.ante import tutor_answer
+
+    try:
+        payload = _json.loads(request.get_data() or b"{}")
+    except ValueError:
+        payload = {}
+    result = tutor_answer(payload if isinstance(payload, dict) else {})
+    return _json.dumps(result).encode("utf-8")
+
+
+def ante_viva_transcribe() -> bytes:
+    "Transcribe a Viva audio answer (raw audio body) -> JSON {text, provider}."
+    import json as _json
+
+    from aqt.ante_studio import studio_for
+
+    mime = request.args.get("mime", "audio/webm")
+    audio = request.get_data() or b""
+    result = studio_for(aqt.mw.col).transcribe(audio, mime) if audio else None
+    return _json.dumps(result or {"text": "", "provider": None}).encode("utf-8")
+
+
 post_handler_list = [
     congrats_info,
     get_deck_configs_for_update,
@@ -720,6 +746,8 @@ post_handler_list = [
     deck_options_require_close,
     deck_options_ready,
     save_custom_colours,
+    ante_viva_transcribe,
+    ante_tutor,
 ]
 
 
@@ -832,6 +860,10 @@ def _check_dynamic_request_permissions():
         "/_anki/setSchedulingStates",
         "/_anki/i18nResources",
         "/_anki/congratsInfo",
+        # the den runs in the main webview (no API key); its POSTs read
+        # media/questions and write nothing to the collection
+        "/_anki/anteVivaTranscribe",
+        "/_anki/anteTutor",
     ):
         pass
     else:
@@ -877,8 +909,168 @@ def _have_api_access() -> bool:
 
 # this currently only handles a single method; in the future, idempotent
 # requests like i18nResources should probably be moved here
+def ante_page() -> Response:
+    "Ante dashboard HTML (served as a GET so it needs no API key)."
+    from aqt.ante import dashboard_html
+
+    return Response(dashboard_html(), mimetype="text/html")
+
+
+def ante_data() -> Response:
+    "Read-only Ante dashboard JSON for the page above."
+    import json as _json
+
+    from aqt.ante import build_dashboard_payload
+
+    if not aqt.mw.col:
+        return _text_response(HTTPStatus.SERVICE_UNAVAILABLE, "collection not open")
+    try:
+        budget = int(request.args.get("budget", "75"))
+    except ValueError:
+        budget = 75
+    payload = build_dashboard_payload(aqt.mw.col, budget_minutes=budget)
+    return Response(_json.dumps(payload), mimetype="application/json")
+
+
+def _ante_json(fn) -> Response:
+    import json as _json
+
+    if not aqt.mw.col:
+        return _text_response(HTTPStatus.SERVICE_UNAVAILABLE, "collection not open")
+    return Response(_json.dumps(fn(aqt.mw.col)), mimetype="application/json")
+
+
+def ante_study() -> Response:
+    "Current queued card for the custom Study view."
+    from aqt.ante import build_study_payload
+
+    return _ante_json(build_study_payload)
+
+
+def ante_add_info() -> Response:
+    "Decks / notetypes / fields for the custom Add view."
+    from aqt.ante import build_add_info
+
+    return _ante_json(build_add_info)
+
+
+def ante_library() -> Response:
+    "Searchable card list for the custom Library view."
+    from aqt.ante import build_library_payload
+
+    query = request.args.get("q", "")
+    return _ante_json(lambda col: build_library_payload(col, query))
+
+
+def ante_quiz() -> Response:
+    "Next application/transfer item + application-accuracy summary for the Quiz view."
+    from aqt.ante import build_quiz_payload
+
+    return _ante_json(build_quiz_payload)
+
+
+def ante_full_length() -> Response:
+    "A full-length practice test form (?test=1|2), with any prior result."
+    from aqt.ante import build_fl_payload
+
+    test_no = request.args.get("test", "1")
+    try:
+        n = int(test_no)
+    except ValueError:
+        n = 1
+    return _ante_json(lambda col: build_fl_payload(col, n))
+
+
+def ante_grade_open() -> Response:
+    "Grade an open-ended answer offline (no storage; the pycmd bridge stores it)."
+    import json as _json
+
+    from aqt.ante import grade_open_preview
+
+    item_id = request.args.get("id", "")
+    answer = request.args.get("answer", "")
+    payload = grade_open_preview(item_id, answer)
+    return Response(_json.dumps(payload), mimetype="application/json")
+
+
+def ante_practice() -> Response:
+    "Free-study: an unlimited card/question from a chosen scope."
+    from aqt.ante import build_practice_payload
+
+    mode = request.args.get("mode", "mcq")
+    scope = request.args.get("scope", "")
+    exclude = request.args.get("exclude", "")
+    return _ante_json(lambda col: build_practice_payload(col, mode, scope, exclude))
+
+
+def ante_auth() -> Response:
+    "Current sign-in state (for the login gate + poll)."
+    from aqt.ante import build_auth_payload
+
+    return _ante_json(build_auth_payload)
+
+
+def ante_diagnostic() -> Response:
+    "The Baseline Diagnostic form + status (+ summary once answered)."
+    from aqt.ante import build_diagnostic_payload
+
+    return _ante_json(build_diagnostic_payload)
+
+
+def ante_asset() -> Response:
+    "Serve a bundled den asset (cinematic plates, portraits, dealer voice lines)."
+    from aqt.ante import read_asset
+
+    data, mime = read_asset(request.args.get("name", ""))
+    if data is None:
+        return _text_response(HTTPStatus.NOT_FOUND, "asset not found")
+    resp = Response(data, mimetype=mime)
+    # revalidate each load so regenerated film audio/video is picked up without
+    # a stale cache hit (these assets change as the film is re-rendered)
+    resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
+def ante_viva() -> Response:
+    "Active Viva session + eligible topics for the Examination Hall."
+    from aqt.ante import build_viva_payload
+
+    return _ante_json(build_viva_payload)
+
+
+def ante_studio_asset() -> Response:
+    "Serve a generated Studio asset (Palace scenes, verdict clips, narration)."
+    from aqt.ante_studio import read_studio_asset
+
+    if not aqt.mw.col:
+        return _text_response(HTTPStatus.SERVICE_UNAVAILABLE, "collection not open")
+    data, mime = read_studio_asset(aqt.mw.col, request.args.get("name", ""))
+    if data is None:
+        return _text_response(HTTPStatus.NOT_FOUND, "asset not found")
+    resp = Response(data, mimetype=mime)
+    # generated assets are content-addressed (immutable), so they cache hard
+    resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return resp
+
+
+_DYNAMIC_GET_REQUESTS: dict[str, DynamicRequest] = {
+    "legacyPageData": legacy_page_data,
+    "ante": ante_page,
+    "anteData": ante_data,
+    "anteStudy": ante_study,
+    "anteAddInfo": ante_add_info,
+    "anteLibrary": ante_library,
+    "anteQuiz": ante_quiz,
+    "anteFullLength": ante_full_length,
+    "anteGradeOpen": ante_grade_open,
+    "antePractice": ante_practice,
+    "anteAuth": ante_auth,
+    "anteDiagnostic": ante_diagnostic,
+    "anteAsset": ante_asset,
+    "anteViva": ante_viva,
+    "anteStudioAsset": ante_studio_asset,
+}
+
+
 def _extract_dynamic_get_request(path: str) -> DynamicRequest | None:
-    if path == "legacyPageData":
-        return legacy_page_data
-    else:
-        return None
+    return _DYNAMIC_GET_REQUESTS.get(path)

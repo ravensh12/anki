@@ -108,6 +108,10 @@ message DeckConfig {
       REVIEW_CARD_ORDER_RANDOM = 8;
       REVIEW_CARD_ORDER_ADDED = 9;
       REVIEW_CARD_ORDER_REVERSE_ADDED = 10;
+      // Speedrun: highest "points at stake" first, i.e. topic exam-weight
+      // multiplied by the student's weakness (1 - retrievability) on each card.
+      // Surfaces the most exam-valuable, least-secure cards first.
+      REVIEW_CARD_ORDER_POINTS_AT_STAKE = 13;
     }
     enum ReviewMix {
       REVIEW_MIX_MIX_WITH_REVIEWS = 0;

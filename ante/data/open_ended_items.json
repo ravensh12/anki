@@ -1,0 +1,2533 @@
+{
+    "note": "Open-ended (short-answer) application items, one list per MCAT topic tag. model_answer + rubric_points + keywords support both AI grading and an offline rubric/keyword grader. Hand-authored-quality, AI-free at runtime.",
+    "items": {
+        "mcat::bio_biochem::amino_acids": [
+            {
+                "id": "oe_bio_biochem_amino_acids_1",
+                "topic": "mcat::bio_biochem::amino_acids",
+                "prompt": "You run electrophoresis at pH 6 on a mixture of lysine (pI about 9.7) and aspartate (pI about 2.8). Predict which electrode each migrates toward and explain your reasoning using their pI values.",
+                "model_answer": "At pH 6 lysine is below its pI, so it carries a net positive charge and migrates toward the negative electrode (cathode). Aspartate is above its pI, so it carries a net negative charge and migrates toward the positive electrode (anode). A molecule is positively charged when pH < pI and negatively charged when pH > pI, so the two separate in opposite directions.",
+                "rubric_points": [
+                    "pH < pI gives net positive charge (lysine)",
+                    "pH > pI gives net negative charge (aspartate)",
+                    "positive migrates to cathode, negative to anode",
+                    "migration direction deduced from pI vs solution pH"
+                ],
+                "keywords": ["pi", "isoelectric point", "net charge", "ph", "cathode", "anode", "lysine", "aspartate"],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_amino_acids_2",
+                "topic": "mcat::bio_biochem::amino_acids",
+                "prompt": "A peptide has only an N-terminal amino group (pKa about 9) and a C-terminal carboxyl (pKa about 2). Explain why it buffers well near pH 2 and pH 9 but poorly at pH 6.",
+                "model_answer": "A group buffers best within about one pH unit of its pKa, where it is roughly a 50:50 mix of protonated and deprotonated forms that can absorb added acid or base. Near pH 2 the carboxyl and near pH 9 the amino group are each half-ionized, so both resist pH change there. At pH 6 both groups are essentially fully ionized (carboxyl deprotonated, amino protonated), leaving little conjugate partner to neutralize added H+ or OH-, so buffering is weak.",
+                "rubric_points": [
+                    "buffering strongest within ~1 unit of a pKa",
+                    "at the pKa the group is ~50% protonated/deprotonated",
+                    "at pH 6 both groups are fully ionized/far from their pKa",
+                    "little conjugate acid-base pair remains to resist pH change"
+                ],
+                "keywords": [
+                    "pka",
+                    "buffer",
+                    "protonated",
+                    "deprotonated",
+                    "carboxyl",
+                    "amino",
+                    "conjugate",
+                    "titration"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_amino_acids_3",
+                "topic": "mcat::bio_biochem::amino_acids",
+                "prompt": "Two versions of a protein differ only in whether a solvent-facing position holds serine or valine. Predict which residue is more likely to end up buried in the protein core, and explain why.",
+                "model_answer": "Valine has a nonpolar, hydrophobic side chain, so it is more likely buried in the water-excluded core, where it avoids disrupting water's hydrogen-bond network (the hydrophobic effect). Serine's hydroxyl side chain is polar and can hydrogen-bond with water, so it sits comfortably on the solvent-exposed surface. Proteins therefore tend to bury nonpolar residues and display polar or charged ones outward.",
+                "rubric_points": [
+                    "valine is nonpolar/hydrophobic and tends to be buried",
+                    "serine is polar and can be solvent-exposed",
+                    "hydrophobic effect drives burial of nonpolar residues",
+                    "polar residues hydrogen-bond with water"
+                ],
+                "keywords": ["hydrophobic", "polar", "nonpolar", "valine", "serine", "buried", "solvent", "side chain"],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::bio_biochem::protein_structure": [
+            {
+                "id": "oe_bio_biochem_protein_structure_1",
+                "topic": "mcat::bio_biochem::protein_structure",
+                "prompt": "Replacing a buried hydrophobic residue with a charged one usually destabilizes a protein far more than the same swap on the surface. Explain why, in terms of the forces that stabilize tertiary structure.",
+                "model_answer": "The protein core is tightly packed with nonpolar residues held together by the hydrophobic effect and van der Waals contacts, so inserting a charged residue there forces an unfavorable charge into a water-excluded environment and disrupts packing, greatly destabilizing the fold. On the surface, a charged residue is readily solvated by water, so the same substitution costs little stability. Core mutations are therefore usually far more disruptive than surface ones.",
+                "rubric_points": [
+                    "core stabilized by hydrophobic effect/van der Waals packing",
+                    "burying a charge is unfavorable without solvation",
+                    "surface charged residues are solvated by water",
+                    "core mutation destabilizes the fold more than a surface one"
+                ],
+                "keywords": [
+                    "hydrophobic core",
+                    "tertiary",
+                    "charged",
+                    "solvation",
+                    "packing",
+                    "stability",
+                    "van der waals",
+                    "surface"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_protein_structure_2",
+                "topic": "mcat::bio_biochem::protein_structure",
+                "prompt": "A denatured enzyme can spontaneously refold to its active form in a test tube. Explain what this shows about the relationship between primary structure and 3-D shape, and one reason cells still need chaperones.",
+                "model_answer": "Spontaneous refolding shows that the amino acid sequence (primary structure) contains all the information needed to specify the native fold, which is generally the thermodynamically most stable conformation. In the crowded, highly concentrated interior of a cell, however, folding intermediates can misfold or aggregate with each other. Chaperones assist folding and prevent aggregation so proteins reliably reach their native state.",
+                "rubric_points": [
+                    "primary sequence determines the native 3-D structure",
+                    "native fold is the thermodynamically favored state",
+                    "cellular crowding risks misfolding/aggregation",
+                    "chaperones assist correct folding"
+                ],
+                "keywords": [
+                    "primary structure",
+                    "sequence",
+                    "native",
+                    "thermodynamic",
+                    "chaperone",
+                    "misfold",
+                    "aggregation",
+                    "fold"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_protein_structure_3",
+                "topic": "mcat::bio_biochem::protein_structure",
+                "prompt": "Proline is called a helix breaker and is common in turns. Using its structure, explain why it disrupts an alpha helix.",
+                "model_answer": "An alpha helix is stabilized by backbone N-H groups hydrogen-bonding to C=O groups four residues away, but proline's nitrogen is locked in a ring and lacks an amide N-H to donate that bond. Its rigid ring also fixes the backbone angle and kinks the chain, so a helix cannot continue smoothly through it. Proline therefore interrupts helices and instead favors turns.",
+                "rubric_points": [
+                    "alpha helix stabilized by backbone N-H to C=O hydrogen bonds",
+                    "proline lacks an amide N-H to donate",
+                    "proline's rigid ring constrains backbone geometry/kinks the chain",
+                    "so proline breaks helices and favors turns"
+                ],
+                "keywords": ["proline", "alpha helix", "hydrogen bond", "backbone", "n-h", "rigid", "ring", "turn"],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::enzymes": [
+            {
+                "id": "oe_bio_biochem_enzymes_1",
+                "topic": "mcat::bio_biochem::enzymes",
+                "prompt": "A competitive inhibitor and a noncompetitive inhibitor each reduce an enzyme's reaction rate. Explain how each affects Vmax and Km, and why.",
+                "model_answer": "A competitive inhibitor raises the apparent Km (more substrate needed) but leaves Vmax unchanged because it competes for the active site and can be outcompeted by substrate. A noncompetitive inhibitor lowers Vmax (fewer functional enzymes) but leaves Km unchanged because it binds an allosteric site regardless of substrate.",
+                "rubric_points": [
+                    "competitive raises Km, Vmax unchanged",
+                    "noncompetitive lowers Vmax, Km unchanged",
+                    "competitive can be overcome by adding substrate",
+                    "noncompetitive binds allosteric/non-active site"
+                ],
+                "keywords": ["km", "vmax", "competitive", "noncompetitive", "active site", "allosteric", "substrate"],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_enzymes_2",
+                "topic": "mcat::bio_biochem::enzymes",
+                "prompt": "An enzyme lowers a reaction's activation energy. Explain why this speeds the reaction without changing its equilibrium constant or overall ΔG.",
+                "model_answer": "The enzyme stabilizes the transition state, lowering the activation energy for the forward and reverse directions equally, which speeds how fast equilibrium is reached. Because ΔG and Keq depend only on the free energies of reactants and products, not on the path taken, the enzyme leaves them unchanged. Catalysis thus changes kinetics (how fast) but not thermodynamics (how far).",
+                "rubric_points": [
+                    "enzyme lowers activation energy by stabilizing the transition state",
+                    "speeds forward and reverse rates equally",
+                    "ΔG/Keq depend only on reactant and product free energies",
+                    "catalysis changes rate, not the equilibrium position"
+                ],
+                "keywords": [
+                    "activation energy",
+                    "transition state",
+                    "equilibrium",
+                    "keq",
+                    "delta g",
+                    "rate",
+                    "catalyst",
+                    "kinetics"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_enzymes_3",
+                "topic": "mcat::bio_biochem::enzymes",
+                "prompt": "Predict how doubling substrate concentration changes an enzyme's rate when [S] is far below Km versus far above Km, and explain each case.",
+                "model_answer": "Far below Km the enzyme is mostly unoccupied and the rate is roughly first order in [S], so doubling [S] nearly doubles the rate. Far above Km the enzyme is nearly saturated and running close to Vmax (zero order in [S]), so doubling [S] barely changes the rate because there are almost no free active sites. This reflects the hyperbolic Michaelis-Menten relationship between rate and substrate concentration.",
+                "rubric_points": [
+                    "below Km rate is ~first order, so doubling [S] ~doubles rate",
+                    "above Km the enzyme is saturated/near Vmax",
+                    "at saturation adding substrate barely changes rate (zero order)",
+                    "reflects Michaelis-Menten saturation kinetics"
+                ],
+                "keywords": [
+                    "km",
+                    "vmax",
+                    "saturation",
+                    "first order",
+                    "zero order",
+                    "michaelis-menten",
+                    "substrate",
+                    "active site"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::carbohydrates": [
+            {
+                "id": "oe_bio_biochem_carbohydrates_1",
+                "topic": "mcat::bio_biochem::carbohydrates",
+                "prompt": "Starch and cellulose are both glucose polymers, yet humans digest starch but not cellulose. Explain the structural basis of this difference and one physiological consequence.",
+                "model_answer": "Starch joins glucose with alpha-1,4 glycosidic bonds, which human amylase can hydrolyze, whereas cellulose uses beta-1,4 bonds that human enzymes cannot cleave. The beta linkages also let cellulose chains pack into rigid, hydrogen-bonded fibers. As a result, cellulose passes through the gut as indigestible dietary fiber rather than serving as a caloric source.",
+                "rubric_points": [
+                    "starch has alpha-1,4 bonds humans can hydrolyze",
+                    "cellulose has beta-1,4 bonds humans cannot digest",
+                    "bond stereochemistry/enzyme specificity explains the difference",
+                    "cellulose acts as fiber, not calories"
+                ],
+                "keywords": ["alpha", "beta", "glycosidic", "cellulose", "starch", "amylase", "fiber", "glucose"],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_bio_biochem_carbohydrates_2",
+                "topic": "mcat::bio_biochem::carbohydrates",
+                "prompt": "Explain why cells store glucose as branched glycogen rather than as free glucose, addressing both osmotic and mobilization reasons.",
+                "model_answer": "Packing thousands of glucose units into one large glycogen molecule keeps the number of dissolved particles low, avoiding the large osmotic water influx that free glucose would cause. The many branch points create numerous nonreducing ends where enzymes can rapidly release glucose when energy is needed. Glycogen is therefore both osmotically economical and quickly mobilizable.",
+                "rubric_points": [
+                    "polymer lowers osmotic pressure vs free glucose",
+                    "avoids drawing water into the cell",
+                    "branching creates many ends for rapid glucose release",
+                    "supports fast mobilization on demand"
+                ],
+                "keywords": [
+                    "glycogen",
+                    "osmotic",
+                    "branching",
+                    "nonreducing ends",
+                    "polymer",
+                    "mobilization",
+                    "glucose",
+                    "storage"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_carbohydrates_3",
+                "topic": "mcat::bio_biochem::carbohydrates",
+                "prompt": "Glucose reduces Benedict's reagent but sucrose does not. Explain why sucrose is a non-reducing sugar in terms of its glycosidic linkage.",
+                "model_answer": "Reducing sugars have a free anomeric carbon that can open to an aldehyde or ketone and be oxidized. In sucrose the anomeric carbons of both glucose and fructose are tied up in the glycosidic bond, so neither ring can open to expose a reactive carbonyl. With no free anomeric carbon available, sucrose cannot reduce Benedict's reagent.",
+                "rubric_points": [
+                    "reducing sugars have a free anomeric carbon/carbonyl",
+                    "sucrose joins both anomeric carbons in the bond",
+                    "no ring can open to a free aldehyde/ketone",
+                    "therefore sucrose is non-reducing"
+                ],
+                "keywords": [
+                    "reducing sugar",
+                    "anomeric carbon",
+                    "glycosidic bond",
+                    "sucrose",
+                    "carbonyl",
+                    "aldehyde",
+                    "benedict",
+                    "fructose"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::lipids": [
+            {
+                "id": "oe_bio_biochem_lipids_1",
+                "topic": "mcat::bio_biochem::lipids",
+                "prompt": "Predict how increasing the proportion of cis-unsaturated fatty acid tails affects a membrane's fluidity in the cold, and explain the molecular reason.",
+                "model_answer": "More cis-unsaturated tails increase fluidity, especially at low temperature, because the kinks introduced by cis double bonds prevent the fatty acid chains from packing tightly together. Looser packing lowers the temperature at which the membrane would solidify, keeping it fluid. This is why cold-adapted organisms enrich their membranes in unsaturated lipids.",
+                "rubric_points": [
+                    "cis-unsaturated tails increase fluidity",
+                    "double-bond kinks prevent tight packing",
+                    "looser packing keeps the membrane fluid at lower temperature",
+                    "adaptive response to cold environments"
+                ],
+                "keywords": [
+                    "unsaturated",
+                    "cis",
+                    "double bond",
+                    "fluidity",
+                    "packing",
+                    "membrane",
+                    "kink",
+                    "saturated"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_bio_biochem_lipids_2",
+                "topic": "mcat::bio_biochem::lipids",
+                "prompt": "Steroid hormones diffuse straight through the plasma membrane while peptide hormones cannot. Explain this difference and its consequence for where each hormone's receptor is located.",
+                "model_answer": "Steroid hormones are lipophilic (nonpolar), so they dissolve through the hydrophobic membrane interior and bind intracellular or nuclear receptors, often directly altering gene transcription. Peptide hormones are hydrophilic and cannot cross the nonpolar bilayer, so they bind cell-surface receptors and act through second messengers. The chemical nature of each hormone therefore dictates receptor location and mechanism.",
+                "rubric_points": [
+                    "steroids are lipophilic/nonpolar and cross the membrane",
+                    "peptide hormones are hydrophilic and cannot cross",
+                    "steroid receptors are intracellular/nuclear",
+                    "peptide receptors are on the cell surface / use second messengers"
+                ],
+                "keywords": [
+                    "steroid",
+                    "lipophilic",
+                    "hydrophilic",
+                    "membrane",
+                    "intracellular receptor",
+                    "surface receptor",
+                    "second messenger",
+                    "diffuse"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_lipids_3",
+                "topic": "mcat::bio_biochem::lipids",
+                "prompt": "Explain why triglycerides store more energy per gram than carbohydrates, referring to the oxidation state of their carbons.",
+                "model_answer": "The fatty acid tails of triglycerides are highly reduced, being long chains of C-H bonds with little oxygen, so their carbons can be oxidized extensively and release a great deal of energy. Carbohydrates are already partially oxidized (many C-OH groups), so less energy remains to extract per carbon. Fats are also anhydrous and hydrophobic, whereas glycogen is heavily hydrated, so fat packs more energy per gram.",
+                "rubric_points": [
+                    "fat carbons are highly reduced (many C-H bonds)",
+                    "more reduced carbons release more energy when oxidized",
+                    "carbohydrates are already partially oxidized",
+                    "fats are anhydrous/hydrophobic, storing more per gram"
+                ],
+                "keywords": [
+                    "triglyceride",
+                    "reduced",
+                    "oxidation state",
+                    "c-h bonds",
+                    "energy density",
+                    "carbohydrate",
+                    "anhydrous",
+                    "oxidize"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::bio_biochem::nucleic_acids": [
+            {
+                "id": "oe_bio_biochem_nucleic_acids_1",
+                "topic": "mcat::bio_biochem::nucleic_acids",
+                "prompt": "DNA from a heat-loving bacterium melts at a much higher temperature than human DNA. Predict its likely base composition and explain the molecular reason.",
+                "model_answer": "The thermophile's DNA most likely has a higher G-C content. G-C base pairs form three hydrogen bonds versus two for A-T, so GC-rich DNA needs more thermal energy to separate the strands. This higher melting temperature helps keep the duplex stable in the organism's hot environment.",
+                "rubric_points": [
+                    "higher melting temperature implies higher G-C content",
+                    "G-C pairs have three hydrogen bonds vs two for A-T",
+                    "more hydrogen bonds require more energy to melt",
+                    "stability aids survival at high temperature"
+                ],
+                "keywords": [
+                    "gc content",
+                    "melting temperature",
+                    "hydrogen bonds",
+                    "a-t",
+                    "g-c",
+                    "denature",
+                    "stability",
+                    "base pairing"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_bio_biochem_nucleic_acids_2",
+                "topic": "mcat::bio_biochem::nucleic_acids",
+                "prompt": "Explain why the antiparallel orientation of DNA strands is essential for complementary base pairing, referring to the 5' and 3' ends.",
+                "model_answer": "Complementary bases can align with the correct hydrogen-bonding geometry only when one strand runs 5' to 3' and its partner runs 3' to 5', that is, antiparallel. If the strands were parallel, the bases would not be positioned to pair properly and a stable helix could not form. This antiparallel arrangement also forces polymerases to read a template 3' to 5' while synthesizing 5' to 3'.",
+                "rubric_points": [
+                    "strands run in opposite 5'-to-3' directions (antiparallel)",
+                    "antiparallel geometry allows proper base-pair alignment",
+                    "parallel strands could not hydrogen-bond correctly",
+                    "constrains polymerase directionality"
+                ],
+                "keywords": [
+                    "antiparallel",
+                    "5' 3'",
+                    "complementary",
+                    "base pairing",
+                    "hydrogen bond",
+                    "template",
+                    "helix",
+                    "strand"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_nucleic_acids_3",
+                "topic": "mcat::bio_biochem::nucleic_acids",
+                "prompt": "RNA is generally less chemically stable than DNA. Identify the structural feature responsible and explain why this instability suits RNA's biological roles.",
+                "model_answer": "RNA has a 2'-hydroxyl group on its ribose that DNA lacks, and this -OH can attack the adjacent phosphodiester bond and cleave the backbone, making RNA prone to hydrolysis. That instability suits RNA's transient roles as messenger and regulatory molecules that should be made and degraded quickly. DNA's 2'-deoxy backbone gives the long-term stability required for permanent genetic storage.",
+                "rubric_points": [
+                    "RNA has a 2'-OH; DNA is 2'-deoxy",
+                    "the 2'-OH promotes backbone cleavage/hydrolysis",
+                    "this makes RNA less stable/more transient",
+                    "fits RNA's short-lived roles vs DNA storage"
+                ],
+                "keywords": [
+                    "2'-hydroxyl",
+                    "ribose",
+                    "deoxyribose",
+                    "hydrolysis",
+                    "stability",
+                    "backbone",
+                    "rna",
+                    "dna"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::dna_replication": [
+            {
+                "id": "oe_bio_biochem_dna_replication_1",
+                "topic": "mcat::bio_biochem::dna_replication",
+                "prompt": "DNA polymerase synthesizes only 5' to 3'. Predict how the leading and lagging strands are made at a fork and explain why the lagging strand needs Okazaki fragments.",
+                "model_answer": "The leading strand is synthesized continuously in the same direction the fork opens, because that matches the required 5'-to-3' direction. The lagging strand runs the opposite way, so polymerase must work backward from the fork in short pieces (Okazaki fragments), re-priming each time new template is exposed. DNA ligase then joins these fragments into one continuous strand.",
+                "rubric_points": [
+                    "polymerase extends only 5' to 3'",
+                    "leading strand made continuously toward the fork",
+                    "lagging strand made discontinuously in Okazaki fragments",
+                    "fragments later joined by ligase"
+                ],
+                "keywords": [
+                    "leading strand",
+                    "lagging strand",
+                    "okazaki",
+                    "5' 3'",
+                    "ligase",
+                    "replication fork",
+                    "primer",
+                    "continuous"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_dna_replication_2",
+                "topic": "mcat::bio_biochem::dna_replication",
+                "prompt": "Explain how DNA polymerase's 3'-to-5' exonuclease (proofreading) activity lowers the mutation rate, and predict the consequence of losing it.",
+                "model_answer": "During synthesis the polymerase's 3'-to-5' exonuclease can excise a nucleotide that was just inserted incorrectly and then replace it with the correct one, greatly improving fidelity. If this proofreading activity is lost, many mismatches go uncorrected and the mutation rate rises sharply. Such cells show a mutator phenotype and accumulate mutations much faster.",
+                "rubric_points": [
+                    "3'-to-5' exonuclease removes misincorporated nucleotides",
+                    "the correct base is then inserted, raising fidelity",
+                    "loss increases the mutation rate",
+                    "produces a mutator phenotype/genome instability"
+                ],
+                "keywords": [
+                    "proofreading",
+                    "exonuclease",
+                    "fidelity",
+                    "mismatch",
+                    "mutation rate",
+                    "polymerase",
+                    "3' 5'",
+                    "correction"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_dna_replication_3",
+                "topic": "mcat::bio_biochem::dna_replication",
+                "prompt": "Linear chromosomes shorten a little with each replication (the end-replication problem). Explain the cause and how telomerase addresses it.",
+                "model_answer": "Because lagging-strand synthesis needs an RNA primer that cannot be replaced at the very 3' end of the template, a short stretch of DNA is lost from each end every division. Telomeres are repetitive, noncoding caps that get eroded instead of essential genes. Telomerase, a reverse transcriptase carrying its own RNA template, extends the 3' end to replace lost repeats, offsetting the shortening in cells such as germ and stem cells.",
+                "rubric_points": [
+                    "terminal RNA primer removal leaves an unreplicated 3' gap",
+                    "chromosome ends shorten each division",
+                    "telomeres are expendable repetitive caps",
+                    "telomerase extends ends using an RNA template"
+                ],
+                "keywords": [
+                    "end-replication problem",
+                    "telomere",
+                    "telomerase",
+                    "primer",
+                    "rna template",
+                    "3' end",
+                    "shortening",
+                    "reverse transcriptase"
+                ],
+                "difficulty": 0.7
+            }
+        ],
+        "mcat::bio_biochem::transcription_translation": [
+            {
+                "id": "oe_bio_biochem_transcription_translation_1",
+                "topic": "mcat::bio_biochem::transcription_translation",
+                "prompt": "A silent mutation changes a codon but not the amino acid, whereas a frameshift often destroys a protein. Explain the difference in terms of the genetic code.",
+                "model_answer": "The genetic code is degenerate, so several codons specify the same amino acid, and a base change (often at the third position) can still code for the same residue, leaving the protein unchanged. A frameshift from an insertion or deletion shifts the reading frame, so every downstream codon is misread and a premature stop codon often appears, usually yielding a nonfunctional protein. The type of mutation, not just its size, determines the impact.",
+                "rubric_points": [
+                    "genetic code is degenerate/redundant",
+                    "silent mutation still codes the same amino acid",
+                    "frameshift shifts the downstream reading frame",
+                    "frameshift garbles all following codons / adds premature stop"
+                ],
+                "keywords": [
+                    "degenerate",
+                    "codon",
+                    "silent mutation",
+                    "frameshift",
+                    "reading frame",
+                    "wobble",
+                    "premature stop",
+                    "amino acid"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_transcription_translation_2",
+                "topic": "mcat::bio_biochem::transcription_translation",
+                "prompt": "Explain how a single eukaryotic gene can give rise to several different protein isoforms, and name the process responsible.",
+                "model_answer": "Through alternative splicing, the spliceosome can include or exclude particular exons while removing introns, so one pre-mRNA produces multiple mature mRNAs with different exon combinations. Each of these mRNAs is translated into a distinct protein isoform. This lets a single gene encode several related proteins and greatly expands proteome diversity.",
+                "rubric_points": [
+                    "alternative splicing of the pre-mRNA",
+                    "different exon combinations are included/excluded",
+                    "one gene yields multiple mRNAs/isoforms",
+                    "increases proteome diversity"
+                ],
+                "keywords": [
+                    "alternative splicing",
+                    "exon",
+                    "intron",
+                    "isoform",
+                    "spliceosome",
+                    "pre-mrna",
+                    "proteome",
+                    "gene"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_transcription_translation_3",
+                "topic": "mcat::bio_biochem::transcription_translation",
+                "prompt": "Explain how the ribosome uses codon-anticodon pairing to add the correct amino acid, and what role tRNA charging plays in accuracy.",
+                "model_answer": "Each tRNA has an anticodon that base-pairs with the complementary mRNA codon in the ribosome, so only the tRNA matching the codon is accepted at each step. Accuracy also depends on aminoacyl-tRNA synthetases correctly charging each tRNA with its proper amino acid beforehand. If a tRNA were mischarged, the wrong amino acid would be inserted even though codon-anticodon pairing was correct.",
+                "rubric_points": [
+                    "anticodon base-pairs with the mRNA codon",
+                    "matching selects the correct tRNA at each site",
+                    "aminoacyl-tRNA synthetase charges tRNA with the right amino acid",
+                    "mischarging would insert the wrong residue"
+                ],
+                "keywords": [
+                    "codon",
+                    "anticodon",
+                    "trna",
+                    "ribosome",
+                    "aminoacyl-trna synthetase",
+                    "charging",
+                    "base pairing",
+                    "amino acid"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::gene_regulation": [
+            {
+                "id": "oe_bio_biochem_gene_regulation_1",
+                "topic": "mcat::bio_biochem::gene_regulation",
+                "prompt": "Explain why E. coli transcribes the lac operon strongly only when lactose is present AND glucose is scarce, referring to both the repressor and CAP.",
+                "model_answer": "Lactose (via allolactose) inactivates the lac repressor, freeing the operator so RNA polymerase can transcribe; this is the lactose-present requirement. When glucose is scarce, cAMP rises and binds CAP, which then binds near the promoter and strongly recruits polymerase; this is the glucose-scarce requirement. Only when both hold (repressor off and CAP on) is transcription high, so the cell uses lactose only when preferred glucose is unavailable.",
+                "rubric_points": [
+                    "lactose/allolactose inactivates the repressor (removes the block)",
+                    "low glucose raises cAMP",
+                    "cAMP-CAP activates transcription at the promoter",
+                    "high expression requires both conditions together"
+                ],
+                "keywords": [
+                    "lac operon",
+                    "repressor",
+                    "allolactose",
+                    "cap",
+                    "camp",
+                    "operator",
+                    "glucose",
+                    "promoter"
+                ],
+                "difficulty": 0.7
+            },
+            {
+                "id": "oe_bio_biochem_gene_regulation_2",
+                "topic": "mcat::bio_biochem::gene_regulation",
+                "prompt": "The same genome produces both a neuron and a muscle cell. Explain how, referring to differential gene expression and epigenetic regulation.",
+                "model_answer": "Every somatic cell carries the same DNA, but each cell type transcribes a different subset of genes, selected by cell-type-specific transcription factors that switch appropriate genes on or off. Epigenetic marks such as DNA methylation and histone modifications stably silence unneeded genes and keep needed ones accessible, and these patterns are heritable through cell division. Distinct cell types thus arise from differential expression, not different genes.",
+                "rubric_points": [
+                    "all cells share the same genome",
+                    "cell-type-specific transcription factors select which genes are expressed",
+                    "epigenetic marks (methylation/histone mods) lock in the pattern",
+                    "differential expression yields distinct cell types"
+                ],
+                "keywords": [
+                    "differential expression",
+                    "transcription factor",
+                    "methylation",
+                    "histone",
+                    "epigenetic",
+                    "chromatin",
+                    "gene regulation",
+                    "cell type"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_gene_regulation_3",
+                "topic": "mcat::bio_biochem::gene_regulation",
+                "prompt": "Predict the effect on a gene's expression if an activator that normally binds an enhancer is mutated so it can no longer bind, and explain how enhancers work.",
+                "model_answer": "The gene's expression would fall, because enhancers act by binding activator transcription factors that, through DNA looping, contact the promoter and boost RNA polymerase recruitment. Without the activator bound, that stimulation is lost even though the promoter and coding sequence remain intact. Enhancers can act at a distance and are needed for full, tissue-appropriate expression.",
+                "rubric_points": [
+                    "expression decreases without the bound activator",
+                    "enhancers bind activating transcription factors",
+                    "DNA looping brings the enhancer to the promoter",
+                    "this boosts RNA polymerase recruitment"
+                ],
+                "keywords": [
+                    "enhancer",
+                    "transcription factor",
+                    "activator",
+                    "dna looping",
+                    "promoter",
+                    "expression",
+                    "rna polymerase",
+                    "distal"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::bio_biochem::glycolysis": [
+            {
+                "id": "oe_bio_biochem_glycolysis_1",
+                "topic": "mcat::bio_biochem::glycolysis",
+                "prompt": "During intense, oxygen-poor exercise, muscle converts pyruvate to lactate. Explain how this lets glycolysis keep making ATP.",
+                "model_answer": "Glycolysis needs a steady supply of NAD+ to accept electrons at the GAPDH step, but without oxygen the electron transport chain cannot regenerate NAD+ from NADH. Reducing pyruvate to lactate reoxidizes NADH back to NAD+, replenishing the pool so glycolysis can continue producing ATP by substrate-level phosphorylation. This allows anaerobic ATP production at the cost of lactate buildup.",
+                "rubric_points": [
+                    "glycolysis requires NAD+ to be regenerated",
+                    "without O2 the ETC cannot reoxidize NADH",
+                    "pyruvate to lactate regenerates NAD+ from NADH",
+                    "allows continued substrate-level ATP production"
+                ],
+                "keywords": ["nad+", "nadh", "lactate", "pyruvate", "anaerobic", "glycolysis", "atp", "regenerate"],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_glycolysis_2",
+                "topic": "mcat::bio_biochem::glycolysis",
+                "prompt": "Phosphofructokinase-1 is inhibited by high ATP and activated by AMP. Explain why this makes it an effective control point for glycolysis.",
+                "model_answer": "PFK-1 catalyzes an early, committed, essentially irreversible step, so regulating it controls flux through the entire pathway. High ATP signals an energy surplus and slows PFK-1, while high AMP signals low energy and speeds it up. This feedback matches the rate of glucose breakdown to the cell's real-time energy demand.",
+                "rubric_points": [
+                    "PFK-1 catalyzes the committed/rate-limiting step",
+                    "high ATP (energy surplus) inhibits it",
+                    "high AMP (energy need) activates it",
+                    "matches glycolytic flux to energy demand"
+                ],
+                "keywords": [
+                    "pfk-1",
+                    "atp",
+                    "amp",
+                    "rate-limiting",
+                    "committed step",
+                    "feedback",
+                    "regulation",
+                    "flux"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_glycolysis_3",
+                "topic": "mcat::bio_biochem::glycolysis",
+                "prompt": "Glycolysis invests 2 ATP but produces 4, for a net of 2 per glucose. Explain the logic of this investment phase and why the net yield is modest.",
+                "model_answer": "The early investment of 2 ATP phosphorylates glucose and then fructose-6-phosphate, trapping the sugar in the cell and raising its energy so it can be split into two reactive three-carbon molecules. The later payoff phase generates 4 ATP by substrate-level phosphorylation, giving a net of 2. The yield is modest because glucose is only partially oxidized to pyruvate, leaving most of its energy stored in pyruvate and NADH for later stages.",
+                "rubric_points": [
+                    "invests 2 ATP to phosphorylate/trap and destabilize glucose",
+                    "payoff phase yields 4 ATP by substrate-level phosphorylation",
+                    "net is 2 ATP per glucose",
+                    "modest because glucose is only partially oxidized to pyruvate"
+                ],
+                "keywords": [
+                    "investment phase",
+                    "payoff phase",
+                    "atp",
+                    "substrate-level phosphorylation",
+                    "pyruvate",
+                    "net",
+                    "glucose",
+                    "phosphorylate"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::bio_biochem::citric_acid_cycle": [
+            {
+                "id": "oe_bio_biochem_citric_acid_cycle_1",
+                "topic": "mcat::bio_biochem::citric_acid_cycle",
+                "prompt": "The citric acid cycle uses no oxygen in any step, yet it is called aerobic. Explain why it stops without oxygen.",
+                "model_answer": "The cycle itself consumes no O2, but it depends on a supply of oxidized carriers NAD+ and FAD to accept electrons at its dehydrogenase steps. These carriers are regenerated only when the electron transport chain passes their electrons ultimately to O2. Without oxygen, NADH and FADH2 accumulate, NAD+/FAD are not recycled, and the cycle halts, so it is functionally aerobic.",
+                "rubric_points": [
+                    "cycle uses NAD+/FAD, not O2 directly",
+                    "these carriers must be regenerated by the ETC",
+                    "the ETC ultimately passes electrons to O2",
+                    "without O2 the carriers stay reduced and the cycle stops"
+                ],
+                "keywords": [
+                    "citric acid cycle",
+                    "nad+",
+                    "fad",
+                    "electron transport chain",
+                    "oxygen",
+                    "aerobic",
+                    "nadh",
+                    "regenerate"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_citric_acid_cycle_2",
+                "topic": "mcat::bio_biochem::citric_acid_cycle",
+                "prompt": "Per acetyl-CoA, the cycle makes only 1 GTP directly but many NADH and FADH2. Explain why the reduced carriers, not the GTP, are the cycle's main energy contribution.",
+                "model_answer": "Each NADH and FADH2 carries a pair of high-energy electrons to the electron transport chain, where their energy drives proton pumping and ultimately the synthesis of many ATP by oxidative phosphorylation. The single GTP is just one high-energy phosphate, a small fraction of the total. The cycle's real payoff is therefore capturing energy as reduced electron carriers for later ATP production.",
+                "rubric_points": [
+                    "NADH/FADH2 carry electrons to the electron transport chain",
+                    "their electrons drive oxidative phosphorylation and most ATP",
+                    "the GTP is only one high-energy phosphate",
+                    "reduced carriers are the main energy output"
+                ],
+                "keywords": [
+                    "nadh",
+                    "fadh2",
+                    "gtp",
+                    "electron transport chain",
+                    "oxidative phosphorylation",
+                    "atp",
+                    "electron carrier",
+                    "energy"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_citric_acid_cycle_3",
+                "topic": "mcat::bio_biochem::citric_acid_cycle",
+                "prompt": "Predict what happens to citric acid cycle activity when a cell suddenly has abundant ATP and NADH, and explain the regulatory logic.",
+                "model_answer": "The cycle slows down, because high ATP and NADH signal an energy surplus and inhibit key regulatory enzymes such as isocitrate dehydrogenase and alpha-ketoglutarate dehydrogenase. High NADH also depletes the NAD+ that the cycle needs as a substrate, further lowering flux. This feedback prevents wasteful oxidation of fuel when energy is already plentiful.",
+                "rubric_points": [
+                    "high ATP/NADH slow the cycle",
+                    "they inhibit key enzymes (e.g., isocitrate dehydrogenase)",
+                    "high NADH depletes NAD+ substrate",
+                    "feedback avoids wasteful fuel oxidation when energy is high"
+                ],
+                "keywords": [
+                    "nadh",
+                    "atp",
+                    "feedback inhibition",
+                    "isocitrate dehydrogenase",
+                    "nad+",
+                    "regulation",
+                    "cycle",
+                    "energy charge"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::bio_biochem::oxidative_phosphorylation": [
+            {
+                "id": "oe_bio_biochem_oxidative_phosphorylation_1",
+                "topic": "mcat::bio_biochem::oxidative_phosphorylation",
+                "prompt": "An uncoupler makes the inner mitochondrial membrane leaky to protons. Predict its effect on the proton gradient, ATP synthesis, and heat, and explain why.",
+                "model_answer": "The leak lets protons flow back into the matrix without passing through ATP synthase, so the proton gradient collapses and ATP synthesis drops sharply. Electron transport actually speeds up as it tries to rebuild the gradient, and the energy that would have made ATP is released as heat. This is why uncouplers cause increased oxygen consumption and hyperthermia.",
+                "rubric_points": [
+                    "protons bypass ATP synthase, collapsing the gradient",
+                    "ATP synthesis falls",
+                    "electron transport/O2 consumption increases",
+                    "energy is released as heat"
+                ],
+                "keywords": [
+                    "uncoupler",
+                    "proton gradient",
+                    "atp synthase",
+                    "heat",
+                    "electron transport",
+                    "membrane",
+                    "chemiosmosis",
+                    "matrix"
+                ],
+                "difficulty": 0.7
+            },
+            {
+                "id": "oe_bio_biochem_oxidative_phosphorylation_2",
+                "topic": "mcat::bio_biochem::oxidative_phosphorylation",
+                "prompt": "Explain how the chemiosmotic theory links electron transport to ATP synthesis, and why an intact inner membrane is essential.",
+                "model_answer": "As electrons move down the transport chain, the complexes pump protons from the matrix into the intermembrane space, building an electrochemical gradient called the proton-motive force. Protons then flow back through ATP synthase, and this flow drives phosphorylation of ADP to ATP. An intact, impermeable inner membrane is essential to hold the gradient; if it leaks, the force dissipates and ATP cannot be made.",
+                "rubric_points": [
+                    "electron transport pumps protons across the inner membrane",
+                    "this creates an electrochemical/proton-motive gradient",
+                    "protons return through ATP synthase to make ATP",
+                    "an intact impermeable membrane is required to hold the gradient"
+                ],
+                "keywords": [
+                    "chemiosmosis",
+                    "proton-motive force",
+                    "atp synthase",
+                    "electron transport",
+                    "gradient",
+                    "inner membrane",
+                    "adp",
+                    "matrix"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_bio_biochem_oxidative_phosphorylation_3",
+                "topic": "mcat::bio_biochem::oxidative_phosphorylation",
+                "prompt": "Cyanide blocks Complex IV. Predict the effect on upstream carriers and the citric acid cycle, and explain the chain reaction.",
+                "model_answer": "With Complex IV blocked, electrons cannot reach oxygen, so the whole chain backs up and stays reduced, and NADH and FADH2 can no longer be reoxidized to NAD+/FAD. Proton pumping stops, the gradient collapses, and ATP synthesis halts. Because the citric acid cycle depends on NAD+/FAD as substrates, it also stalls, crippling aerobic ATP production and forcing reliance on glycolysis.",
+                "rubric_points": [
+                    "blocking Complex IV stops electron flow to O2",
+                    "carriers stay reduced; NAD+/FAD are not regenerated",
+                    "the gradient collapses and ATP synthesis stops",
+                    "the citric acid cycle stalls for lack of NAD+/FAD"
+                ],
+                "keywords": [
+                    "cyanide",
+                    "complex iv",
+                    "electron transport",
+                    "nad+",
+                    "oxygen",
+                    "proton gradient",
+                    "atp",
+                    "citric acid cycle"
+                ],
+                "difficulty": 0.7
+            }
+        ],
+        "mcat::bio_biochem::cell_biology": [
+            {
+                "id": "oe_bio_biochem_cell_biology_1",
+                "topic": "mcat::bio_biochem::cell_biology",
+                "prompt": "Predict what happens to a red blood cell placed in distilled water and explain the mechanism, including why a plant cell in the same water does not burst.",
+                "model_answer": "Water rushes into the red blood cell by osmosis because the cell interior is hypertonic relative to distilled water, and with no rigid wall the cell swells and can lyse. A plant cell in the same water also takes up water, but its rigid cell wall resists further expansion, so it becomes turgid instead of bursting. The difference is the mechanical support provided by the cell wall.",
+                "rubric_points": [
+                    "water enters by osmosis (cell hypertonic to the water)",
+                    "the red cell swells and lyses without a wall",
+                    "the plant cell wall resists expansion",
+                    "the plant cell becomes turgid rather than bursting"
+                ],
+                "keywords": [
+                    "osmosis",
+                    "hypotonic",
+                    "lysis",
+                    "turgid",
+                    "cell wall",
+                    "water",
+                    "red blood cell",
+                    "swell"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_bio_biochem_cell_biology_2",
+                "topic": "mcat::bio_biochem::cell_biology",
+                "prompt": "Trace the organelles a secreted protein passes through from synthesis to release, and explain the role of each in the secretory pathway.",
+                "model_answer": "The protein is synthesized by ribosomes on the rough endoplasmic reticulum and enters the ER lumen, where it folds and receives initial glycosylation. It is carried in vesicles to the Golgi apparatus, which further modifies, sorts, and packages it. Secretory vesicles then transport it to the plasma membrane, where exocytosis releases it from the cell.",
+                "rubric_points": [
+                    "synthesized on the rough ER (folding/initial modification)",
+                    "transported to the Golgi for modification/sorting",
+                    "packaged into secretory vesicles",
+                    "released by exocytosis at the plasma membrane"
+                ],
+                "keywords": [
+                    "rough er",
+                    "golgi",
+                    "vesicle",
+                    "exocytosis",
+                    "secretory pathway",
+                    "ribosome",
+                    "glycosylation",
+                    "plasma membrane"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_bio_biochem_cell_biology_3",
+                "topic": "mcat::bio_biochem::cell_biology",
+                "prompt": "Explain why moving ions against their concentration gradient requires ATP, and contrast this with facilitated diffusion.",
+                "model_answer": "Moving a solute against its gradient is thermodynamically unfavorable (positive delta G), so the cell must couple it to an energy source such as ATP hydrolysis in active transport, as the Na+/K+ pump does. Facilitated diffusion instead moves solutes down their gradient through a channel or carrier, which is favorable and needs no energy. The key differences are the direction relative to the gradient and whether energy input is required.",
+                "rubric_points": [
+                    "against-gradient transport is unfavorable (delta G > 0)",
+                    "active transport uses ATP to drive it",
+                    "facilitated diffusion moves down the gradient",
+                    "facilitated diffusion requires no energy"
+                ],
+                "keywords": [
+                    "active transport",
+                    "atp",
+                    "concentration gradient",
+                    "facilitated diffusion",
+                    "channel",
+                    "na/k pump",
+                    "electrochemical",
+                    "carrier"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::chem_phys::atomic_structure": [
+            {
+                "id": "oe_chem_phys_atomic_structure_1",
+                "topic": "mcat::chem_phys::atomic_structure",
+                "prompt": "Explain why hydrogen's emission spectrum is a set of discrete lines rather than a continuous rainbow, and what a single line's wavelength tells you.",
+                "model_answer": "Electrons occupy only quantized energy levels, so an electron can fall only between specific allowed levels, emitting a photon whose energy equals that exact gap. Because only certain gaps exist, only certain photon energies (and thus discrete wavelengths) appear, producing sharp lines. A given line's wavelength therefore reveals the size of that particular transition, since E = hc/lambda and a larger gap means a shorter wavelength.",
+                "rubric_points": [
+                    "electron energy levels are quantized",
+                    "photon energy equals the gap between levels",
+                    "only discrete gaps give discrete wavelengths",
+                    "wavelength encodes the transition energy (E = hc/lambda)"
+                ],
+                "keywords": [
+                    "quantized",
+                    "energy levels",
+                    "photon",
+                    "emission spectrum",
+                    "wavelength",
+                    "transition",
+                    "discrete",
+                    "energy gap"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_atomic_structure_2",
+                "topic": "mcat::chem_phys::atomic_structure",
+                "prompt": "Carbon-12 and carbon-14 behave almost identically in chemical reactions but differ in nuclear stability. Explain why, referring to protons, neutrons, and electrons.",
+                "model_answer": "Chemical behavior is governed by electrons, whose arrangement depends on proton number; both isotopes have 6 protons and the same electron configuration, so their chemistry is nearly identical. They differ only in neutron count (6 versus 8), which changes nuclear mass and stability, and carbon-14's neutron-to-proton ratio makes it unstable and radioactive. Neutrons thus affect the nucleus, not the chemistry.",
+                "rubric_points": [
+                    "chemistry is set by electrons/proton number",
+                    "the isotopes share proton and electron counts",
+                    "they differ in neutron number/mass",
+                    "neutron ratio affects nuclear stability/radioactivity, not chemistry"
+                ],
+                "keywords": [
+                    "isotope",
+                    "protons",
+                    "neutrons",
+                    "electrons",
+                    "chemical behavior",
+                    "nuclear stability",
+                    "mass",
+                    "radioactive"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_atomic_structure_3",
+                "topic": "mcat::chem_phys::atomic_structure",
+                "prompt": "Explain why removing a core (inner-shell) electron takes far more energy than removing a valence electron.",
+                "model_answer": "Core electrons sit in inner shells much closer to the nucleus and feel nearly the full nuclear charge with little shielding, so they are held very tightly. Valence electrons are farther out and shielded by the inner electrons, so they experience a smaller effective nuclear charge and are bound loosely. Removing the strongly held core electron therefore requires much more energy.",
+                "rubric_points": [
+                    "core electrons are closer to the nucleus",
+                    "core electrons feel higher effective nuclear charge/less shielding",
+                    "valence electrons are shielded and farther out",
+                    "tighter binding means higher ionization energy"
+                ],
+                "keywords": [
+                    "core electron",
+                    "valence electron",
+                    "effective nuclear charge",
+                    "shielding",
+                    "ionization energy",
+                    "shell",
+                    "nucleus",
+                    "binding"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::chem_phys::periodic_trends": [
+            {
+                "id": "oe_chem_phys_periodic_trends_1",
+                "topic": "mcat::chem_phys::periodic_trends",
+                "prompt": "Explain why atomic radius decreases from left to right across a period but increases going down a group.",
+                "model_answer": "Across a period, protons are added to the same shell, so the effective nuclear charge rises and pulls the electrons inward, shrinking the atom. Down a group, each element adds a new, larger electron shell, and the added shielding offsets the greater nuclear charge, so the outer electrons sit farther out and the atom grows. The trends reflect the competition between added shells and increasing nuclear pull.",
+                "rubric_points": [
+                    "across a period effective nuclear charge increases",
+                    "electrons are pulled inward, decreasing radius",
+                    "down a group new shells are added",
+                    "added shells/shielding increase radius"
+                ],
+                "keywords": [
+                    "atomic radius",
+                    "effective nuclear charge",
+                    "shell",
+                    "shielding",
+                    "period",
+                    "group",
+                    "nuclear charge",
+                    "electrons"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_periodic_trends_2",
+                "topic": "mcat::chem_phys::periodic_trends",
+                "prompt": "There is a huge jump between sodium's first and second ionization energies. Explain what this reveals about its electron configuration.",
+                "model_answer": "Sodium easily loses its single 3s valence electron (low first ionization energy) to reach a stable noble-gas configuration. The second electron must be pulled from the filled inner shell close to the nucleus, which requires far more energy and produces the large jump. This jump confirms that sodium has just one valence electron.",
+                "rubric_points": [
+                    "the first electron removed is the lone valence (3s) electron",
+                    "removal gives a stable noble-gas configuration",
+                    "the second electron comes from a core/inner shell",
+                    "the tightly held core electron makes IE2 much greater than IE1"
+                ],
+                "keywords": [
+                    "ionization energy",
+                    "valence electron",
+                    "core electron",
+                    "noble gas configuration",
+                    "jump",
+                    "sodium",
+                    "shell",
+                    "effective nuclear charge"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_periodic_trends_3",
+                "topic": "mcat::chem_phys::periodic_trends",
+                "prompt": "Predict whether a cation is larger or smaller than its parent atom, and whether an anion is larger or smaller, and explain both.",
+                "model_answer": "A cation is smaller than its parent because losing electrons can empty an outer shell and leaves the remaining electrons feeling a greater effective nuclear charge each, drawing them in tighter. An anion is larger than its parent because added electrons increase electron-electron repulsion and reduce the effective nuclear charge per electron, expanding the electron cloud. Charge and radius thus change in predictable opposite directions.",
+                "rubric_points": [
+                    "a cation is smaller than the parent atom",
+                    "losing electrons raises effective nuclear charge per electron / removes a shell",
+                    "an anion is larger than the parent atom",
+                    "added electrons increase repulsion, expanding the cloud"
+                ],
+                "keywords": [
+                    "cation",
+                    "anion",
+                    "ionic radius",
+                    "effective nuclear charge",
+                    "electron repulsion",
+                    "shell",
+                    "smaller",
+                    "larger"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::chem_phys::bonding": [
+            {
+                "id": "oe_chem_phys_bonding_1",
+                "topic": "mcat::chem_phys::bonding",
+                "prompt": "CO2 and H2O both have polar bonds, but CO2 is nonpolar overall while H2O is polar. Explain how molecular geometry accounts for this.",
+                "model_answer": "CO2 is linear, so its two C=O bond dipoles point in exactly opposite directions and cancel, leaving no net dipole. Water is bent (about 104.5 degrees) because of oxygen's two lone pairs, so its O-H bond dipoles do not cancel and add up to a net dipole. Identical bond polarity therefore produces different molecular polarity depending on shape.",
+                "rubric_points": [
+                    "CO2 is linear so its bond dipoles cancel",
+                    "CO2 has no net dipole",
+                    "water is bent due to lone pairs",
+                    "water's dipoles do not cancel, giving a net dipole"
+                ],
+                "keywords": ["dipole", "linear", "bent", "geometry", "polar", "nonpolar", "lone pair", "vsepr"],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_bonding_2",
+                "topic": "mcat::chem_phys::bonding",
+                "prompt": "HF boils at a higher temperature than the heavier HCl. Explain this using the intermolecular forces involved.",
+                "model_answer": "HF boils higher despite its lower mass because HF molecules form strong hydrogen bonds, since hydrogen is bonded to highly electronegative fluorine. HCl relies mainly on weaker dipole-dipole and dispersion forces. Because stronger intermolecular forces take more energy to overcome, the strength of those forces, not molecular mass alone, sets the boiling point here.",
+                "rubric_points": [
+                    "HF boils higher despite lower molecular mass",
+                    "HF has hydrogen bonding (H bonded to F)",
+                    "HCl has weaker dipole-dipole/dispersion forces",
+                    "stronger intermolecular forces raise the boiling point"
+                ],
+                "keywords": [
+                    "hydrogen bond",
+                    "electronegativity",
+                    "dipole-dipole",
+                    "dispersion",
+                    "boiling point",
+                    "intermolecular forces",
+                    "hf",
+                    "mass"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_bonding_3",
+                "topic": "mcat::chem_phys::bonding",
+                "prompt": "Using electronegativity difference, explain why NaCl forms an ionic bond while Cl2 forms a nonpolar covalent bond.",
+                "model_answer": "In NaCl the electronegativity difference between sodium and chlorine is very large, so chlorine essentially takes sodium's electron, forming Na+ and Cl- held together by ionic attraction. In Cl2 the two identical atoms have zero electronegativity difference, so they share the electrons equally in a nonpolar covalent bond. The size of the electronegativity gap places the bond along the continuum from covalent to ionic.",
+                "rubric_points": [
+                    "large electronegativity difference gives ionic bonding (NaCl)",
+                    "an electron is essentially transferred, forming ions",
+                    "zero difference in Cl2 gives equal sharing",
+                    "identical atoms form a nonpolar covalent bond"
+                ],
+                "keywords": [
+                    "electronegativity",
+                    "ionic",
+                    "covalent",
+                    "nonpolar",
+                    "electron transfer",
+                    "sharing",
+                    "difference",
+                    "bond type"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::stoichiometry": [
+            {
+                "id": "oe_chem_phys_stoichiometry_1",
+                "topic": "mcat::chem_phys::stoichiometry",
+                "prompt": "Explain how to identify the limiting reactant in a reaction and why the amount of product depends on it rather than on the reactant in excess.",
+                "model_answer": "Convert each reactant's mass to moles and divide by its coefficient in the balanced equation; the reactant that gives the smallest value is limiting. Products form in fixed mole ratios, so once the limiting reactant is used up the reaction stops, no matter how much of the other reactant remains. The limiting reactant therefore sets the maximum (theoretical) yield.",
+                "rubric_points": [
+                    "convert to moles and divide by coefficients",
+                    "the smallest ratio identifies the limiting reactant",
+                    "the reaction stops when the limiting reactant is consumed",
+                    "the limiting reactant sets the theoretical yield"
+                ],
+                "keywords": [
+                    "limiting reactant",
+                    "moles",
+                    "coefficient",
+                    "mole ratio",
+                    "theoretical yield",
+                    "excess",
+                    "balanced equation",
+                    "stoichiometry"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_stoichiometry_2",
+                "topic": "mcat::chem_phys::stoichiometry",
+                "prompt": "A student reports a 130% percent yield for a purified solid. Explain why this is physically impossible and what most likely went wrong.",
+                "model_answer": "Percent yield is actual divided by theoretical yield, and you cannot form more product than the limiting reactant allows, so any value above 100% signals an error rather than extra product. The most likely cause is that the product was not fully dried or was contaminated with leftover solvent, water, or impurities, which inflated its measured mass. Proper drying and purification should bring the yield below 100%.",
+                "rubric_points": [
+                    "percent yield = actual/theoretical x 100",
+                    "product cannot exceed the limiting-reactant maximum",
+                    "over 100% indicates measurement error",
+                    "likely impurities/incomplete drying inflated the mass"
+                ],
+                "keywords": [
+                    "percent yield",
+                    "theoretical yield",
+                    "actual yield",
+                    "impurity",
+                    "drying",
+                    "contamination",
+                    "limiting reactant",
+                    "mass"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_stoichiometry_3",
+                "topic": "mcat::chem_phys::stoichiometry",
+                "prompt": "For N2 + 3 H2 -> 2 NH3, explain how mole ratios let you predict the ammonia produced from a given mass of hydrogen, and why grams cannot be compared directly.",
+                "model_answer": "The balanced equation fixes a 3:2 mole ratio of H2 to NH3, so you convert grams of H2 to moles, multiply by 2/3 to get moles of NH3, then convert back to grams. Grams cannot be compared directly because different substances have different molar masses, so equal masses contain different numbers of molecules. Stoichiometry works in moles, which count particles.",
+                "rubric_points": [
+                    "the balanced equation gives fixed mole ratios (3 H2 : 2 NH3)",
+                    "convert grams to moles, apply the ratio, then convert back",
+                    "grams differ because molar masses differ",
+                    "mole ratios, not mass ratios, relate reactants and products"
+                ],
+                "keywords": [
+                    "mole ratio",
+                    "balanced equation",
+                    "molar mass",
+                    "moles",
+                    "ammonia",
+                    "grams",
+                    "stoichiometry",
+                    "conversion"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::thermodynamics": [
+            {
+                "id": "oe_chem_phys_thermodynamics_1",
+                "topic": "mcat::chem_phys::thermodynamics",
+                "prompt": "A reaction is nonspontaneous at low temperature but spontaneous at high temperature. Using delta G = delta H - T*delta S, deduce the signs of delta H and delta S and explain.",
+                "model_answer": "For spontaneity to switch on only at high temperature, the -T*delta S term must become negative enough to overcome a positive delta H, which requires delta S > 0 and delta H > 0 (endothermic). At low T the positive delta H dominates, so delta G > 0 and the reaction is nonspontaneous. As T rises, the T*delta S term grows until delta G becomes negative, making the reaction spontaneous and entropy-driven.",
+                "rubric_points": [
+                    "delta H > 0 (endothermic)",
+                    "delta S > 0 (positive)",
+                    "at low T delta H dominates so delta G > 0",
+                    "at high T the T*delta S term makes delta G < 0"
+                ],
+                "keywords": [
+                    "delta g",
+                    "delta h",
+                    "delta s",
+                    "temperature",
+                    "spontaneous",
+                    "endothermic",
+                    "entropy",
+                    "gibbs"
+                ],
+                "difficulty": 0.7
+            },
+            {
+                "id": "oe_chem_phys_thermodynamics_2",
+                "topic": "mcat::chem_phys::thermodynamics",
+                "prompt": "Dissolving some salts feels cold yet happens spontaneously. Explain in thermodynamic terms how an endothermic process can be spontaneous.",
+                "model_answer": "Even though dissolving is endothermic (delta H > 0), it greatly increases disorder as the ordered crystal disperses into freely moving ions, giving a large positive delta S. If T*delta S exceeds delta H, then delta G = delta H - T*delta S is negative and the process proceeds spontaneously. An entropy increase can thus drive a heat-absorbing process forward.",
+                "rubric_points": [
+                    "dissolving is endothermic (delta H > 0)",
+                    "entropy increases greatly as the crystal disperses (delta S > 0)",
+                    "T*delta S can exceed delta H",
+                    "this makes delta G negative/spontaneous despite absorbing heat"
+                ],
+                "keywords": [
+                    "endothermic",
+                    "entropy",
+                    "delta g",
+                    "delta s",
+                    "spontaneous",
+                    "dissolving",
+                    "disorder",
+                    "gibbs"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_thermodynamics_3",
+                "topic": "mcat::chem_phys::thermodynamics",
+                "prompt": "Explain the difference between a state function and a path function using enthalpy and heat as examples, and why Hess's law works.",
+                "model_answer": "A state function depends only on the initial and final states, not the route taken, and enthalpy (so delta H) is a state function, whereas heat and work individually depend on the path. Because delta H is path-independent, you can add the enthalpy changes of any sequence of steps connecting reactants to products, which is exactly Hess's law. This lets us compute an overall delta H from convenient intermediate reactions.",
+                "rubric_points": [
+                    "a state function depends only on initial/final states",
+                    "enthalpy/delta H is a state function",
+                    "heat and work are path functions",
+                    "path independence justifies Hess's law (adding steps)"
+                ],
+                "keywords": [
+                    "state function",
+                    "path function",
+                    "enthalpy",
+                    "hess's law",
+                    "heat",
+                    "work",
+                    "delta h",
+                    "path-independent"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::chem_phys::kinetics": [
+            {
+                "id": "oe_chem_phys_kinetics_1",
+                "topic": "mcat::chem_phys::kinetics",
+                "prompt": "A catalyst and a temperature increase both speed a reaction, but only one changes the equilibrium position. Explain how each works and which affects equilibrium.",
+                "model_answer": "A catalyst lowers the activation energy for the forward and reverse reactions equally, so it speeds the approach to equilibrium without shifting its position or changing K. Raising temperature increases the fraction of molecules with enough energy to react and can shift the equilibrium (changing K), because for endothermic or exothermic reactions heat effectively acts as a reactant or product. Only temperature alters the equilibrium position.",
+                "rubric_points": [
+                    "a catalyst lowers activation energy for both directions",
+                    "a catalyst speeds the rate without changing K/equilibrium",
+                    "temperature raises the fraction of molecules above the barrier",
+                    "temperature can shift equilibrium/change K"
+                ],
+                "keywords": [
+                    "catalyst",
+                    "activation energy",
+                    "temperature",
+                    "equilibrium",
+                    "rate",
+                    "boltzmann",
+                    "k",
+                    "collision"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_kinetics_2",
+                "topic": "mcat::chem_phys::kinetics",
+                "prompt": "A reaction is second order in reactant A. Predict how the rate changes when [A] is tripled, and explain using the rate law.",
+                "model_answer": "For a second-order dependence the rate law is rate = k[A]^2, so the rate depends on the square of the concentration. Tripling [A] multiplies the rate by 3^2 = 9. This steep dependence is typical of reactions whose rate-determining step involves two molecules of A.",
+                "rubric_points": [
+                    "rate = k[A]^2 for second order",
+                    "the rate depends on the square of concentration",
+                    "tripling [A] increases the rate ninefold",
+                    "connects reaction order to concentration dependence"
+                ],
+                "keywords": [
+                    "second order",
+                    "rate law",
+                    "concentration",
+                    "rate constant",
+                    "square",
+                    "order",
+                    "k",
+                    "reactant"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_kinetics_3",
+                "topic": "mcat::chem_phys::kinetics",
+                "prompt": "Explain why the slowest (rate-determining) step controls the overall rate of a multistep reaction.",
+                "model_answer": "In a sequence of steps, the overall reaction can proceed no faster than its slowest step, just as a line moves no faster than its slowest checkpoint. The fast steps quickly process whatever the slow step delivers, so the slow step is the bottleneck that sets the observed rate. Consequently the rate law usually reflects the species involved up to and including the rate-determining step.",
+                "rubric_points": [
+                    "the overall rate is limited by the slowest step",
+                    "the slow step acts as a bottleneck",
+                    "faster steps keep up with the slow step's output",
+                    "the rate law reflects the rate-determining step"
+                ],
+                "keywords": [
+                    "rate-determining step",
+                    "slowest step",
+                    "bottleneck",
+                    "mechanism",
+                    "overall rate",
+                    "rate law",
+                    "intermediate",
+                    "multistep"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::equilibrium": [
+            {
+                "id": "oe_chem_phys_equilibrium_1",
+                "topic": "mcat::chem_phys::equilibrium",
+                "prompt": "For an exothermic gas-phase reaction at equilibrium, predict how adding heat and how compressing the system (reducing volume) each shift it, and explain with Le Chatelier's principle.",
+                "model_answer": "Treating heat as a product of an exothermic reaction, adding heat shifts the equilibrium toward the reactants and lowers K. Reducing the volume raises the pressure, so the system shifts toward the side with fewer moles of gas to relieve that pressure. Le Chatelier's principle states that a system at equilibrium responds to each stress in the direction that partially counteracts it.",
+                "rubric_points": [
+                    "for an exothermic reaction heat behaves like a product",
+                    "adding heat shifts toward reactants (lowers K)",
+                    "higher pressure shifts toward fewer gas moles",
+                    "Le Chatelier: the system counteracts the applied stress"
+                ],
+                "keywords": [
+                    "le chatelier",
+                    "exothermic",
+                    "heat",
+                    "pressure",
+                    "moles of gas",
+                    "shift",
+                    "equilibrium",
+                    "volume"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_equilibrium_2",
+                "topic": "mcat::chem_phys::equilibrium",
+                "prompt": "Explain the difference between the reaction quotient Q and the equilibrium constant K, and how comparing them predicts the direction a reaction will proceed.",
+                "model_answer": "Q has the same form as K but uses the current (not equilibrium) concentrations, so it measures where the system stands right now. If Q < K the reaction proceeds forward toward products; if Q > K it proceeds in reverse toward reactants; if Q = K the system is at equilibrium. Comparing Q to K therefore predicts the net direction of change.",
+                "rubric_points": [
+                    "Q uses current concentrations; K describes equilibrium",
+                    "Q < K shifts forward (toward products)",
+                    "Q > K shifts reverse (toward reactants)",
+                    "Q = K means the system is at equilibrium"
+                ],
+                "keywords": [
+                    "reaction quotient",
+                    "q",
+                    "k",
+                    "equilibrium constant",
+                    "concentration",
+                    "forward",
+                    "reverse",
+                    "direction"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_equilibrium_3",
+                "topic": "mcat::chem_phys::equilibrium",
+                "prompt": "Adding an inert gas at constant volume does not shift a gas-phase equilibrium, but adding it at constant pressure can. Explain why.",
+                "model_answer": "At constant volume, an inert gas raises the total pressure but does not change the partial pressures or concentrations of the reacting species, so Q is unchanged and there is no shift. At constant pressure, adding inert gas forces the volume to expand, which lowers the partial pressures of the reactants and products, and the system then shifts toward the side with more moles of gas. What matters is whether the reacting species' partial pressures actually change.",
+                "rubric_points": [
+                    "at constant volume the partial pressures/concentrations are unchanged",
+                    "so Q is unchanged and there is no shift",
+                    "at constant pressure the volume expands, lowering partial pressures",
+                    "the system shifts toward the side with more gas moles"
+                ],
+                "keywords": [
+                    "inert gas",
+                    "constant volume",
+                    "constant pressure",
+                    "partial pressure",
+                    "shift",
+                    "moles of gas",
+                    "concentration",
+                    "equilibrium"
+                ],
+                "difficulty": 0.7
+            }
+        ],
+        "mcat::chem_phys::acids_bases": [
+            {
+                "id": "oe_chem_phys_acids_bases_1",
+                "topic": "mcat::chem_phys::acids_bases",
+                "prompt": "Explain why the pH equals the pKa at the half-equivalence point of a weak-acid titration, using the Henderson-Hasselbalch equation.",
+                "model_answer": "At the half-equivalence point exactly half the weak acid has been converted to its conjugate base, so [A-] equals [HA]. In the Henderson-Hasselbalch equation pH = pKa + log([A-]/[HA]), the ratio is 1 and log(1) = 0, so pH = pKa. This point is also where the buffering capacity is greatest.",
+                "rubric_points": [
+                    "at half-equivalence [A-] = [HA]",
+                    "Henderson-Hasselbalch: pH = pKa + log([A-]/[HA])",
+                    "log(1) = 0, so pH = pKa",
+                    "this is also the point of maximum buffering"
+                ],
+                "keywords": [
+                    "half-equivalence",
+                    "pka",
+                    "henderson-hasselbalch",
+                    "conjugate base",
+                    "weak acid",
+                    "buffer",
+                    "ph",
+                    "ratio"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_acids_bases_2",
+                "topic": "mcat::chem_phys::acids_bases",
+                "prompt": "You need a buffer at pH 7.4. Explain how to choose the weak acid and roughly what ratio of acid to conjugate base you would use.",
+                "model_answer": "Choose a weak acid whose pKa is close to 7.4 (within about one unit), because a buffer works best near its pKa where both the acid and conjugate base are abundant. By Henderson-Hasselbalch, if the pKa is about 7.4 you would use roughly equal amounts of acid and conjugate base; if the pKa is a bit lower you would use proportionally more conjugate base to raise the pH to 7.4. Matching the pKa to the target pH maximizes buffering capacity.",
+                "rubric_points": [
+                    "pick a weak acid with pKa near the target pH (~7.4)",
+                    "buffers work best within ~1 unit of the pKa",
+                    "use Henderson-Hasselbalch to set the acid:base ratio",
+                    "an approximately 1:1 ratio when pKa equals the desired pH"
+                ],
+                "keywords": [
+                    "buffer",
+                    "pka",
+                    "henderson-hasselbalch",
+                    "conjugate base",
+                    "ratio",
+                    "ph",
+                    "weak acid",
+                    "capacity"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_acids_bases_3",
+                "topic": "mcat::chem_phys::acids_bases",
+                "prompt": "Explain why a strong acid fully dissociates while a weak acid only partially dissociates, and how this affects the pH of equimolar solutions.",
+                "model_answer": "A strong acid has a very high tendency to donate protons, so essentially all of its molecules ionize in water, giving [H+] about equal to the acid concentration and a low pH. A weak acid reaches an equilibrium in which most molecules remain undissociated, so it releases far fewer protons and has a higher pH at the same concentration. An equimolar strong acid is therefore more acidic (lower pH) than a weak acid.",
+                "rubric_points": [
+                    "a strong acid dissociates completely",
+                    "a weak acid only partially ionizes (reaches equilibrium)",
+                    "the strong acid gives higher [H+]/lower pH",
+                    "the equimolar weak acid has a higher pH"
+                ],
+                "keywords": ["strong acid", "weak acid", "dissociation", "ionization", "ph", "equilibrium", "h+", "ka"],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::kinematics": [
+            {
+                "id": "oe_chem_phys_kinematics_1",
+                "topic": "mcat::chem_phys::kinematics",
+                "prompt": "A ball is thrown straight up. Explain why its velocity is zero at the top but its acceleration is not, and state the acceleration there.",
+                "model_answer": "On the way up gravity steadily decelerates the ball until, at the peak, its upward velocity momentarily reaches zero. Gravity never stops acting, so the acceleration at the top is still g (about 9.8 m/s^2) directed downward, which is exactly what makes the ball speed up on the way back down. A zero velocity does not imply zero acceleration.",
+                "rubric_points": [
+                    "velocity reaches zero momentarily at the top",
+                    "gravity still acts throughout the motion",
+                    "acceleration equals g downward at the peak",
+                    "zero velocity does not mean zero acceleration"
+                ],
+                "keywords": ["velocity", "acceleration", "gravity", "apex", "projectile", "g", "downward", "instant"],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_chem_phys_kinematics_2",
+                "topic": "mcat::chem_phys::kinematics",
+                "prompt": "Two balls leave a table edge at the same instant, one dropped straight down and one launched horizontally. Ignoring air resistance, predict which lands first and explain why.",
+                "model_answer": "They land at the same time, because horizontal and vertical motions are independent. Both balls start with zero vertical velocity and share the same downward acceleration g, so their vertical fall takes equal time regardless of any horizontal motion. The horizontal velocity only affects how far the launched ball travels sideways, not when it lands.",
+                "rubric_points": [
+                    "both balls land at the same time",
+                    "vertical and horizontal motion are independent",
+                    "same initial vertical velocity and the same g",
+                    "horizontal velocity affects range, not fall time"
+                ],
+                "keywords": [
+                    "projectile",
+                    "independence of motion",
+                    "vertical",
+                    "horizontal",
+                    "acceleration",
+                    "free fall",
+                    "g",
+                    "range"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_kinematics_3",
+                "topic": "mcat::chem_phys::kinematics",
+                "prompt": "Explain the difference between distance and displacement, and describe a situation where average speed is nonzero but average velocity is zero.",
+                "model_answer": "Distance is the total path length traveled, a scalar, while displacement is the straight-line change in position from start to finish, a vector. If a runner completes one full lap and returns to the start, the distance equals the track length but the displacement is zero. Average speed (distance over time) is then nonzero, yet average velocity (displacement over time) is zero.",
+                "rubric_points": [
+                    "distance is total path length (scalar)",
+                    "displacement is the start-to-finish vector",
+                    "returning to the start gives zero displacement",
+                    "average speed is nonzero but average velocity is zero"
+                ],
+                "keywords": [
+                    "distance",
+                    "displacement",
+                    "scalar",
+                    "vector",
+                    "average speed",
+                    "average velocity",
+                    "path",
+                    "position"
+                ],
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::chem_phys::force_energy": [
+            {
+                "id": "oe_chem_phys_force_energy_1",
+                "topic": "mcat::chem_phys::force_energy",
+                "prompt": "A box slides across the floor at constant velocity while you push it and friction opposes it. Explain what the net force must be and reconcile this with the fact that you are doing work.",
+                "model_answer": "Constant velocity means zero acceleration, so by Newton's second law the net force is zero and your push exactly balances kinetic friction. You still do positive work on the box, but friction does an equal amount of negative work, so the box's kinetic energy stays constant. The energy you input is dissipated as heat by friction rather than increasing the box's speed.",
+                "rubric_points": [
+                    "constant velocity means zero net force (Newton's second law)",
+                    "the applied force balances friction",
+                    "your positive work is canceled by friction's negative work",
+                    "the energy is dissipated as heat, so KE is unchanged"
+                ],
+                "keywords": [
+                    "net force",
+                    "constant velocity",
+                    "friction",
+                    "work",
+                    "kinetic energy",
+                    "newton's second law",
+                    "heat",
+                    "equilibrium"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_force_energy_2",
+                "topic": "mcat::chem_phys::force_energy",
+                "prompt": "Explain why a car's braking (stopping) distance roughly quadruples when its speed doubles, using the work-energy theorem.",
+                "model_answer": "Kinetic energy is KE = 1/2 m v^2, so doubling the speed quadruples the kinetic energy the brakes must remove. Braking force does work equal to force times distance, and if that force is roughly constant, the stopping distance must also quadruple to dissipate four times the energy. This is why speed has such a large effect on stopping distance.",
+                "rubric_points": [
+                    "KE = 1/2 m v^2 scales with v squared",
+                    "doubling the speed quadruples the kinetic energy",
+                    "work = force x distance removes that energy",
+                    "constant braking force means the stopping distance quadruples"
+                ],
+                "keywords": [
+                    "kinetic energy",
+                    "work-energy theorem",
+                    "stopping distance",
+                    "v squared",
+                    "force",
+                    "braking",
+                    "distance",
+                    "energy"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_force_energy_3",
+                "topic": "mcat::chem_phys::force_energy",
+                "prompt": "A book rests on a table. Identify the Newton's-third-law reaction partner to the book's weight, and explain why the normal force is NOT that partner.",
+                "model_answer": "The book's weight is Earth pulling down on the book, so its third-law partner is the book pulling up on Earth with an equal and opposite force, because action-reaction pairs always act on two different objects. The normal force (the table pushing up on the book) merely balances the weight on the same object, satisfying Newton's first law, and it belongs to a different pair (the book pushing down on the table). Equal-and-opposite balance on one object is not the same as a third-law pair.",
+                "rubric_points": [
+                    "the book's weight is Earth pulling the book down",
+                    "its third-law partner is the book pulling Earth up",
+                    "action-reaction pairs act on different objects",
+                    "the normal force balances weight but is a separate interaction"
+                ],
+                "keywords": [
+                    "newton's third law",
+                    "action-reaction",
+                    "weight",
+                    "normal force",
+                    "gravity",
+                    "pair",
+                    "different objects",
+                    "balance"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::chem_phys::fluids": [
+            {
+                "id": "oe_chem_phys_fluids_1",
+                "topic": "mcat::chem_phys::fluids",
+                "prompt": "Water flows through a horizontal pipe that narrows. Predict how the water's speed and pressure change in the narrow section and explain using continuity and Bernoulli's principle.",
+                "model_answer": "By the continuity equation (A1*v1 = A2*v2), the same volume flow rate through a smaller cross-section forces the water to speed up in the narrow section. Bernoulli's principle then requires that where the speed increases, the pressure must drop, since energy is conserved along the streamline. The narrow region therefore has higher velocity but lower pressure.",
+                "rubric_points": [
+                    "continuity (A1*v1 = A2*v2) means the speed rises in the narrow section",
+                    "the volume flow rate is conserved",
+                    "Bernoulli: higher speed corresponds to lower pressure",
+                    "the narrow section has fast flow and low pressure"
+                ],
+                "keywords": [
+                    "continuity",
+                    "bernoulli",
+                    "velocity",
+                    "pressure",
+                    "cross-section",
+                    "flow rate",
+                    "streamline",
+                    "narrow"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_chem_phys_fluids_2",
+                "topic": "mcat::chem_phys::fluids",
+                "prompt": "An object floats with 80% of its volume submerged. Deduce its density relative to the fluid and explain using buoyancy.",
+                "model_answer": "For a floating object the buoyant force equals its weight, which means the weight of the displaced fluid equals the object's weight. Because it displaces 80% of its volume in fluid, the object's density must be 80% of the fluid's density. In general, the submerged fraction equals the ratio of the object's density to the fluid's density.",
+                "rubric_points": [
+                    "for floating, the buoyant force equals the weight",
+                    "the weight of displaced fluid equals the object's weight",
+                    "the submerged fraction equals the density ratio",
+                    "the object's density is 0.80 times the fluid's density"
+                ],
+                "keywords": [
+                    "buoyancy",
+                    "archimedes",
+                    "density",
+                    "displaced fluid",
+                    "submerged fraction",
+                    "floating",
+                    "weight",
+                    "ratio"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_fluids_3",
+                "topic": "mcat::chem_phys::fluids",
+                "prompt": "Explain why a dam is built much thicker at its base than at its top, referring to how fluid pressure varies with depth.",
+                "model_answer": "Hydrostatic pressure increases with depth according to P = rho*g*h, so the water pushes much harder near the bottom of the dam than near the surface. The base must therefore be thicker and stronger to withstand those larger forces. It is the increase of pressure with depth, not the total amount of water, that drives the design.",
+                "rubric_points": [
+                    "hydrostatic pressure increases with depth (P = rho*g*h)",
+                    "the force is greater near the bottom",
+                    "the base must resist the larger pressure",
+                    "depth, not total volume, sets the pressure"
+                ],
+                "keywords": ["hydrostatic pressure", "depth", "rho g h", "dam", "base", "force", "density", "pressure"],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::chem_phys::circuits": [
+            {
+                "id": "oe_chem_phys_circuits_1",
+                "topic": "mcat::chem_phys::circuits",
+                "prompt": "Explain why adding more resistors in parallel decreases a circuit's total resistance, even though you are adding components.",
+                "model_answer": "Each parallel resistor provides an additional independent path for current to flow, so more charge can move for the same voltage, which by Ohm's law means a lower effective resistance. Mathematically 1/R_total equals the sum of 1/Ri, so the total is always less than the smallest branch. It is like opening more lanes on a highway: more paths lower the overall resistance to flow.",
+                "rubric_points": [
+                    "parallel resistors add more current paths",
+                    "more current flows for the same voltage",
+                    "1/R_total = sum of 1/Ri, below the smallest branch",
+                    "more paths lower the effective resistance"
+                ],
+                "keywords": [
+                    "parallel",
+                    "resistance",
+                    "current path",
+                    "ohm's law",
+                    "voltage",
+                    "reciprocal",
+                    "total resistance",
+                    "branch"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_chem_phys_circuits_2",
+                "topic": "mcat::chem_phys::circuits",
+                "prompt": "Using Ohm's law, predict what happens to the current through a fixed resistor when the voltage across it is doubled, and explain the relationship.",
+                "model_answer": "Ohm's law (V = IR) says the current is directly proportional to voltage for a fixed resistance, so doubling the voltage doubles the current. The resistance stays constant, so the only change is the proportional rise in current. This linear voltage-current relationship is the defining property of an ohmic resistor.",
+                "rubric_points": [
+                    "Ohm's law is V = IR",
+                    "current is proportional to voltage at fixed R",
+                    "doubling V doubles I",
+                    "the resistance stays constant (ohmic behavior)"
+                ],
+                "keywords": [
+                    "ohm's law",
+                    "voltage",
+                    "current",
+                    "resistance",
+                    "proportional",
+                    "double",
+                    "v=ir",
+                    "resistor"
+                ],
+                "difficulty": 0.5
+            },
+            {
+                "id": "oe_chem_phys_circuits_3",
+                "topic": "mcat::chem_phys::circuits",
+                "prompt": "Two identical bulbs are wired in series, then instead in parallel across the same battery. Predict which arrangement makes the bulbs brighter and explain using power.",
+                "model_answer": "The parallel bulbs are brighter because each one receives the full battery voltage, whereas in series the voltage is split between the two bulbs. Since the power dissipated is P = V^2/R, giving each bulb the full voltage (parallel) delivers more power than half the voltage (series). Parallel wiring also lowers the total resistance and draws more current from the battery.",
+                "rubric_points": [
+                    "the parallel bulbs are brighter",
+                    "each parallel bulb gets the full battery voltage",
+                    "series splits the voltage between the bulbs",
+                    "P = V^2/R, so more voltage per bulb means more power"
+                ],
+                "keywords": [
+                    "series",
+                    "parallel",
+                    "power",
+                    "voltage",
+                    "brightness",
+                    "resistance",
+                    "current",
+                    "p=v^2/r"
+                ],
+                "difficulty": 0.65
+            }
+        ],
+        "mcat::psych_soc::sensation_perception": [
+            {
+                "id": "oe_psych_soc_sensation_perception_1",
+                "topic": "mcat::psych_soc::sensation_perception",
+                "prompt": "Explain the difference between bottom-up and top-down processing, and how top-down processing lets you read messy handwriting.",
+                "model_answer": "Bottom-up processing builds perception directly from raw sensory features such as lines and edges, with no prior expectation, whereas top-down processing uses knowledge, context, and expectations to interpret ambiguous input. Reading messy handwriting relies on top-down processing: knowing the sentence's topic and the likely words lets you fill in letters your eyes cannot clearly resolve. The two normally work together to produce a coherent percept.",
+                "rubric_points": [
+                    "bottom-up builds perception from raw sensory features",
+                    "top-down uses expectation/context/knowledge",
+                    "example: context fills in ambiguous letters",
+                    "the two processes interact in perception"
+                ],
+                "keywords": [
+                    "bottom-up",
+                    "top-down",
+                    "processing",
+                    "expectation",
+                    "context",
+                    "perception",
+                    "sensory",
+                    "schema"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_sensation_perception_2",
+                "topic": "mcat::psych_soc::sensation_perception",
+                "prompt": "You notice a smell strongly when entering a room but not minutes later. Explain this using sensory adaptation and why it is biologically useful.",
+                "model_answer": "Sensory adaptation is the decline in receptor responsiveness to a constant, unchanging stimulus, so the olfactory receptors fire less over time and the smell fades from awareness. This is useful because it lets the nervous system stop spending attention on steady background stimuli and stay sensitive to new or changing signals that may matter more. Detecting change is generally more informative than detecting constancy.",
+                "rubric_points": [
+                    "sensory adaptation reduces the response to a constant stimulus",
+                    "receptors fire less with continued exposure",
+                    "it frees attention from unchanging backgrounds",
+                    "it keeps sensitivity to new/changing stimuli"
+                ],
+                "keywords": [
+                    "sensory adaptation",
+                    "receptor",
+                    "constant stimulus",
+                    "habituation",
+                    "attention",
+                    "change",
+                    "smell",
+                    "responsiveness"
+                ],
+                "difficulty": 0.5
+            },
+            {
+                "id": "oe_psych_soc_sensation_perception_3",
+                "topic": "mcat::psych_soc::sensation_perception",
+                "prompt": "Weber's law says the just-noticeable difference is a constant proportion of the stimulus. Predict whether you more easily notice adding 1 kg to a 2 kg bag or to a 50 kg load, and explain.",
+                "model_answer": "You would notice the 1 kg added to the 2 kg bag far more easily, because Weber's law makes detection depend on the proportional change, not the absolute amount. One kilogram is 50% of 2 kg but only 2% of 50 kg, so it far exceeds the just-noticeable proportion in the light bag while falling below it for the heavy load. Detectability scales with the ratio of the change to the baseline stimulus.",
+                "rubric_points": [
+                    "the JND is a constant fraction of the baseline stimulus",
+                    "1 kg is a large proportion of 2 kg",
+                    "1 kg is a tiny proportion of 50 kg",
+                    "the change is easier to notice in the lighter bag"
+                ],
+                "keywords": [
+                    "weber's law",
+                    "just-noticeable difference",
+                    "proportion",
+                    "ratio",
+                    "stimulus",
+                    "threshold",
+                    "baseline",
+                    "jnd"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::psych_soc::cognition": [
+            {
+                "id": "oe_psych_soc_cognition_1",
+                "topic": "mcat::psych_soc::cognition",
+                "prompt": "After a plane crash dominates the news, many people overestimate flying's danger and choose to drive. Explain which heuristic drives this and how it distorts risk judgment.",
+                "model_answer": "This reflects the availability heuristic, in which people judge how likely an event is by how easily vivid examples come to mind. Dramatic, heavily reported crashes are highly memorable, so they inflate the perceived probability of a plane crash even though flying is statistically far safer than driving. The ease of recall, rather than the actual base rates, is driving the judgment.",
+                "rubric_points": [
+                    "identifies the availability heuristic",
+                    "probability judged by ease of recall",
+                    "vivid/publicized events feel more likely",
+                    "distorts risk relative to actual statistics/base rates"
+                ],
+                "keywords": [
+                    "availability heuristic",
+                    "recall",
+                    "vivid",
+                    "probability",
+                    "risk",
+                    "base rate",
+                    "memory",
+                    "judgment"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_cognition_2",
+                "topic": "mcat::psych_soc::cognition",
+                "prompt": "Explain functional fixedness and predict how it could stop someone from using a coin as a screwdriver.",
+                "model_answer": "Functional fixedness is the cognitive bias of seeing an object only in terms of its usual function, which blocks recognizing alternative uses. Someone fixated on a coin as money may fail to realize that its thin, rigid edge can turn a screw, so they keep searching for a real screwdriver. Overcoming it requires re-representing the object by its properties (thin and hard) rather than by its label.",
+                "rubric_points": [
+                    "functional fixedness is seeing only the usual function",
+                    "it blocks novel/creative uses",
+                    "the coin is seen as money, not a tool",
+                    "it is overcome by focusing on the object's properties"
+                ],
+                "keywords": [
+                    "functional fixedness",
+                    "problem solving",
+                    "fixation",
+                    "creative",
+                    "mental set",
+                    "function",
+                    "bias",
+                    "novel use"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_cognition_3",
+                "topic": "mcat::psych_soc::cognition",
+                "prompt": "Two identical ground-beef labels read '80% lean' versus '20% fat,' and shoppers prefer the first. Explain the cognitive effect at work and why it changes choices.",
+                "model_answer": "This is the framing effect, in which the same information described in different terms leads to different decisions. '80% lean' emphasizes a positive attribute while '20% fat' highlights a negative one, so the positively framed option feels more appealing despite identical content. People respond to how a choice is presented, not just to the objective facts.",
+                "rubric_points": [
+                    "identifies the framing effect",
+                    "the same information is framed positively vs negatively",
+                    "the positive (lean) frame is preferred over the negative (fat) one",
+                    "presentation, not content, drives the choice"
+                ],
+                "keywords": ["framing effect", "gain", "loss", "presentation", "decision", "frame", "wording", "bias"],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::memory": [
+            {
+                "id": "oe_psych_soc_memory_1",
+                "topic": "mcat::psych_soc::memory",
+                "prompt": "A student learns Spanish, then learns French, and later struggles to recall the earlier Spanish. Identify the type of interference and explain the mechanism.",
+                "model_answer": "This is retroactive interference, in which newly learned information (French) disrupts the recall of older, previously learned material (Spanish). The new, similar memories compete with and overwrite the retrieval cues for the old ones. Interference is worse when the two sets of material are similar, as with two closely related Romance languages.",
+                "rubric_points": [
+                    "identifies retroactive interference",
+                    "new learning disrupts recall of older material",
+                    "French interferes with the earlier Spanish",
+                    "similarity increases the interference"
+                ],
+                "keywords": [
+                    "retroactive interference",
+                    "memory",
+                    "recall",
+                    "new learning",
+                    "old memory",
+                    "competition",
+                    "similarity",
+                    "forgetting"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_memory_2",
+                "topic": "mcat::psych_soc::memory",
+                "prompt": "Explain why spacing study sessions over two weeks produces better long-term retention than one cram session of the same total length.",
+                "model_answer": "The spacing effect shows that distributed practice strengthens long-term memory more than massed practice. Each spaced review requires effortful retrieval after some forgetting has occurred, and this repeated retrieval and reconsolidation deepens and stabilizes the memory trace. Cramming instead builds a weak trace that fades quickly because it is never retrieved after a delay.",
+                "rubric_points": [
+                    "distributed/spaced practice beats massed cramming",
+                    "spaced reviews require effortful retrieval after forgetting",
+                    "repeated retrieval consolidates the memory",
+                    "crammed memories fade quickly"
+                ],
+                "keywords": [
+                    "spacing effect",
+                    "distributed practice",
+                    "retrieval",
+                    "consolidation",
+                    "long-term memory",
+                    "cramming",
+                    "forgetting",
+                    "spaced repetition"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_memory_3",
+                "topic": "mcat::psych_soc::memory",
+                "prompt": "A patient with hippocampal damage recalls childhood events and can hold a phone number briefly but cannot form new lasting memories. Explain what this dissociation reveals about the hippocampus.",
+                "model_answer": "It shows the hippocampus is required to consolidate new information from short-term into long-term memory, but not for storing already-consolidated old memories or for brief working memory. Childhood memories survive because they are stored in the cortex, and short-term holding uses separate systems. The hippocampus therefore specifically encodes and consolidates new long-term memories.",
+                "rubric_points": [
+                    "the hippocampus is needed to form new long-term memories",
+                    "it consolidates information from short-term to long-term",
+                    "old memories are intact (stored in the cortex)",
+                    "working/short-term memory is spared"
+                ],
+                "keywords": [
+                    "hippocampus",
+                    "consolidation",
+                    "long-term memory",
+                    "short-term memory",
+                    "anterograde",
+                    "encoding",
+                    "cortex",
+                    "working memory"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::psych_soc::learning": [
+            {
+                "id": "oe_psych_soc_learning_1",
+                "topic": "mcat::psych_soc::learning",
+                "prompt": "A slot machine pays out on a variable-ratio schedule. Explain why this schedule produces such high, persistent play that resists extinction.",
+                "model_answer": "A variable-ratio schedule reinforces after an unpredictable number of responses, so the player can never tell which pull will pay, which encourages rapid, continuous responding. Because the timing of reward is unpredictable, a run of no payouts does not signal that reward has ended, making the behavior highly resistant to extinction. This schedule produces the highest and steadiest response rates.",
+                "rubric_points": [
+                    "variable-ratio reinforces after an unpredictable number of responses",
+                    "unpredictability drives high, steady responding",
+                    "nonrewarded trials do not signal extinction",
+                    "it is the most resistant to extinction"
+                ],
+                "keywords": [
+                    "variable-ratio",
+                    "reinforcement schedule",
+                    "extinction",
+                    "gambling",
+                    "unpredictable",
+                    "response rate",
+                    "operant",
+                    "reward"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_learning_2",
+                "topic": "mcat::psych_soc::learning",
+                "prompt": "Distinguish negative reinforcement from punishment, and explain why taking a painkiller to end a headache is negative reinforcement.",
+                "model_answer": "Negative reinforcement increases a behavior by removing an unpleasant stimulus, whereas punishment decreases a behavior, either by adding something aversive or removing something pleasant. Taking a painkiller removes the aversive headache, and because that relief makes you more likely to take the painkiller next time, the behavior is strengthened, which is reinforcement rather than punishment. The key is that the behavior becomes more frequent.",
+                "rubric_points": [
+                    "negative reinforcement removes an aversive stimulus",
+                    "negative reinforcement increases the behavior",
+                    "punishment decreases a behavior",
+                    "relief from the headache strengthens pill-taking"
+                ],
+                "keywords": [
+                    "negative reinforcement",
+                    "punishment",
+                    "aversive",
+                    "remove",
+                    "increase behavior",
+                    "operant",
+                    "reinforcement",
+                    "relief"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_learning_3",
+                "topic": "mcat::psych_soc::learning",
+                "prompt": "A dog conditioned to salivate at a bell stops after the bell rings repeatedly without food, but the response briefly returns the next day. Explain extinction and spontaneous recovery here.",
+                "model_answer": "Extinction occurs when the conditioned stimulus (the bell) is presented repeatedly without the unconditioned stimulus (food), so the conditioned response (salivation) weakens and disappears. The return of salivation the next day is spontaneous recovery, which shows the association was suppressed rather than erased. This indicates the original learning still exists beneath the extinguished behavior.",
+                "rubric_points": [
+                    "extinction: the CS repeated without the US weakens the CR",
+                    "salivation fades as the bell no longer predicts food",
+                    "spontaneous recovery is the response returning after a rest",
+                    "this shows the association was suppressed, not erased"
+                ],
+                "keywords": [
+                    "extinction",
+                    "spontaneous recovery",
+                    "conditioned stimulus",
+                    "conditioned response",
+                    "classical conditioning",
+                    "association",
+                    "salivation",
+                    "unconditioned stimulus"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::psych_soc::motivation_emotion": [
+            {
+                "id": "oe_psych_soc_motivation_emotion_1",
+                "topic": "mcat::psych_soc::motivation_emotion",
+                "prompt": "Using the Yerkes-Dodson law, predict how a small versus large amount of anxiety would affect performance on a difficult exam, and explain the relationship.",
+                "model_answer": "The Yerkes-Dodson law describes an inverted-U: performance improves with arousal up to an optimum and then declines when arousal is too high. For a difficult task the optimal arousal is relatively low, so a small amount of anxiety can sharpen focus and help, but high anxiety overwhelms working memory and hurts performance. Moderate-to-low arousal is therefore best for hard tasks.",
+                "rubric_points": [
+                    "Yerkes-Dodson is an inverted-U of arousal versus performance",
+                    "moderate arousal optimizes performance",
+                    "the optimal arousal is lower for difficult tasks",
+                    "too much anxiety impairs performance"
+                ],
+                "keywords": [
+                    "yerkes-dodson",
+                    "arousal",
+                    "inverted-u",
+                    "performance",
+                    "anxiety",
+                    "optimal",
+                    "difficult task",
+                    "stress"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_motivation_emotion_2",
+                "topic": "mcat::psych_soc::motivation_emotion",
+                "prompt": "Compare the James-Lange and Cannon-Bard theories in predicting whether a racing heart comes before or together with the feeling of fear.",
+                "model_answer": "The James-Lange theory holds that the physiological response comes first and the emotion is our interpretation of it, so the racing heart precedes and causes the feeling of fear. The Cannon-Bard theory holds that the bodily arousal and the conscious emotion occur simultaneously and independently through a thalamic relay, so the racing heart and the fear happen at the same time. The theories differ in the causal ordering of body and feeling.",
+                "rubric_points": [
+                    "James-Lange: physiological arousal first, then emotion",
+                    "the emotion is an interpretation of the body's state",
+                    "Cannon-Bard: arousal and emotion are simultaneous",
+                    "Cannon-Bard emphasizes independent/thalamic pathways"
+                ],
+                "keywords": [
+                    "james-lange",
+                    "cannon-bard",
+                    "arousal",
+                    "emotion",
+                    "physiological",
+                    "simultaneous",
+                    "thalamus",
+                    "fear"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_psych_soc_motivation_emotion_3",
+                "topic": "mcat::psych_soc::motivation_emotion",
+                "prompt": "By Maslow's hierarchy, explain why a person who has lost access to food and safety is unlikely to focus on creative self-fulfillment.",
+                "model_answer": "Maslow's hierarchy proposes that lower, more basic needs (physiological, then safety) must be reasonably satisfied before higher needs strongly motivate behavior. Someone lacking food and safety is dominated by these deficiency needs, so their motivation is directed toward securing them rather than toward self-actualization at the top of the pyramid. Higher-order growth needs become salient only once the basic needs are met.",
+                "rubric_points": [
+                    "the hierarchy places basic needs before higher needs",
+                    "physiological and safety needs are foundational",
+                    "unmet basic needs dominate motivation",
+                    "self-actualization emerges only after lower needs are met"
+                ],
+                "keywords": [
+                    "maslow",
+                    "hierarchy of needs",
+                    "physiological",
+                    "safety",
+                    "self-actualization",
+                    "deficiency needs",
+                    "motivation",
+                    "pyramid"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::identity": [
+            {
+                "id": "oe_psych_soc_identity_1",
+                "topic": "mcat::psych_soc::identity",
+                "prompt": "Cooley's looking-glass self says we build self-concept from others' reactions. Explain the mechanism and how a student might come to see himself as 'the funny one.'",
+                "model_answer": "The looking-glass self forms in three steps: we imagine how we appear to others, imagine their judgment of that appearance, and then develop a self-feeling based on it. A student whose jokes repeatedly make peers laugh imagines that they see him as funny, feels validated, and gradually incorporates being funny into his self-concept. Identity here is socially constructed from perceived appraisals rather than formed in isolation.",
+                "rubric_points": [
+                    "the looking-glass self is built from others' perceptions",
+                    "we imagine how others see and judge us",
+                    "we internalize that reflected appraisal",
+                    "example: repeated laughter builds a 'funny' self-concept"
+                ],
+                "keywords": [
+                    "looking-glass self",
+                    "cooley",
+                    "self-concept",
+                    "appraisal",
+                    "social",
+                    "reflection",
+                    "identity",
+                    "internalize"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_identity_2",
+                "topic": "mcat::psych_soc::identity",
+                "prompt": "Distinguish role conflict from role strain, and classify a medical resident torn between parenting duties and on-call shifts.",
+                "model_answer": "Role conflict is tension between the demands of two different statuses or roles a person holds, whereas role strain is tension among the competing demands within a single role. A resident torn between being a parent (one status) and an on-call doctor (a different status) is experiencing role conflict, because the incompatible demands arise from two separate roles. If the doctor role alone imposed clashing duties, that would instead be role strain.",
+                "rubric_points": [
+                    "role conflict is tension between two different roles/statuses",
+                    "role strain is tension within a single role",
+                    "the resident case involves two statuses (parent vs doctor)",
+                    "therefore it is role conflict"
+                ],
+                "keywords": [
+                    "role conflict",
+                    "role strain",
+                    "status",
+                    "role",
+                    "demands",
+                    "identity",
+                    "tension",
+                    "incompatible"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_identity_3",
+                "topic": "mcat::psych_soc::identity",
+                "prompt": "Using Erikson's stage of identity versus role confusion, explain why adolescents experiment heavily with peer groups and values.",
+                "model_answer": "Erikson placed the identity-versus-role-confusion crisis in adolescence, when the central task is forming a coherent, stable sense of self. Teens try on different peer groups, ideologies, and possible careers as a way of exploring options and integrating them into an identity. Successfully working through this exploration yields a firm identity, whereas failing to do so leaves role confusion about who one is.",
+                "rubric_points": [
+                    "Erikson: identity versus role confusion occurs in adolescence",
+                    "the central task is forming a coherent self",
+                    "experimentation is a way of exploring possible identities",
+                    "resolution yields a stable identity versus confusion"
+                ],
+                "keywords": [
+                    "erikson",
+                    "identity",
+                    "role confusion",
+                    "adolescence",
+                    "psychosocial",
+                    "exploration",
+                    "self",
+                    "stage"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::social_thinking": [
+            {
+                "id": "oe_psych_soc_social_thinking_1",
+                "topic": "mcat::psych_soc::social_thinking",
+                "prompt": "You call a stranger who trips 'clumsy' but blame your own trip on a wet floor. Explain the attribution bias at work and how the actor and observer perspectives differ.",
+                "model_answer": "This is the fundamental attribution error, along with the related actor-observer bias: we over-attribute others' behavior to their disposition while attributing our own behavior to the situation. Observing a stranger, we do not see the situational causes and default to a character explanation like 'clumsy,' whereas as the actor we are keenly aware of situational factors such as the wet floor. The difference in available information and focus drives the asymmetry.",
+                "rubric_points": [
+                    "identifies the fundamental attribution error / actor-observer bias",
+                    "others' behavior is attributed to disposition",
+                    "one's own behavior is attributed to the situation",
+                    "the asymmetry comes from differing perspective/information"
+                ],
+                "keywords": [
+                    "fundamental attribution error",
+                    "actor-observer",
+                    "dispositional",
+                    "situational",
+                    "attribution",
+                    "bias",
+                    "behavior",
+                    "perspective"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_social_thinking_2",
+                "topic": "mcat::psych_soc::social_thinking",
+                "prompt": "A cohesive committee silences dissent and makes a poor decision to preserve harmony. Explain groupthink and one way to counteract it.",
+                "model_answer": "Groupthink occurs when a group's desire for consensus and harmony overrides realistic appraisal of alternatives, so members suppress their doubts and critical evaluation. This leads to poor, unchallenged decisions because dissenting information is filtered out. It can be countered by assigning a devil's advocate, inviting outside opinions, or having leaders withhold their own views to encourage open debate.",
+                "rubric_points": [
+                    "groupthink is prioritizing consensus over critical thinking",
+                    "members suppress dissent to preserve harmony",
+                    "it leads to poor, unexamined decisions",
+                    "counter it with a devil's advocate/outside input"
+                ],
+                "keywords": [
+                    "groupthink",
+                    "consensus",
+                    "dissent",
+                    "harmony",
+                    "cohesion",
+                    "decision",
+                    "devil's advocate",
+                    "critical thinking"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_social_thinking_3",
+                "topic": "mcat::psych_soc::social_thinking",
+                "prompt": "A person collapses on a crowded street and no one helps. Explain the bystander effect and how diffusion of responsibility contributes.",
+                "model_answer": "The bystander effect is the finding that individuals are less likely to help when other people are present. A key cause is diffusion of responsibility: each onlooker assumes someone else will act, so personal responsibility feels reduced. Pluralistic ignorance, in which people see a calm crowd and infer there is no emergency, can add to the inaction, which is why a victim is often helped faster when there are fewer witnesses.",
+                "rubric_points": [
+                    "the bystander effect: less help when more onlookers are present",
+                    "diffusion of responsibility spreads across the crowd",
+                    "each person assumes someone else will act",
+                    "more witnesses can mean slower help"
+                ],
+                "keywords": [
+                    "bystander effect",
+                    "diffusion of responsibility",
+                    "onlookers",
+                    "help",
+                    "pluralistic ignorance",
+                    "crowd",
+                    "prosocial",
+                    "responsibility"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::social_structure": [
+            {
+                "id": "oe_psych_soc_social_structure_1",
+                "topic": "mcat::psych_soc::social_structure",
+                "prompt": "Researchers find that lower education and income predict worse health outcomes. Explain how socioeconomic status functions as a social determinant of health.",
+                "model_answer": "Socioeconomic status, captured by education, income, and occupation, shapes health by influencing access to care, healthy food, safe housing, and exposure to chronic stress. Lower status means fewer resources and more stressors, which accumulate to produce worse outcomes independent of individual biology. This is why SES is treated as a structural, social determinant of health rather than a purely personal factor.",
+                "rubric_points": [
+                    "SES comprises education, income, and occupation",
+                    "it shapes access to care, food, and housing",
+                    "it affects chronic stress exposure",
+                    "it is a structural cause of health disparities, not just biology"
+                ],
+                "keywords": [
+                    "socioeconomic status",
+                    "social determinant",
+                    "health",
+                    "income",
+                    "education",
+                    "access",
+                    "stress",
+                    "disparities"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_social_structure_2",
+                "topic": "mcat::psych_soc::social_structure",
+                "prompt": "Distinguish a primary group from a secondary group, and explain which one a hospital's surgical department is and why.",
+                "model_answer": "Primary groups are small, intimate, and enduring, like family or close friends, and provide deep emotional bonds, whereas secondary groups are larger, more impersonal, and goal-oriented. A hospital's surgical department is a secondary group because its members associate mainly to accomplish a specific task, patient care, through defined roles rather than deep personal ties. Their interactions are structured around function rather than intimacy.",
+                "rubric_points": [
+                    "primary groups are intimate, enduring, emotionally close",
+                    "secondary groups are impersonal and goal-oriented",
+                    "the surgical department is a secondary group",
+                    "members are united by task/roles rather than intimacy"
+                ],
+                "keywords": [
+                    "primary group",
+                    "secondary group",
+                    "intimate",
+                    "impersonal",
+                    "goal-oriented",
+                    "roles",
+                    "institution",
+                    "ties"
+                ],
+                "difficulty": 0.5
+            },
+            {
+                "id": "oe_psych_soc_social_structure_3",
+                "topic": "mcat::psych_soc::social_structure",
+                "prompt": "Explain how a bureaucracy's key features (hierarchy, written rules, division of labor) can produce both efficiency and 'red tape.'",
+                "model_answer": "Bureaucracies use clear hierarchies, explicit rules, and a specialized division of labor to handle large tasks predictably and impartially, which boosts efficiency and consistency. But those same rigid rules and layered approvals can become red tape, slowing decisions and limiting flexibility when situations do not fit the procedures. The very structure that ensures fairness and order also produces inertia.",
+                "rubric_points": [
+                    "a bureaucracy features hierarchy, rules, and division of labor",
+                    "rules/specialization create efficiency and consistency",
+                    "it handles tasks impartially and predictably",
+                    "rigidity produces red tape/slow adaptation"
+                ],
+                "keywords": [
+                    "bureaucracy",
+                    "hierarchy",
+                    "rules",
+                    "division of labor",
+                    "efficiency",
+                    "red tape",
+                    "impersonal",
+                    "rationalization"
+                ],
+                "difficulty": 0.55
+            }
+        ],
+        "mcat::psych_soc::demographics": [
+            {
+                "id": "oe_psych_soc_demographics_1",
+                "topic": "mcat::psych_soc::demographics",
+                "prompt": "Explain the demographic transition model and why a country's population surges in its middle stages before leveling off.",
+                "model_answer": "The demographic transition describes the shift from high birth and death rates to low ones as a society industrializes. In the middle stages the death rate falls first, thanks to better medicine, sanitation, and food, while the birth rate stays high, so births far outnumber deaths and the population surges. Later the birth rate also declines, with urbanization, education, and contraception, and growth slows toward stability.",
+                "rubric_points": [
+                    "the transition goes from high to low birth and death rates",
+                    "the death rate falls first (medicine/sanitation)",
+                    "the birth rate stays high initially, causing a population surge",
+                    "the birth rate later falls and growth levels off"
+                ],
+                "keywords": [
+                    "demographic transition",
+                    "birth rate",
+                    "death rate",
+                    "industrialization",
+                    "population growth",
+                    "mortality",
+                    "fertility",
+                    "stages"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_demographics_2",
+                "topic": "mcat::psych_soc::demographics",
+                "prompt": "A country's population pyramid is top-heavy, with many elderly and few children. Predict two societal consequences and explain the underlying dependency issue.",
+                "model_answer": "An aging, top-heavy population means a shrinking working-age base must support a growing number of retirees, which raises the dependency ratio. Likely consequences include strained pension and healthcare systems and potential labor shortages or slower economic growth. Having few children today also foreshadows continued aging and possible future population decline.",
+                "rubric_points": [
+                    "an aging population raises the dependency ratio",
+                    "fewer workers must support more retirees",
+                    "strain on pensions/healthcare",
+                    "risk of labor shortages / population decline"
+                ],
+                "keywords": [
+                    "population pyramid",
+                    "aging",
+                    "dependency ratio",
+                    "pensions",
+                    "healthcare",
+                    "workforce",
+                    "retirees",
+                    "demographics"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_demographics_3",
+                "topic": "mcat::psych_soc::demographics",
+                "prompt": "Explain migration push and pull factors and classify war and abundant city jobs within this framework.",
+                "model_answer": "Push factors drive people away from an origin, such as war, famine, or persecution, while pull factors attract them to a destination, such as jobs, safety, or opportunity. War is a push factor forcing people out of a region, and abundant city jobs are a pull factor drawing migrants in. Migration patterns typically result from a combination of both kinds of forces.",
+                "rubric_points": [
+                    "push factors drive people from the origin",
+                    "pull factors attract people to the destination",
+                    "war is a push factor",
+                    "abundant city jobs are a pull factor"
+                ],
+                "keywords": [
+                    "push factor",
+                    "pull factor",
+                    "migration",
+                    "war",
+                    "jobs",
+                    "origin",
+                    "destination",
+                    "urbanization"
+                ],
+                "difficulty": 0.5
+            }
+        ],
+        "mcat::psych_soc::biological_behavior": [
+            {
+                "id": "oe_psych_soc_biological_behavior_1",
+                "topic": "mcat::psych_soc::biological_behavior",
+                "prompt": "After a stroke a patient understands speech but produces only halting, effortful speech. Predict the brain area damaged and explain how this differs from damage to the other language area.",
+                "model_answer": "The deficit fits damage to Broca's area (Broca's aphasia), which impairs speech production while comprehension remains relatively intact, yielding effortful, non-fluent speech. Damage to Wernicke's area instead produces fluent but meaningless speech together with poor comprehension. Broca's area is thus concerned with producing language, and Wernicke's with understanding it.",
+                "rubric_points": [
+                    "identifies damage to Broca's area",
+                    "Broca's aphasia: non-fluent/effortful production, comprehension intact",
+                    "Wernicke's damage gives fluent but meaningless speech",
+                    "Wernicke's area impairs comprehension"
+                ],
+                "keywords": [
+                    "broca's area",
+                    "wernicke's area",
+                    "aphasia",
+                    "speech production",
+                    "comprehension",
+                    "non-fluent",
+                    "language",
+                    "stroke"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_psych_soc_biological_behavior_2",
+                "topic": "mcat::psych_soc::biological_behavior",
+                "prompt": "During a sudden fright your heart pounds, pupils dilate, and digestion slows. Explain which division of the autonomic nervous system causes this and how it reverses afterward.",
+                "model_answer": "The sympathetic nervous system drives this fight-or-flight response, releasing norepinephrine and epinephrine to speed the heart, dilate the pupils, and divert energy away from digestion. Once the threat passes, the parasympathetic division takes over in a rest-and-digest mode, slowing the heart, constricting the pupils, and resuming digestion. The two divisions act in opposition to keep the body in balance.",
+                "rubric_points": [
+                    "the sympathetic nervous system causes fight-or-flight",
+                    "it raises heart rate, dilates pupils, and slows digestion",
+                    "the parasympathetic division reverses it (rest-and-digest)",
+                    "the two divisions are antagonistic"
+                ],
+                "keywords": [
+                    "sympathetic",
+                    "parasympathetic",
+                    "autonomic",
+                    "fight-or-flight",
+                    "rest-and-digest",
+                    "epinephrine",
+                    "heart rate",
+                    "pupils"
+                ],
+                "difficulty": 0.55
+            },
+            {
+                "id": "oe_psych_soc_biological_behavior_3",
+                "topic": "mcat::psych_soc::biological_behavior",
+                "prompt": "A recreational drug increases dopamine signaling in the brain's reward pathway. Predict its behavioral effect and explain why such drugs are prone to addiction.",
+                "model_answer": "Boosting dopamine in the reward pathway increases feelings of pleasure and reinforces whatever behavior led to the drug, making the user seek it again. With repeated use the brain adapts by downregulating receptors, so tolerance develops and natural rewards feel less satisfying, which drives escalating, compulsive use. This hijacking of the dopamine reward system underlies addiction.",
+                "rubric_points": [
+                    "dopamine in the reward pathway increases pleasure/reinforcement",
+                    "it reinforces drug-seeking behavior",
+                    "repeated use causes tolerance/receptor downregulation",
+                    "the hijacked reward system drives addiction"
+                ],
+                "keywords": [
+                    "dopamine",
+                    "reward pathway",
+                    "mesolimbic",
+                    "reinforcement",
+                    "addiction",
+                    "tolerance",
+                    "receptor",
+                    "pleasure"
+                ],
+                "difficulty": 0.6
+            }
+        ],
+        "mcat::cars": [
+            {
+                "id": "oe_cars_1",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'Public monuments do not preserve history so much as freeze a single interpretation of it, discouraging the reexamination that keeps a society's memory alive.' Explain the author's central claim and identify one assumption it rests on.",
+                "model_answer": "The author's central claim is that monuments harm collective memory by locking in one fixed interpretation of the past and thereby discouraging ongoing reinterpretation. This rests on the assumption that a society's memory stays alive only through continual reexamination, and that monuments actually discourage rather than provoke such rethinking. If people in fact debate and reinterpret monuments, the argument would weaken.",
+                "rubric_points": [
+                    "states the central claim: monuments freeze one interpretation and harm memory",
+                    "identifies an unstated assumption (e.g., living memory requires reexamination)",
+                    "explains why the assumption is necessary to the claim",
+                    "grounds the reasoning in the passage"
+                ],
+                "keywords": [
+                    "central claim",
+                    "assumption",
+                    "interpretation",
+                    "memory",
+                    "reexamination",
+                    "monuments",
+                    "argument",
+                    "author"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_cars_2",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'Critics blame the program's failure on underfunding. Yet comparable programs with far larger budgets fared no better, suggesting the flaw lay in the design, not the money.' Explain how the author uses the second sentence to challenge the critics, and evaluate the strength of that evidence.",
+                "model_answer": "The author uses the second sentence as counter-evidence: by noting that better-funded comparable programs also failed, the author undercuts the critics' claim that underfunding caused the failure and redirects the blame to poor design. The evidence is reasonably strong if the compared programs are genuinely comparable, but it weakens if those programs differed in other important ways, such as their populations or implementation, which would introduce a confound. Its persuasiveness hinges on how comparable the cases really are.",
+                "rubric_points": [
+                    "identifies the second sentence as counter-evidence to the critics",
+                    "explains it shifts the cause from funding to design",
+                    "evaluates strength as depending on true comparability",
+                    "notes a confound/limitation that could weaken it"
+                ],
+                "keywords": [
+                    "counterargument",
+                    "evidence",
+                    "underfunding",
+                    "design",
+                    "comparable",
+                    "confound",
+                    "critics",
+                    "evaluate"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_cars_3",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'Because the new drug reduced symptoms in a small trial, it should be approved for nationwide use.' Explain the unstated assumption this argument depends on and describe one piece of evidence that would strengthen or weaken it.",
+                "model_answer": "The argument assumes that results from a small trial will generalize to the much larger and more varied national population, and that reducing symptoms reliably indicates real overall benefit and safety. It would be strengthened by large, diverse follow-up trials showing the same benefit with acceptable side effects, and weakened by evidence that the trial sample was unrepresentative or that serious adverse effects emerge at scale. The leap from limited data to a universal policy is the argument's most vulnerable point.",
+                "rubric_points": [
+                    "identifies the assumption that small-trial results generalize to the population",
+                    "notes the assumption that symptom reduction equals real benefit/safety",
+                    "gives strengthening evidence (large, diverse replication)",
+                    "gives weakening evidence (unrepresentative sample or side effects)"
+                ],
+                "keywords": [
+                    "assumption",
+                    "generalize",
+                    "small trial",
+                    "population",
+                    "sample",
+                    "evidence",
+                    "strengthen",
+                    "weaken"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_cars_4",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'Because members of the community always repay gifts, anthropologists concluded that gift-giving there is a disguised form of economic exchange rather than pure generosity.' Explain the unstated assumption this inference depends on, and describe one observation that would test it.",
+                "model_answer": "The inference rests on the assumption that consistent repayment reveals the giver's motive\u2014that people give in order to create an obligation, not out of genuine generosity. It treats a behavior, repayment, as proof of intent. You could test it by observing gifts that cannot be reciprocated: if people still give freely to those who can never repay them, the disguised-exchange reading weakens, whereas if giving dries up whenever a return is unlikely, it is supported.",
+                "rubric_points": [
+                    "identifies the assumption that repayment reveals the giver's motive",
+                    "notes the leap from a behavior (repayment) to an intent",
+                    "proposes an observation using gifts that cannot be reciprocated",
+                    "explains how the result would strengthen or weaken the exchange reading"
+                ],
+                "keywords": [
+                    "assumption",
+                    "repayment",
+                    "motive",
+                    "obligation",
+                    "generosity",
+                    "intent",
+                    "exchange",
+                    "test"
+                ],
+                "difficulty": 0.65
+            },
+            {
+                "id": "oe_cars_5",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'The swift triumph of the germ theory proves that science always discards mistaken ideas as soon as better evidence arrives.' Explain why this reasoning is an overgeneralization and describe the kind of evidence that would most undermine it.",
+                "model_answer": "The claim is an overgeneralization: it leaps from a single case, the germ theory, to a sweeping rule about all of science using the word always, and one example cannot establish a universal rule. It also ignores how social habits and generational turnover often delay the acceptance of new ideas even when the evidence is strong. It would be most undermined by well-documented episodes in which compelling evidence existed yet the scientific community clung to the old view for years or decades.",
+                "rubric_points": [
+                    "identifies the overgeneralization from one case to all of science",
+                    "notes that a single example cannot establish a universal rule",
+                    "points to social or generational delay in accepting new ideas",
+                    "specifies undermining evidence: strong evidence that was long ignored"
+                ],
+                "keywords": [
+                    "overgeneralization",
+                    "single",
+                    "case",
+                    "always",
+                    "universal",
+                    "example",
+                    "evidence",
+                    "delay",
+                    "acceptance"
+                ],
+                "difficulty": 0.6
+            },
+            {
+                "id": "oe_cars_6",
+                "topic": "mcat::cars",
+                "prompt": "Passage: 'A representative serves the people only by voting as the majority of constituents instructs; to do otherwise is to impose one's own private judgment on the public.' Explain the assumption that links 'following the majority' to 'serving the public good,' and give one consideration that challenges it.",
+                "model_answer": "The argument assumes that what the majority of constituents wants reliably coincides with the public good, so that obeying their instructions is the same as serving the people. That assumption is what lets the author equate following the majority with good representation. One consideration that challenges it is that a majority can be misinformed or can favor its own short-term interest at the expense of a minority; in such cases a representative's independent judgment might serve the public good better than mechanical obedience.",
+                "rubric_points": [
+                    "identifies the assumption that majority preference tracks the public good",
+                    "explains why that link is needed for the argument",
+                    "offers a challenge such as a misinformed majority or harm to a minority",
+                    "connects the challenge to whether obedience truly serves the people"
+                ],
+                "keywords": [
+                    "assumption",
+                    "majority",
+                    "constituents",
+                    "representative",
+                    "judgment",
+                    "minority",
+                    "misinformed",
+                    "interest",
+                    "obedience"
+                ],
+                "difficulty": 0.65
+            }
+        ]
+    }
+}

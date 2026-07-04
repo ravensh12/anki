@@ -1,0 +1,67 @@
+{
+    "note": "Hand-checked MCAT Q/A used to seed a tagged deck without any AI. Keyed by full topic tag (must match ids in mcat_outline.json). The generator pads each topic with synthetic cards to reach a target deck size for benchmarking.",
+    "cards": {
+        "mcat::bio_biochem::amino_acids": [
+            ["Which amino acid is achiral?", "Glycine (its side chain is a single hydrogen)."],
+            ["What is the net charge of an amino acid at its isoelectric point (pI)?", "Zero."]
+        ],
+        "mcat::bio_biochem::enzymes": [
+            ["What does a competitive inhibitor do to Km and Vmax?", "Increases apparent Km; Vmax unchanged."],
+            ["What does a noncompetitive inhibitor do to Km and Vmax?", "Km unchanged; Vmax decreases."]
+        ],
+        "mcat::bio_biochem::glycolysis": [
+            ["Net ATP yield of glycolysis per glucose?", "2 ATP (4 produced, 2 consumed)."],
+            ["Rate-limiting enzyme of glycolysis?", "Phosphofructokinase-1 (PFK-1)."]
+        ],
+        "mcat::bio_biochem::oxidative_phosphorylation": [
+            ["Final electron acceptor in the electron transport chain?", "Molecular oxygen (O2)."],
+            ["What does the proton-motive force drive?", "ATP synthesis via ATP synthase."]
+        ],
+        "mcat::bio_biochem::nucleic_acids": [
+            ["Which bonds hold complementary DNA strands together?", "Hydrogen bonds between base pairs."],
+            ["Purines vs pyrimidines: which are double-ringed?", "Purines (adenine, guanine)."]
+        ],
+        "mcat::bio_biochem::protein_structure": [
+            ["What stabilizes the alpha helix?", "Hydrogen bonds between backbone carbonyl and amide groups."],
+            [
+                "What level of protein structure are disulfide bonds associated with?",
+                "Tertiary (and quaternary) structure."
+            ]
+        ],
+        "mcat::chem_phys::acids_bases": [
+            ["What is the pH of a 0.01 M strong acid solution?", "2 (-log(0.01))."],
+            ["At the half-equivalence point of a weak acid titration, pH equals what?", "pKa."]
+        ],
+        "mcat::chem_phys::thermodynamics": [
+            ["Sign of delta G for a spontaneous process?", "Negative."],
+            ["Relationship between delta G, delta H, and delta S?", "delta G = delta H - T*delta S."]
+        ],
+        "mcat::chem_phys::kinematics": [
+            ["Acceleration due to gravity near Earth's surface?", "About 9.8 m/s^2 downward."],
+            ["For a projectile, what is the horizontal acceleration (ignoring air)?", "Zero."]
+        ],
+        "mcat::chem_phys::circuits": [
+            ["Ohm's law?", "V = I * R."],
+            ["Power dissipated by a resistor?", "P = I^2 * R = V^2 / R."]
+        ],
+        "mcat::psych_soc::memory": [
+            ["Which brain structure is critical for forming new long-term memories?", "The hippocampus."],
+            ["What is proactive interference?", "Old information disrupts learning of new information."]
+        ],
+        "mcat::psych_soc::learning": [
+            ["In classical conditioning, what is the CS before conditioning?", "A neutral stimulus."],
+            ["Which reinforcement schedule is most resistant to extinction?", "Variable ratio."]
+        ],
+        "mcat::psych_soc::social_thinking": [
+            [
+                "What is the fundamental attribution error?",
+                "Overattributing others' behavior to disposition over situation."
+            ],
+            ["What is the actor-observer bias?", "Attributing our own actions to situation but others' to disposition."]
+        ],
+        "mcat::psych_soc::sensation_perception": [
+            ["What is the absolute threshold?", "The minimum stimulus intensity detectable 50% of the time."],
+            ["Which theory explains color vision via three cone types?", "Trichromatic (Young-Helmholtz) theory."]
+        ]
+    }
+}

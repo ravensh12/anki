@@ -64,6 +64,10 @@ service SchedulerService {
   // The number of days the calculated interval was fuzzed by on the previous
   // review (if any). Utilized by the FSRS add-on.
   rpc FuzzDelta(FuzzDeltaRequest) returns (FuzzDeltaResponse);
+  // Speedrun: per-topic mastery/coverage rollup powering the dashboard. Groups
+  // cards by tag prefix and reports how many are mastered and the average
+  // recall, fast enough to run over a 50k-card collection.
+  rpc GetTopicMastery(GetTopicMasteryRequest) returns (GetTopicMasteryResponse);
 }
 
 // Implicitly includes any of the above methods that are not listed in the
@@ -482,4 +486,43 @@ message FuzzDeltaRequest {
 
 message FuzzDeltaResponse {
   sint32 delta_days = 1;
+}
+
+// Speedrun mastery query -----------------------------------------------------
+
+message GetTopicMasteryRequest {
+  // Optional search to restrict the cards considered (e.g. a deck). Empty means
+  // the whole collection.
+  string search = 1;
+  // Tags starting with this prefix define topics. Defaults to "mcat::" when
+  // empty.
+  string topic_prefix = 2;
+  // A card counts as mastered when its FSRS retrievability is at or above this
+  // threshold. Defaults to 0.9 when zero.
+  double mastery_threshold = 3;
+}
+
+message TopicMastery {
+  // Full topic tag, e.g. "mcat::bio_biochem::amino_acids".
+  string topic = 1;
+  // Relative exam weight assigned to this topic.
+  double weight = 2;
+  // Total cards tagged with this topic.
+  uint32 total_cards = 3;
+  // Cards that have been studied (have an FSRS memory state).
+  uint32 studied_cards = 4;
+  // Studied cards whose retrievability is at or above the mastery threshold.
+  uint32 mastered_cards = 5;
+  // Mean retrievability across studied cards (0 when none studied).
+  double average_recall = 6;
+  // studied_cards / total_cards.
+  double coverage = 7;
+}
+
+message GetTopicMasteryResponse {
+  repeated TopicMastery topics = 1;
+  // Distinct topics seen.
+  uint32 topic_count = 2;
+  // total_cards summed across topics.
+  uint32 total_cards = 3;
 }

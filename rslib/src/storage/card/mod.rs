@@ -317,6 +317,31 @@ impl super::SqliteStorage {
         Ok(())
     }
 
+    /// Speedrun: one row per card with its note tags and current FSRS
+    /// retrievability (None when the card has no memory state). Used to build
+    /// the per-topic mastery rollup. A single pass over the cards table, fast
+    /// enough for the dashboard on a large collection.
+    pub(crate) fn topic_mastery_rows(
+        &self,
+        timing: SchedTimingToday,
+    ) -> Result<Vec<(CardId, String, Option<f64>)>> {
+        let mut stmt = self.db.prepare_cached(
+            "SELECT id,
+                coalesce((SELECT tags FROM notes WHERE notes.id = cards.nid), ''),
+                extract_fsrs_retrievability(data, case when odue != 0 then odue else due end, ivl, ?1, ?2, ?3)
+             FROM cards",
+        )?;
+        let rows = stmt
+            .query_and_then(
+                params![timing.days_elapsed, timing.next_day_at.0, timing.now.0],
+                |row| -> Result<(CardId, String, Option<f64>)> {
+                    Ok((row.get(0)?, row.get(1)?, row.get(2)?))
+                },
+            )?
+            .collect::<Result<Vec<_>>>()?;
+        Ok(rows)
+    }
+
     /// Call func() for each new card in the provided deck, stopping when it
     /// returns or no more cards found.
     pub(crate) fn for_each_new_card_in_deck<F>(
@@ -810,6 +835,10 @@ pub(crate) enum ReviewOrderSubclause {
         fsrs: bool,
         timing: SchedTimingToday,
     },
+    /// Speedrun: topic exam-weight * weakness, highest first.
+    PointsAtStake {
+        timing: SchedTimingToday,
+    },
     Added,
     ReverseAdded,
 }
@@ -847,6 +876,15 @@ impl fmt::Display for ReviewOrderSubclause {
                         "-(1 + cast({today}-due+0.001 as real)/ivl) asc"
                     )
                 };
+                &temp_string
+            }
+            ReviewOrderSubclause::PointsAtStake { timing } => {
+                let today = timing.days_elapsed;
+                let next_day_at = timing.next_day_at.0;
+                let now = timing.now.0;
+                temp_string = format!(
+                    "points_at_stake((select tags from notes where notes.id = nid), data, case when odue != 0 then odue else due end, ivl, {today}, {next_day_at}, {now}) desc"
+                );
                 &temp_string
             }
             ReviewOrderSubclause::Added => "nid asc, ord asc",
@@ -889,6 +927,9 @@ fn review_order_sql(order: ReviewCardOrder, timing: SchedTimingToday, fsrs: bool
         }
         ReviewCardOrder::RelativeOverdueness => {
             vec![ReviewOrderSubclause::RelativeOverdueness { fsrs, timing }]
+        }
+        ReviewCardOrder::PointsAtStake => {
+            vec![ReviewOrderSubclause::PointsAtStake { timing }]
         }
         ReviewCardOrder::Random => vec![],
         ReviewCardOrder::Added => vec![ReviewOrderSubclause::Added],

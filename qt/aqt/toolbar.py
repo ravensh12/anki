@@ -343,31 +343,32 @@ class Toolbar:
         )
 
     def _centerLinks(self) -> str:
+        # Ante navigation: reframed labels, same handlers/ids.
         links = [
             self.create_link(
                 "decks",
-                tr.actions_decks(),
+                "Play",
                 self._deckLinkHandler,
                 tip=tr.actions_shortcut_key(val="D"),
                 id="decks",
             ),
             self.create_link(
                 "add",
-                tr.actions_add(),
+                "Add",
                 self._addLinkHandler,
                 tip=tr.actions_shortcut_key(val="A"),
                 id="add",
             ),
             self.create_link(
                 "browse",
-                tr.qt_misc_browse(),
+                "Library",
                 self._browseLinkHandler,
                 tip=tr.actions_shortcut_key(val="B"),
                 id="browse",
             ),
             self.create_link(
                 "stats",
-                tr.qt_misc_stats(),
+                "The Book",
                 self._statsLinkHandler,
                 tip=tr.actions_shortcut_key(val="T"),
                 id="stats",
@@ -457,7 +458,8 @@ class Toolbar:
     ######################################################################
 
     _body = """
-<div class="header">
+<div class="header an-header">
+  <div class="an-brand" title="Ante" onclick="pycmd('decks')"><span class="an-tick"></span>ANTE</div>
   <div class="left-tray">{left_tray_content}</div>
   <div class="toolbar">{toolbar_content}</div>
   <div class="right-tray">{right_tray_content}</div>

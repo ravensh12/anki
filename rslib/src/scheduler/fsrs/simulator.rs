@@ -116,8 +116,9 @@ fn create_review_priority_fn(
             wrap!(move |_c, _w| rand::rng().random_range(0..deck_size) as i32)
         }
 
-        // Not implemented yet
-        Added | ReverseAdded | RelativeOverdueness => None,
+        // Not implemented in the simulator. PointsAtStake depends on note tags,
+        // which the simulator's lightweight card model does not carry.
+        Added | ReverseAdded | RelativeOverdueness | PointsAtStake => None,
     }
 }
 

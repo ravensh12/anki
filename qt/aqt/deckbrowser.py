@@ -81,8 +81,30 @@ class DeckBrowser:
         self.refresh()
 
     def refresh(self) -> None:
-        self._renderPage()
+        # Ante replaces Anki's deck-list home screen with the readiness view.
+        self._render_ante()
         self._refresh_needed = False
+
+    def _render_ante(self) -> None:
+        from aqt.ante import dashboard_body
+
+        # Recreate the app: hide Anki's top/bottom toolbars so the Ante
+        # single-page app fills the whole window (its own nav replaces them).
+        try:
+            self.mw.toolbarWeb.hide()
+            self.mw.bottomWeb.hide()
+        except Exception:
+            pass
+        # The cold-open cinematic auto-plays with narration on entry, so the
+        # den's webview must not demand a user gesture first (same setting the
+        # reviewer uses for card audio autoplay).
+        try:
+            self.web.setPlaybackRequiresGesture(False)
+        except Exception:
+            pass
+        # Render Ante natively into Anki's main web view via stdHtml (the
+        # main view is built around setHtml; a URL load does not stick).
+        self.web.stdHtml(dashboard_body(), context=self)
 
     def refresh_if_needed(self) -> None:
         if self._refresh_needed:
@@ -108,6 +130,8 @@ class DeckBrowser:
         else:
             cmd = url
             arg = ""
+        if self._ante_link(cmd, arg):
+            return False
         if cmd == "open":
             self.set_current_deck(DeckId(int(arg)))
         elif cmd == "opts":
@@ -126,20 +150,336 @@ class DeckBrowser:
         elif cmd == "v2upgrade":
             self._confirm_upgrade()
         elif cmd == "v2upgradeinfo":
-            if self.mw.col.sched_ver() == 1:
-                openLink("https://faqs.ankiweb.net/the-anki-2.1-scheduler.html")
-            else:
-                openLink("https://faqs.ankiweb.net/the-2021-scheduler.html")
+            self._open_v2_upgrade_info()
         elif cmd == "select":
             set_current_deck(
                 parent=self.mw, deck_id=DeckId(int(arg))
             ).run_in_background()
         return False
 
+    def _open_v2_upgrade_info(self) -> None:
+        if self.mw.col.sched_ver() == 1:
+            openLink("https://faqs.ankiweb.net/the-anki-2.1-scheduler.html")
+        else:
+            openLink("https://faqs.ankiweb.net/the-2021-scheduler.html")
+
+    def _ante_link(self, cmd: str, arg: str) -> bool:
+        """Dispatch the Ante single-page-app commands. Returns True if the
+        command was a Ante one (and handled)."""
+        handlers = {
+            "study": lambda: self._ante_study(),
+            "ananswer": lambda: self._ante_answer(arg),
+            "anadd": lambda: self._ante_add(arg),
+            "anquiz": lambda: self._ante_quiz(arg),
+            "anopen": lambda: self._ante_open(arg),
+            "anprofile": lambda: self._ante_profile(arg),
+            "anforecast": lambda: self._ante_forecast(arg),
+            "anlogin": lambda: self._ante_login(arg),
+            "anaccount": lambda: self._ante_account(arg),
+            "andiag": lambda: self._ante_diag(arg),
+            "annotify": lambda: self._ante_notify(arg),
+            "angsecret": lambda: self._ante_gsecret(arg),
+            "andemo": lambda: self._ante_demo(arg),
+            "anfl": lambda: self._ante_fl(arg),
+            "anpalace": lambda: self._ante_palace(arg),
+            "anviva": lambda: self._ante_viva(arg),
+        }
+        fn = handlers.get(cmd)
+        if fn is None:
+            return False
+        fn()
+        return True
+
     def set_current_deck(self, deck_id: DeckId) -> None:
         set_current_deck(parent=self.mw, deck_id=deck_id).success(
             lambda _: self.mw.onOverview()
         ).run_in_background(initiator=self)
+
+    # Ante: study straight from the home screen
+    ##########################################################################
+
+    def _ante_pick_deck(self) -> DeckId:
+        """Study the deck that actually holds cards (the largest one)."""
+        db = self.mw.col.db
+        assert db is not None
+        row = db.first(
+            "select did, count(*) from cards group by did order by count(*) desc limit 1"
+        )
+        if row and row[0]:
+            return DeckId(int(row[0]))
+        return DeckId(1)
+
+    def _ante_apply_order(self, did: DeckId) -> None:
+        """Use the points-at-stake review order for the studied deck so the
+        engine change is actually exercised during study."""
+        try:
+            conf = self.mw.col.decks.config_dict_for_deck_id(did)
+            # REVIEW_CARD_ORDER_POINTS_AT_STAKE = 13
+            if conf.get("reviewOrder") != 13:
+                conf["reviewOrder"] = 13
+                self.mw.col.decks.update_config(conf)
+        except Exception:
+            pass
+
+    def _ante_study(self) -> None:
+        # Ensure the value-ordered queue is applied, then study inside the SPA
+        # (the custom Study view drives the engine via endpoints; no Anki
+        # reviewer state).
+        did = self._ante_pick_deck()
+        self.mw.col.decks.select(did)
+        self._ante_apply_order(did)
+
+    def _ante_answer(self, arg: str) -> None:
+        # arg = "<ease>[:<confidence>]" (confidence = pre-flip self-rating)
+        from aqt.ante import answer_current_card
+
+        try:
+            parts = arg.split(":")
+            conf = float(parts[1]) if len(parts) > 1 and parts[1] else None
+            answer_current_card(self.mw.col, int(parts[0]), conf)
+        except Exception:
+            pass
+
+    def _ante_quiz(self, arg: str) -> None:
+        # arg = "<item_id>:<chosen_index>[:<confidence>[:<elapsed_ms>]]"
+        from aqt.ante import record_quiz_answer
+
+        try:
+            parts = arg.split(":")
+            confidence = float(parts[2]) if len(parts) >= 3 and parts[2] else None
+            elapsed = int(parts[3]) if len(parts) >= 4 and parts[3] else None
+            record_quiz_answer(
+                self.mw.col, parts[0], int(parts[1]), confidence, elapsed
+            )
+        except Exception:
+            pass
+
+    def _ante_open(self, arg: str) -> None:
+        # arg = "<item_id>:<confidence>:<elapsed_ms>:<base64(answer)>"
+        import base64
+
+        from aqt.ante import grade_and_record_open
+
+        try:
+            iid, conf_s, ms_s, ans_b64 = arg.split(":", 3)
+            confidence = float(conf_s) if conf_s else None
+            elapsed = int(ms_s) if ms_s else None
+            answer = base64.b64decode(ans_b64.encode("ascii")).decode("utf-8")
+            grade_and_record_open(self.mw.col, iid, answer, confidence, elapsed)
+        except Exception:
+            pass
+
+    def _ante_profile(self, arg: str) -> None:
+        # arg = base64(json(profile-updates)); saving re-applies FSRS recalibration
+        import base64
+        import json
+
+        from aqt.ante import set_profile
+        from aqt.utils import tooltip
+
+        try:
+            updates = json.loads(base64.b64decode(arg.encode("ascii")).decode("utf-8"))
+            set_profile(self.mw.col, updates)
+            if updates.get("onboarded"):
+                tooltip("Plan recalibrated to your exam date.", parent=self.mw)
+            self._ante_reschedule_reminders()
+        except Exception:
+            pass
+
+    def _ante_reschedule_reminders(self) -> None:
+        try:
+            from aqt.ante_reminders import reschedule
+
+            reschedule(self.mw)
+        except Exception:
+            pass
+
+    def _ante_diag(self, arg: str) -> None:
+        # arg = "done" or "skip" — close out the Baseline Diagnostic and
+        # recalibrate the plan against the measured starting point.
+        from aqt.ante import finish_diagnostic
+
+        try:
+            finish_diagnostic(self.mw.col, skipped=(arg == "skip"))
+        except Exception:
+            pass
+
+    def _ante_notify(self, arg: str) -> None:
+        # arg = "test" (next scheduled) or "fire:<kind>" (a specific type)
+        try:
+            if arg == "test":
+                from aqt.ante_reminders import fire_test
+
+                fire_test(self.mw)
+            elif arg.startswith("fire:"):
+                from aqt.ante_reminders import fire_kind
+
+                fire_kind(self.mw, arg.split(":", 1)[1])
+        except Exception:
+            pass
+
+    def _ante_demo(self, arg: str) -> None:
+        # arg = "on" | "off" | "day:<n>" | "hour:<n>"
+        from aqt.ante import set_demo_state
+
+        try:
+            if arg == "on":
+                set_demo_state(self.mw.col, {"enabled": True})
+            elif arg == "off":
+                set_demo_state(self.mw.col, {"enabled": False})
+            elif arg.startswith("day:"):
+                set_demo_state(self.mw.col, {"day": int(arg.split(":", 1)[1])})
+            elif arg.startswith("hour:"):
+                set_demo_state(self.mw.col, {"hour": int(arg.split(":", 1)[1])})
+        except Exception:
+            pass
+
+    def _ante_fl(self, arg: str) -> None:
+        # arg = "<test_no>:<base64(json {item_id: chosen_index})>"
+        import base64
+        import json
+
+        from aqt.ante import record_fl_result
+        from aqt.utils import tooltip
+
+        try:
+            test_no, b64 = arg.split(":", 1)
+            answers = json.loads(base64.b64decode(b64).decode("utf-8"))
+            score = record_fl_result(self.mw.col, int(test_no), answers)
+            tooltip(f"Full-length {score['test_no']} recorded \u2014 {score['total']}")
+        except Exception:
+            pass
+
+    def _ante_palace(self, arg: str) -> None:
+        # arg = "commission" (render new scenes for leeches) | "regen:<card_id>"
+        from aqt.ante_studio import commission_palace_async, regenerate_scene
+
+        try:
+            if arg == "commission":
+                commission_palace_async(self.mw, count=3)
+            elif arg.startswith("regen:"):
+                regenerate_scene(self.mw, int(arg.split(":", 1)[1]))
+        except Exception:
+            pass
+
+    def _ante_viva(self, arg: str) -> None:
+        # arg = "start:<b64topic>" | "answer:<b64answer>" | "close"
+        import base64
+
+        from aqt.ante_studio import (
+            answer_viva,
+            commission_verdict_async,
+            start_viva,
+        )
+
+        def dec(x: str) -> str:
+            return base64.b64decode(x.encode("ascii")).decode("utf-8") if x else ""
+
+        try:
+            from aqt.ante import get_demo_state
+
+            demo = get_demo_state(self.mw.col).get("enabled")
+            act, _, val = arg.partition(":")
+            if act == "start":
+                start_viva(self.mw.col, dec(val))
+            elif act == "answer":
+                session = answer_viva(self.mw.col, dec(val))
+                # demo never commissions real media (it can't write to studio)
+                if not demo and session and session.get("status") in (
+                    "passed",
+                    "failed",
+                ):
+                    commission_verdict_async(self.mw, session)
+            elif act == "close":
+                from aqt.ante_studio import _set_active_viva
+
+                _set_active_viva(self.mw.col, None)
+        except Exception:
+            pass
+
+    def _ante_gsecret(self, arg: str) -> None:
+        # arg = base64(client secret) — stored device-locally for the Google
+        # 'Desktop app' token exchange (which requires the client secret).
+        import base64
+
+        from aqt.ante import set_google_secret
+
+        try:
+            secret = (
+                base64.b64decode(arg.encode("ascii")).decode("utf-8") if arg else ""
+            )
+            set_google_secret(self.mw.col, secret)
+        except Exception:
+            pass
+
+    def _ante_login(self, arg: str) -> None:
+        # arg = "google[:<b64email>]" or "email:<b64email>[:<b64name>]"
+        import base64
+
+        from aqt.ante import sign_in_email
+
+        def dec(x: str) -> str:
+            return base64.b64decode(x.encode("ascii")).decode("utf-8") if x else ""
+
+        try:
+            kind, _, rest = arg.partition(":")
+            if kind == "google":
+                from aqt import ante_auth
+
+                ante_auth.start_google_login(self.mw, dec(rest))
+            elif kind == "email":
+                e, _, n = rest.partition(":")
+                sign_in_email(self.mw.col, dec(e), dec(n) or None)
+        except Exception:
+            pass
+
+    def _ante_account(self, arg: str) -> None:
+        # arg = "switch:<b64id>" or "signout"
+        import base64
+
+        from aqt.ante import sign_out, switch_account
+
+        try:
+            act, _, val = arg.partition(":")
+            if act == "switch" and val:
+                switch_account(
+                    self.mw.col, base64.b64decode(val.encode("ascii")).decode("utf-8")
+                )
+            elif act == "signout":
+                sign_out(self.mw.col)
+        except Exception:
+            pass
+
+    def _ante_forecast(self, arg: str) -> None:
+        # arg = "<exam_date YYYY-MM-DD or ''>:<target_score or ''>"
+        from aqt.ante import set_forecast_settings
+
+        try:
+            date_str, _, target_str = arg.partition(":")
+            exam_date = date_str.strip() or None
+            target = int(target_str) if target_str.strip() else None
+            set_forecast_settings(self.mw.col, exam_date, target)
+        except Exception:
+            pass
+
+    def _ante_add(self, arg: str) -> None:
+        import json
+        import urllib.parse
+
+        from aqt.ante import add_note_from_payload
+        from aqt.utils import tooltip
+
+        try:
+            payload = json.loads(urllib.parse.unquote(arg))
+            result = add_note_from_payload(self.mw.col, payload)
+            if result.get("demo"):
+                tooltip("Card added (demo mode \u2014 not saved to a real deck)")
+            elif result.get("ok"):
+                tooltip("Card added")
+            else:
+                tooltip(f"Add failed: {result.get('error')}")
+        except Exception as e:
+            tooltip(f"Add failed: {e}")
 
     # HTML generation
     ##########################################################################
@@ -374,8 +714,7 @@ class DeckBrowser:
     ######################################################################
 
     drawLinks = [
-        ["", "shared", tr.decks_get_shared()],
-        ["", "create", tr.decks_create_deck()],
+        ["", "study", "Take your seat"],
         ["Ctrl+Shift+I", "import", tr.decks_import_file()],
     ]
 

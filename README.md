@@ -1,32 +1,64 @@
-# Anki
+# Ante
 
-[![Build Status](https://github.com/ankitects/anki/actions/workflows/ci.yml/badge.svg)](https://github.com/ankitects/anki/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/badge/docs-dev--docs.ankiweb.net-blue)](https://dev-docs.ankiweb.net)
+**A members-only card den for the MCAT — an honest, mastery-gated study system, built as a fork of [Anki](https://apps.ankiweb.net).**
 
-This repo contains the source code for the computer version of
-[Anki](https://apps.ankiweb.net).
+You open Ante seated in the Emerald Room, a card den above Canal Street, where
+**Sahir** — a djinn who has dealt cards since Babylon — deals your due cards
+onto green felt. Your opponent is the House: the forgetting curve. On top of
+Anki's spacing engine (FSRS), Ante does three things Anki structurally cannot:
 
-## About
+1. **Gates progress on demonstrated topic mastery** — tables on the Circuit
+   are _won_ by application (quizzes + open-ended), not visited or self-rated.
+2. **Measures the memory→performance gap** — can you use a fact on a novel
+   MCAT-style question, not just recall the card?
+3. **Posts a calibrated readiness line that abstains** — "NO LINE" beats a
+   guess in a nice font.
 
-Anki is a spaced repetition program. Please see the [website](https://apps.ankiweb.net) to learn more.
+The consumer promise is **time back**: the same retention from roughly half
+the seat time, because the schedule — not extra hours — does the work.
 
-## Getting Started
+## What's in this fork
 
-### Contributing
+| Path                | What it is                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [`ante/`](ante/)    | The product: mastery engine, the den web UI (`web/den.html`), AI tutor/studio, seed data, tests, and docs      |
+| [`ios/`](ios/)      | SwiftUI companion app — Tonight / Circuit / Table / Ledger, with native morning & midnight game notifications  |
+| `rslib/`            | Engine changes: points-at-stake queue order + `GetTopicMastery` RPC (`rslib/src/scheduler/topics.rs`)          |
+| `qt/aqt/ante*.py`   | Desktop integration: serves the den, auth, reminders, and the media studio inside the Anki app                 |
+| everything else     | Upstream Anki (see below)                                                                                       |
 
-Want to contribute to Anki? Check out the [Contribution Guidelines](./docs/contributing.md).
+> This work lives on the **`speedrun`** branch; `main` tracks upstream Anki.
 
-For more information on building and developing, please see [Development](./docs/development.md).
+## Quick start
 
-#### Contributors
+Prereqs: `just`, a Rust toolchain, `n2` (`bash tools/install-n2`).
 
-The following people have contributed to Anki: [CONTRIBUTORS](./CONTRIBUTORS)
+```bash
+just run     # build + launch the desktop app
+             # the den: http://localhost:40000/_anki/ante
+```
 
-### Anki Betas
+Where to go next:
 
-If you'd like to try development builds of Anki but don't feel comfortable
-building the code, please see [Anki betas](https://betas.ankiweb.net/).
+- [`ante/README.md`](ante/README.md) — the full system: the Circuit, the Book,
+  the Back Room, the Studio, design principles, architecture, and every command.
+- [`ios/README.md`](ios/README.md) — generate and run the iOS app
+  (`xcodegen generate && open Ante.xcodeproj`).
+- [`ante/docs/PRD.md`](ante/docs/PRD.md) — product requirements;
+  [`ante/docs/learning-science.md`](ante/docs/learning-science.md) — the
+  evidence map behind each feature.
+
+AI features (card generation, the tutor, generated media) are optional and
+provider-isolated — the app fully works with no API keys set.
+
+## About Anki (upstream)
+
+This repo is a fork of [ankitects/anki](https://github.com/ankitects/anki),
+the computer version of Anki, a spaced repetition program by Ankitects Pty Ltd
+and contributors. For upstream docs see [Development](./docs/development.md)
+and the [Contribution Guidelines](./docs/contributing.md).
 
 ## License
 
-Anki's license: [LICENSE](./LICENSE)
+GNU AGPL-3.0-or-later, inheriting [Anki's license](./LICENSE). Some Anki
+components are BSD-3-Clause.

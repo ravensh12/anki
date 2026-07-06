@@ -25,6 +25,9 @@ final class AppModel: ObservableObject {
 
     // The live engine + den link (nil while the client serves sample data).
     @Published private(set) var engineStatus: EngineStatus?
+    /// True after the first engine status read finishes (so sample-data badge
+    /// does not flash before we know whether the Rust core started).
+    private var engineStatusResolved = false
     /// "Just show me the den" — waves the door away for this launch only.
     @Published private(set) var accountSkipped = false
     @Published private(set) var isSyncing = false
@@ -52,8 +55,11 @@ final class AppModel: ObservableObject {
         self.engine = engine
         self.notifications = notifications
         self.defaults = defaults
-        self.profile = Self.load(StudyProfile.self, key: profileKey, from: defaults, decoder: decoder)
+        var loaded = Self.load(StudyProfile.self, key: profileKey, from: defaults, decoder: decoder)
             ?? .default
+        // The door runs every launch — local sign-in is session-only.
+        loaded.account = nil
+        self.profile = loaded
         self.ritual = Self.load(RitualState.self, key: ritualKey, from: defaults, decoder: decoder)
             ?? .empty
         // Demo/e2e hook: a launch environment that names a den skips the
@@ -138,6 +144,7 @@ final class AppModel: ObservableObject {
         isLoading = true
         lastError = nil
         engineStatus = await engine.liveStatus()
+        engineStatusResolved = true
         await autoConnectIfLaunchedWithDen()
         do {
             self.scores = try await engine.fetchScores()
@@ -299,7 +306,9 @@ final class AppModel: ObservableObject {
 
     private func applyProfile(_ newProfile: StudyProfile) {
         profile = newProfile
-        persist(newProfile, key: profileKey)
+        var durable = newProfile
+        durable.account = nil
+        persist(durable, key: profileKey)
         Task { await rescheduleNotifications() }
     }
 

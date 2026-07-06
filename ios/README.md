@@ -49,9 +49,10 @@ device you'll be asked to select your team for automatic signing; the bundle id
 is `app.ante.ios`.
 
 - **Deployment target:** iOS 17.0.
-- **First launch:** the date-first onboarding runs; finish it and the four tabs
-  appear. Everything is driven by the bundled `MockEngine`, so it works fully
-  offline with no backend.
+- **First launch:** the date-first onboarding runs, then the door — a local
+  email + name sign-in. The account is session-only by design (never
+  persisted), so the door greets you again on **every** launch; "Just show me
+  the den" waves it away for the current run. After that the four tabs appear.
 - **Notifications:** onboarding requests permission if game calls are enabled;
   the schedule is armed immediately and previewed on the Ledger tab. To see one
   fire quickly, set your quiet hours to a narrow window and a study window to
@@ -98,6 +99,7 @@ real Rust core, so the UI never changes when the engine is swapped in.
 | `AppModel.swift`              | `ObservableObject` store: persists the profile, fetches from the engine, tracks the two games and the run, keeps calls in sync, and owns tab routing.                                                                                            |
 | `NotificationScheduler.swift` | Requests authorization and turns game calls into repeating calendar notifications; reschedules on change, cancels when off, and can read back what's armed.                                                                                      |
 | `OnboardingView.swift`        | The date-first, three-step flow plus the "Recalibrating…" interstitial that ends at the Emerald Room.                                                                                                                                            |
+| `LoginView.swift`             | The door: the local email + name sign-in shown after onboarding, mirroring the desktop's gate. Session-only — the account is never persisted, so sign-in runs on every launch.                                                                   |
 | `MainTabView.swift`           | The four surfaces and the shared den page scaffold (`AnScreen`).                                                                                                                                                                                 |
 | `TodayView.swift`             | Tonight: countdown, one CTA, the Book's line (or the abstention stamp), the Morning/Midnight Games, and the 30-night run tracker.                                                                                                                |
 | `AtlasView.swift`             | The Circuit: city-by-city table map with states, chip stakes, percentages, and confidence bands.                                                                                                                                                 |

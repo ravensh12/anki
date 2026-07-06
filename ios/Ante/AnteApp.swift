@@ -11,6 +11,7 @@ import SwiftUI
 @main
 struct AnteApp: App {
     @StateObject private var model = AppModel(engine: SyncedEngine())
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -18,6 +19,13 @@ struct AnteApp: App {
                 .environmentObject(model)
                 .tint(.anBrass)
                 .preferredColorScheme(.dark)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // Picking the phone up is the sync gesture: whatever the desktop
+            // banked lands on this seat the moment the app comes forward.
+            if phase == .active {
+                Task { await model.syncNow() }
+            }
         }
     }
 }
@@ -27,10 +35,12 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if model.profile.onboarded {
-                MainTabView()
-            } else {
+            if !model.profile.onboarded {
                 OnboardingView()
+            } else if model.needsAccount {
+                DenLoginView()
+            } else {
+                MainTabView()
             }
         }
         .task { await model.refresh() }

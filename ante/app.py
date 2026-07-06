@@ -20,6 +20,7 @@ from collections.abc import Mapping, Sequence
 from typing import Iterable
 
 from .analytics import timing_summary
+from .circuit import build_world
 from .comprehension import build_comprehension
 from .config import CONFIG, AnteConfig
 from .coverage import compute_coverage, topic_counts_from_mastery  # noqa: F401
@@ -45,11 +46,11 @@ from .metacognition import (
     overconfidence_penalty,
     self_trust,
 )
-from .circuit import build_world
 from .outline import load_outline
 from .performance_items import due_items
 from .profile import StudyProfile
 from .readiness import project_readiness, readiness_from_topics
+from .trackrecord import evaluate as evaluate_track_record
 from .recalibrate import recalibrate
 from .reminders import build_schedule, next_reminder, what_to_do_now
 from .rewards import (
@@ -62,7 +63,7 @@ from .rewards import (
 from .rhythm import peak_windows
 from .ritual import bookends, night_shift
 from .sessions import plan_micro_session
-from .studyplan import build_study_plan
+from .studyplan import build_study_plan, marked_nights
 
 # default daily plan: 15 min night + 30 morning + 30 day = 75 min.
 DEFAULT_SLOTS = [("morning", 30), ("during the day", 30), ("night", 15)]
@@ -246,6 +247,8 @@ def build_dashboard(  # noqa: PLR0913
     events_today: Sequence[Mapping] | None = None,
     studio_status: Mapping[str, object] | None = None,
     overnight: tuple[int, int] | None = None,
+    readiness_history: list[dict] | None = None,
+    fl_results: Mapping[str, object] | None = None,
     now: object | None = None,
     outline=None,
     cfg: AnteConfig | None = None,
@@ -372,6 +375,13 @@ def build_dashboard(  # noqa: PLR0913
             readiness["projected_total"] = None
             readiness["total_range"] = None
 
+    # How accurate the Book's PAST lines turned out to be, checked against real
+    # completed full-lengths (spec section 1 honesty rule). Abstains until at
+    # least one past line has an actual score to check it against.
+    readiness["track_record"] = evaluate_track_record(
+        list(readiness_history or []), dict(fl_results or {})
+    ).as_dict()
+
     # --- Predictive-coach layer (Trajectory / Calibration / Peak Hours / Diagnosis) ---
     gaps = _paraphrase_gaps(topics, topic_performance)
     rhythm = peak_windows(hour_outcomes or [])
@@ -442,6 +452,10 @@ def build_dashboard(  # noqa: PLR0913
         now=now_ts,
         cfg=cfg,
     )
+    # the next marked night (quiz checkpoint / full-length) becomes a dated
+    # reminder, so test nights announce themselves instead of hiding in the
+    # calendar. Soonest first; offset 0 means tonight.
+    upcoming_marked = marked_nights(recal.days_remaining, today=now_date)
     schedule = build_schedule(
         prof,
         recal.slot_plan,
@@ -449,9 +463,11 @@ def build_dashboard(  # noqa: PLR0913
         best_next_topic=next_topic,
         days_remaining=recal.days_remaining,
         sec_per_card=sec_per_card,
+        marked_night=upcoming_marked[0] if upcoming_marked else None,
         cfg=cfg,
     )
-    nxt = next_reminder(schedule, clock_hour)
+    today_iso = (now_date or _dt.date.today()).isoformat()
+    nxt = next_reminder(schedule, clock_hour, today=today_iso)
     reminders = {
         "enabled": prof.reminders_enabled,
         "schedule": [r.as_dict() for r in schedule],
@@ -529,6 +545,7 @@ def build_dashboard(  # noqa: PLR0913
         ritual=ritual,
         readiness=readiness,
         due_count=due_count,
+        new_count=new_count,
         due_by_topic=due_by_topic,
         best_next_topic=next_topic,
         diagnostic_taken=bool(diagnostic_payload.get("taken")),
@@ -570,7 +587,9 @@ def build_dashboard(  # noqa: PLR0913
         "viva": {"suggested": viva_suggested},
         "dreamseed": dreamseed,
         "documentary": documentary,
-        "studio": dict(studio_status) if studio_status else {"providers": {}, "assets": {}},
+        "studio": dict(studio_status)
+        if studio_status
+        else {"providers": {}, "assets": {}},
         "scores": {
             "memory": memory,
             "performance": performance,

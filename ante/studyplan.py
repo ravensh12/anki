@@ -33,7 +33,10 @@ from .mastery import MasteryStatus, TopicMastery
 from .outline import Outline, load_outline
 
 STUDY_DAYS_PER_WEEK = 6  # one rest day a week (matches recalibrate)
-REST_WEEKDAY = 6  # every 7th day in the plan is a rest day
+# The standing rest night is a real weekday (Python weekday: Saturday), so it
+# lands on a fixed date that actually arrives. Keying it to "offset % 7" kept
+# the rest night six-days-from-now on every rebuild — a break that never came.
+REST_WEEKDAY = 5
 # realistic per-item times for the DISPLAYED daily dose (thinking + flip/answer
 # + reading the explanation), so a 2-hour day prescribes counts a student can
 # actually do: ~100 cards and ~25 questions, not 85 questions.
@@ -74,6 +77,7 @@ def _phase_id_for_days_out(days_out: int) -> str:
     if days_out <= BRIDGE_WITHIN_DAYS:
         return "bridge"
     return "build"
+
 
 _SECTION_ABBR = {
     "bio_biochem": "B/B",
@@ -212,30 +216,30 @@ def build_study_plan(
         }
     days = max(1, days_remaining)
 
-    # rotate the ranked list one step per plan-day so the daily focus
-    # interleaves weak spots (interleaving > blocking) instead of pinning the
-    # same topic every day until it's mastered. Keyed off (date - days-left) so
-    # it advances as real days pass AND as demo time-travel moves the runway.
-    if ranked:
-        rot = (today.toordinal() - days) % len(ranked)
-        ranked = ranked[rot:] + ranked[:rot]
-
-    # --- assign ranked topics evenly across the study days of the runway ---
     study_days_total = max(1, round(days * STUDY_DAYS_PER_WEEK / 7))
     n_topics = len(ranked)
 
-    def topic_for_study_index(si: int) -> TopicMastery | None:
+    # Each study day cycles through the ranked weak spots, keyed to the day's
+    # absolute DATE. Two properties matter (the old spread-in-blocks assignment
+    # had neither): consecutive study days CHANGE topic — interleaving beats
+    # blocking, and with two topics left a block plan pinned one of them for
+    # five straight weeks — and a calendar day keeps its topic across daily
+    # rebuilds instead of the whole plan drifting forward each morning.
+    # Counting study days (rest nights excluded) keeps the rotation strict
+    # across the weekend gap.
+    def topic_for_date(d: date) -> TopicMastery | None:
         if n_topics == 0:
             return None
-        idx = min(n_topics - 1, si * n_topics // study_days_total)
-        return ranked[idx]
+        o = d.toordinal()
+        rest_nights = (o + 6 - REST_WEEKDAY) // 7  # rest days up to and incl. d
+        return ranked[(o - rest_nights) % n_topics]
 
-    def is_rest(offset: int) -> bool:
-        return offset % 7 == REST_WEEKDAY
+    def is_rest(d: date) -> bool:
+        return d.weekday() == REST_WEEKDAY
 
     # --- today's prescription ---
     phase_id, phase_name, mix, phase_blurb = _phase_for(0, days)
-    focus = ranked[0] if ranked else None
+    focus = topic_for_date(today)
     flash, quiz, opn = _counts(daily_minutes, mix, sec_per_card)
     if focus is not None:
         headline = f"Today's focus: {focus.name}"
@@ -273,10 +277,9 @@ def build_study_plan(
     # --- the calendar window (today .. today+calendar_days) ---
     window = min(calendar_days, days)
     calendar: list[DayPlan] = []
-    study_index = 0
     for offset in range(0, window + 1):
         d = today + timedelta(days=offset)
-        rest = is_rest(offset)
+        rest = is_rest(d)
         exam = offset == days
         p_id, _p_name, p_mix, _b = _phase_for(offset, days)
         if exam:
@@ -321,8 +324,7 @@ def build_study_plan(
                 )
             )
             continue
-        topic = topic_for_study_index(study_index)
-        study_index += 1
+        topic = topic_for_date(d)
         # the plan breathes: light/normal/heavy days (anchored to the real date,
         # so a given calendar day keeps its load) — today shows the full dose
         load = 1.0 if offset == 0 else DAY_LOAD[(d.toordinal()) % len(DAY_LOAD)]
@@ -352,7 +354,10 @@ def build_study_plan(
     # build: today .. (D-45), bridge: (D-45) .. (D-14), sharpen: final 14 days
     bounds = {
         "build": (0, max(0, days - BRIDGE_WITHIN_DAYS)),
-        "bridge": (max(0, days - BRIDGE_WITHIN_DAYS), max(0, days - SHARPEN_WITHIN_DAYS)),
+        "bridge": (
+            max(0, days - BRIDGE_WITHIN_DAYS),
+            max(0, days - SHARPEN_WITHIN_DAYS),
+        ),
         "sharpen": (max(0, days - SHARPEN_WITHIN_DAYS), days),
     }
     timeline = []
@@ -408,7 +413,8 @@ def _day_slots(
             continue
         window = slot.get("window", "")
         meta = WINDOW_META.get(
-            window, {"label": window.title() or "Session", "at": "", "icon": "mid", "cue": ""}
+            window,
+            {"label": window.title() or "Session", "at": "", "icon": "mid", "cue": ""},
         )
         f, q, o = _counts(minutes, mix, sec_per_card)
         out.append(
@@ -458,6 +464,58 @@ def _study_index_to_offset(si: int) -> int:
         offset += 1
 
 
+def checkpoint_offsets(days_remaining: int) -> list[int]:
+    """Calendar offsets (days from today) of the quiz re-check checkpoints,
+    every ~14 days ANCHORED TO THE EXAM (like the full-lengths). Anchoring to
+    today would re-derive "14 days from now" on every rebuild, so the
+    checkpoint drifts forward daily and never comes due; exam-anchored offsets
+    shrink as real days pass, so each checkpoint lands on a fixed date that
+    actually arrives (offset 0 = tonight)."""
+    days = max(1, int(days_remaining))
+    return sorted(off for off in range(days - 14, -1, -14))
+
+
+def marked_nights(days_remaining: int | None, today: date | None = None) -> list[dict]:
+    """The dated test milestones — quiz checkpoints plus the two full-lengths —
+    sorted soonest-first. Pure date math off the exam runway (no mastery data),
+    so reminders and the den can ask "what test lands when?" without building
+    the whole plan. Empty without an exam date."""
+    if days_remaining is None:
+        return []
+    days = max(1, int(days_remaining))
+    today = today or date.today()
+    out: list[dict] = []
+    for off in checkpoint_offsets(days):
+        out.append(
+            {
+                "offset": off,
+                "date": (today + timedelta(days=off)).isoformat(),
+                "kind": "practice_test",
+                "label": "Practice checkpoint",
+                "detail": "Re-take the section quizzes to re-measure your baseline.",
+            }
+        )
+    for n, fl_off in fl_offsets(days).items():
+        out.append(
+            {
+                "offset": fl_off,
+                "date": (today + timedelta(days=fl_off)).isoformat(),
+                "kind": "full_length",
+                "test_no": n,
+                "label": f"Full-length practice test {n}",
+                "detail": (
+                    "Every section, timed, in one sitting \u2014 sets your honest baseline."
+                    if n == 1
+                    else "The dress rehearsal \u2014 timed, scored, then taper into the exam."
+                ),
+            }
+        )
+    # soonest first; when a checkpoint and a full-length share a night, the
+    # full-length is the headline event
+    out.sort(key=lambda m: (m["offset"], 0 if m["kind"] == "full_length" else 1))
+    return out
+
+
 def _milestones(
     ranked: list[TopicMastery],
     study_days_total: int,
@@ -490,38 +548,9 @@ def _milestones(
                 }
             )
 
-    # practice-test checkpoints every ~14 days (quiz re-checks) ...
-    off = 14
-    while off < days - 3:
-        out.append(
-            {
-                "offset": off,
-                "date": (today + timedelta(days=off)).isoformat(),
-                "kind": "practice_test",
-                "label": "Practice checkpoint",
-                "detail": "Re-take the section quizzes to re-measure your baseline.",
-            }
-        )
-        off += 14
-    # ... plus exactly TWO full-length practice tests, anchored to the exam:
-    # one ~a month out (measures the Build), one ~10 days out (dress rehearsal)
-    for n, fl_off in fl_offsets(days).items():
-        if fl_off < 0:
-            continue  # already behind us on a short runway
-        out.append(
-            {
-                "offset": fl_off,
-                "date": (today + timedelta(days=fl_off)).isoformat(),
-                "kind": "full_length",
-                "test_no": n,
-                "label": f"Full-length practice test {n}",
-                "detail": (
-                    "Every section, timed, in one sitting \u2014 sets your honest baseline."
-                    if n == 1
-                    else "The dress rehearsal \u2014 timed, scored, then taper into the exam."
-                ),
-            }
-        )
+    # the marked nights: quiz checkpoints every ~14 days + the two full-lengths,
+    # all exam-anchored so each lands on a fixed date that actually arrives
+    out.extend(marked_nights(days, today))
 
     out.append(
         {

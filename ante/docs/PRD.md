@@ -404,7 +404,7 @@ provider-isolated **generative-media Studio** (Higgsfield + ElevenLabs, offline
 engraver fallback) manufactures bespoke study media from the student's own data.
 Every feature is opt-in, budget-capped, killable, and still scores with AI OFF.
 Each traces to a design principle and ships with pure-logic tests
-(`ante/tests/test_studio|palace|viva|mnemopolis|reels.py`).
+(`ante/tests/test_studio|palace|viva|circuit|reels.py`).
 
 ### 16.1 The Studio (provider isolation for media; Principle 5 — AI-optional)
 
@@ -440,9 +440,10 @@ Each traces to a design principle and ships with pure-logic tests
 
 ### 16.4 Mnemopolis (Principles 2, 3, 4 — the world replaces the dashboard)
 
-- **FR-W5 — The city IS the app** (`ante/mnemopolis.py`, `web/atlas.html`):
-  four districts (sections), one building per topic; state = mastery (scaffold /
-  raised / cracked / lit), **fog = FSRS decay**, **unmapped = no evidence**
+- **FR-W5 — The city IS the app** (`ante/circuit.py`, `ante/web/den.html` —
+  the world later renamed from Mnemopolis to the Circuit): four cities
+  (sections), one table per topic; state = mastery (roped / open / low table /
+  won), **dust = FSRS decay**, **unlisted = no evidence**
   (abstention as geography). Civic places carry the old dashboard's functions:
   Examination Hall (Viva), Observatory (readiness; **fogged shut** while it
   abstains), Archive (Palace), Cinema (film / Documentary), Meridian (ritual +

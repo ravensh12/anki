@@ -203,6 +203,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "anki_ios_ffi"
+version = "0.0.0"
+dependencies = [
+ "anki",
+ "anki_proto",
+ "prost",
+ "tempfile",
+]
+
+[[package]]
 name = "anki_process"
 version = "0.0.0"
 dependencies = [

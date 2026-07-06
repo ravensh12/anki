@@ -28,6 +28,12 @@ struct PlanView: View {
     @State private var seeded = false
     @State private var pending: [PendingReminder] = []
 
+    // The Wire (den link) form. localhost reaches the Mac from the simulator;
+    // a physical phone types the Mac's LAN address instead.
+    @State private var wireEndpoint = "http://localhost:27701/"
+    @State private var wireUser = "ante"
+    @State private var wirePass = "ante123"
+
     var body: some View {
         let plan = model.plan
         return AnScreen(issue: "The Ledger · set to your exam") {
@@ -51,6 +57,10 @@ struct PlanView: View {
             }
             SectionHeader(number: "♦", title: "Exam & levers", meta: "recalibrate")
             editor
+            SectionHeader(number: "♠", title: "Your seat", meta: "account")
+            seat
+            SectionHeader(number: "♠", title: "The wire", meta: wireMeta)
+            wire
         }
         .task {
             seed()
@@ -201,6 +211,146 @@ struct PlanView: View {
             get: { Double(targetScore) },
             set: { targetScore = Int($0.rounded()) }
         )
+    }
+
+    // MARK: Your seat (the local account — the door's identity)
+
+    /// The signed-in seat + sign-out, mirroring the desktop's account row.
+    /// Signing out returns to the door (the same email/name gate).
+    @ViewBuilder
+    private var seat: some View {
+        VStack(alignment: .leading, spacing: AnSpace.md) {
+            if let account = model.profile.account {
+                VStack(alignment: .leading, spacing: AnSpace.sm) {
+                    Text(account.displayName)
+                        .font(.system(size: 15, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.anInk)
+                    if !account.email.isEmpty {
+                        Text(account.email).anMicroLabel(color: .anFaint, size: 9.5)
+                    }
+                }
+                wireButton("Sign out", prominent: false) {
+                    model.signOutAccount()
+                }
+            } else {
+                Text("Playing without a seat. Sign in to name this seat.")
+                    .anNote(color: .anMuted, size: 12)
+                wireButton("Go to the door", prominent: true) {
+                    model.signOutAccount()
+                }
+            }
+        }
+        .anPanel(fill: .anPanel, stroke: .anRuleStrong, padding: 18)
+    }
+
+    // MARK: The Wire (one engine, two seats)
+
+    private var wireMeta: String {
+        guard let status = model.engineStatus else { return "sample data" }
+        return status.connected ? "wired" : "engine live · unlinked"
+    }
+
+    /// The den link: the same modified Rust engine runs on this phone and on
+    /// the desktop; the wire is the self-hosted sync server between them.
+    @ViewBuilder
+    private var wire: some View {
+        if let status = model.engineStatus {
+            VStack(alignment: .leading, spacing: AnSpace.md) {
+                if status.connected {
+                    VStack(alignment: .leading, spacing: AnSpace.sm) {
+                        Text("Wired to \(status.endpoint ?? "")")
+                            .font(.system(size: 15, weight: .semibold, design: .serif))
+                            .foregroundStyle(Color.anInk)
+                        Text("seat: \(status.username ?? "") · engine \(String(status.buildHash.prefix(8)))")
+                            .anMicroLabel(color: .anFaint, size: 9.5)
+                        if let line = model.syncLine {
+                            Text(line).anNote(color: .anMuted, size: 12)
+                        }
+                    }
+                    HStack(spacing: AnSpace.sm) {
+                        wireButton(model.isSyncing ? "Syncing…" : "Sync now", prominent: true) {
+                            Task { await model.syncNow() }
+                        }
+                        wireButton("Leave the den", prominent: false) {
+                            Task { await model.disconnectDen() }
+                        }
+                    }
+                } else {
+                    Text("This seat runs the same modified Rust engine as the desktop (build \(String(status.buildHash.prefix(8)))). Wire it to your den's sync server and the two play one collection.")
+                        .anNote(color: .anMuted, size: 12)
+                    VStack(spacing: AnSpace.sm) {
+                        wireField("Sync server", text: $wireEndpoint, keyboard: .URL)
+                        wireField("Username", text: $wireUser)
+                        wireField("Password", text: $wirePass, secure: true)
+                    }
+                    if let error = model.lastError {
+                        Text(error).anNote(color: .anSignal, size: 11.5)
+                    }
+                    wireButton(model.isSyncing ? "Linking…" : "Wire this seat", prominent: true) {
+                        Task {
+                            await model.connectDen(
+                                endpoint: wireEndpoint.trimmingCharacters(in: .whitespaces),
+                                username: wireUser.trimmingCharacters(in: .whitespaces),
+                                password: wirePass
+                            )
+                        }
+                    }
+                }
+            }
+            .anPanel(fill: .anPanel, stroke: .anRuleStrong, padding: 18)
+        } else {
+            Text("This build is serving sample data — the shared engine isn't running behind it.")
+                .anNote(color: .anMuted)
+                .anPanel(fill: .anPanel2, stroke: .anRule)
+        }
+    }
+
+    private func wireField(
+        _ label: String,
+        text: Binding<String>,
+        keyboard: UIKeyboardType = .default,
+        secure: Bool = false
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(label).anMicroLabel(size: 9.5)
+            Group {
+                if secure {
+                    SecureField("", text: text)
+                } else {
+                    TextField("", text: text)
+                        .keyboardType(keyboard)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+            }
+            .font(.system(size: 14, design: .monospaced))
+            .foregroundStyle(Color.anInk)
+            .padding(10)
+            .background(Color.anPanel2)
+            .overlay(
+                RoundedRectangle(cornerRadius: AnSpace.radius)
+                    .strokeBorder(Color.anRule, lineWidth: 1)
+            )
+        }
+    }
+
+    private func wireButton(_ title: String, prominent: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                .tracking(0.8)
+                .textCase(.uppercase)
+                .foregroundStyle(prominent ? Color.anCardInk : Color.anMuted)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(prominent ? Color.anBrass : Color.anPanel2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AnSpace.radius)
+                        .strokeBorder(prominent ? Color.clear : Color.anRule, lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isSyncing)
     }
 
     // MARK: Logic

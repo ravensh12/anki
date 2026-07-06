@@ -159,3 +159,41 @@ def test_next_reminder_wraps_to_tomorrow():
     sched = build_schedule(prof, plan.slot_plan, due_count=40)
     # after the last reminder, the next one wraps to the first
     assert next_reminder(sched, 23) is sched[0]
+
+
+def test_marked_night_becomes_a_dated_early_evening_reminder():
+    prof = StudyProfile(
+        exam_date=_exam_in(30), daily_minutes=75, reminders_enabled=True
+    )
+    plan = recalibrate(prof, due_count=40, remaining_minutes=600, topics_remaining=8)
+    night = {"kind": "practice_test", "offset": 4, "date": "2026-08-01"}
+    sched = build_schedule(prof, plan.slot_plan, due_count=40, marked_night=night)
+    marked = [r for r in sched if r.kind == "checkpoint"]
+    assert len(marked) == 1
+    r = marked[0]
+    assert (r.hour, r.minute) == (17, 0)
+    assert r.date == "2026-08-01"
+    assert "checkpoint" in r.title.lower()
+    assert r.as_dict()["date"] == "2026-08-01"
+    # daily reminders carry no date
+    assert all(x.date is None for x in sched if x.kind != "checkpoint")
+
+    # next_reminder never offers a marked night that isn't tonight...
+    nxt = next_reminder(sched, 16, 0, today="2026-07-28")
+    assert nxt is not None and nxt.kind != "checkpoint"
+    # ...but on its night it is the 17:00 cue
+    tonight = next_reminder(sched, 16, 0, today="2026-08-01")
+    assert tonight is not None and tonight.kind == "checkpoint"
+
+
+def test_full_length_marked_night_gets_its_own_copy():
+    prof = StudyProfile(exam_date=_exam_in(30), reminders_enabled=True)
+    plan = recalibrate(prof, due_count=0)
+    sched = build_schedule(
+        prof,
+        plan.slot_plan,
+        marked_night={"kind": "full_length", "test_no": 2, "date": "2026-08-04"},
+    )
+    r = next(x for x in sched if x.kind == "checkpoint")
+    assert "full-length 2" in r.title.lower()
+    assert "dress rehearsal" in r.body.lower()

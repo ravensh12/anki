@@ -39,6 +39,7 @@ from typing import Any
 
 from .mastery import MasteryStatus, TopicMastery
 from .outline import Outline, load_outline
+from .ritual import FIRST_LIGHT
 
 WORLD_NAME = "The Circuit"
 
@@ -83,10 +84,19 @@ TABLE_UNLISTED = "unlisted"
 LEGEND = [
     {"state": TABLE_WON, "means": "won — proven by application; the plaque is yours"},
     {"state": TABLE_OPEN, "means": "open — you have a seat; not yet proven"},
-    {"state": TABLE_LOW, "means": "the low table — application dipped; win your way back"},
+    {
+        "state": TABLE_LOW,
+        "means": "the low table — application dipped; win your way back",
+    },
     {"state": TABLE_ROPED, "means": "roped off — beat its prerequisite tables first"},
-    {"state": TABLE_UNLISTED, "means": "unlisted — no evidence; the Circuit won't pretend"},
-    {"state": "dust", "means": "dust settles as recall fades — play the table to clear it"},
+    {
+        "state": TABLE_UNLISTED,
+        "means": "unlisted — no evidence; the Circuit won't pretend",
+    },
+    {
+        "state": "dust",
+        "means": "dust settles as recall fades — play the table to clear it",
+    },
 ]
 
 
@@ -138,6 +148,7 @@ def build_world(  # noqa: PLR0913
     ritual: Mapping | None = None,
     readiness: Mapping | None = None,
     due_count: int = 0,
+    new_count: int = 0,
     due_by_topic: Mapping[str, int] | None = None,
     best_next_topic: str | None = None,
     diagnostic_taken: bool = True,
@@ -158,9 +169,7 @@ def build_world(  # noqa: PLR0913
     viva_suggested = viva_suggested or []
     readiness = dict(readiness or {})
 
-    max_weight = max(
-        (m.exam_weight for m in mastery.values()), default=1.0
-    ) or 1.0
+    max_weight = max((m.exam_weight for m in mastery.values()), default=1.0) or 1.0
 
     cities = []
     counts = {
@@ -168,9 +177,7 @@ def build_world(  # noqa: PLR0913
     }
     table_city: dict[str, str] = {}
     order = {sid: i for i, sid in enumerate(CITY_ORDER)}
-    sections = sorted(
-        outline.sections, key=lambda s: order.get(s.id, len(order) + 1)
-    )
+    sections = sorted(outline.sections, key=lambda s: order.get(s.id, len(order) + 1))
     for i, section in enumerate(sections):
         city, room, flavor, asset = CITY_FLAVOR.get(
             section.id, (section.name, f"The {section.code} Room", section.name, "")
@@ -226,6 +233,7 @@ def build_world(  # noqa: PLR0913
     seat = _seat(
         ritual or {},
         due_count=due_count,
+        new_count=new_count,
         best_next_topic=best_next_topic,
         diagnostic_taken=diagnostic_taken,
         viva_suggested=viva_suggested,
@@ -252,6 +260,7 @@ def _seat(
     ritual: Mapping,
     *,
     due_count: int,
+    new_count: int = 0,
     best_next_topic: str | None,
     diagnostic_taken: bool,
     viva_suggested: list[dict],
@@ -263,9 +272,13 @@ def _seat(
 ) -> dict:
     """Exactly one pulled-out chair. Priorities, in order of leverage:
 
-    buy-in -> keep the current bookend (a session at the biggest-stakes
-    table) -> the premiere -> heads-up with Sahir -> clear the remaining
-    due stack -> the last hand replayed -> check the Book.
+    buy-in -> the day's due bookend game (morning/midnight) -> the premiere ->
+    heads-up with Sahir -> clear the remaining due stack -> the last hand
+    replayed -> check the Book.
+
+    The daily games come first: heads-up with Sahir (and the reel/Book) never
+    jump the queue ahead of a morning or midnight game that is still owed for
+    today. Sahir only takes the seat once the current game is kept.
     """
 
     def table_of(tag: str | None) -> tuple[str, str, str] | None:
@@ -281,17 +294,34 @@ def _seat(
             "reason": "every honest game starts from a measured stack",
         }
 
+    # Is a bookend game still owed for today? ``next`` is the ritual's next
+    # bookend; the one case it points at a game that CAN'T still be played today
+    # is tomorrow's First Light after tonight's game is already kept, so exclude
+    # that. A game is only "due" when there is actually something to play.
+    night_done = bool((ritual.get("night") or {}).get("done"))
     next_bookend = ritual.get("next")
+    playable = int(due_count) + int(new_count)
+    bookend_pending = bool(next_bookend) and not (
+        next_bookend == FIRST_LIGHT and night_done
+    )
+    bookend_due = bookend_pending and playable > 0
+
     target = table_of(best_next_topic)
-    if next_bookend and due_count > 0 and target:
+    if bookend_due and target:
         tag, name, city = target
-        game = "morning game" if next_bookend == "first_light" else "midnight game"
+        game = "morning game" if next_bookend == FIRST_LIGHT else "midnight game"
+        if due_count > 0:
+            detail = f"{due_count} due on the felt"
+        elif new_count > 0:
+            detail = "fresh cards on the felt"
+        else:
+            detail = "take your seat"
         return {
             "kind": "session",
             "table": tag,
             "city": city,
-            "label": f"The {game} — {due_count} cards on the felt",
-            "reason": f"highest stakes right now: {name}",
+            "label": f"The {game} — {detail}",
+            "reason": f"finish today's game first — highest stakes: {name}",
         }
 
     if documentary_ready:
@@ -301,7 +331,9 @@ def _seat(
             "reason": "the whole climb, cut together — watch it before you sleep",
         }
 
-    if viva_suggested:
+    # Heads-up with Sahir only once the day's owed game is kept — a due morning
+    # or midnight game always takes precedence over the oral defense.
+    if viva_suggested and not bookend_due:
         top = viva_suggested[0]
         return {
             "kind": "headsup",

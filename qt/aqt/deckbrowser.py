@@ -86,7 +86,15 @@ class DeckBrowser:
         self._refresh_needed = False
 
     def _render_ante(self) -> None:
-        from aqt.ante import dashboard_body
+        from aqt.ante import dashboard_body, ensure_seed_deck
+
+        # Premade content is always ready: seed the MCAT deck on first run so
+        # the den is never empty and the student never has to import anything.
+        # Idempotent + main-thread (this render runs on the GUI thread).
+        try:
+            ensure_seed_deck(self.mw.col)
+        except Exception:
+            pass
 
         # Recreate the app: hide Anki's top/bottom toolbars so the Ante
         # single-page app fills the whole window (its own nav replaces them).
@@ -130,8 +138,11 @@ class DeckBrowser:
         else:
             cmd = url
             arg = ""
-        if self._ante_link(cmd, arg):
-            return False
+        ante_result = self._ante_link(cmd, arg)
+        if ante_result is not None:
+            # returned to the page's pycmd callback as a JSON ack, so the SPA
+            # can await the write instead of sleeping and hoping
+            return ante_result
         if cmd == "open":
             self.set_current_deck(DeckId(int(arg)))
         elif cmd == "opts":
@@ -163,9 +174,10 @@ class DeckBrowser:
         else:
             openLink("https://faqs.ankiweb.net/the-2021-scheduler.html")
 
-    def _ante_link(self, cmd: str, arg: str) -> bool:
-        """Dispatch the Ante single-page-app commands. Returns True if the
-        command was a Ante one (and handled)."""
+    def _ante_link(self, cmd: str, arg: str) -> dict | None:
+        """Dispatch the Ante single-page-app commands. Returns a small JSON-
+        serializable ack if the command was an Ante one (and handled), so the
+        page can await the write completing; None otherwise."""
         handlers = {
             "study": lambda: self._ante_study(),
             "ananswer": lambda: self._ante_answer(arg),
@@ -181,14 +193,17 @@ class DeckBrowser:
             "angsecret": lambda: self._ante_gsecret(arg),
             "andemo": lambda: self._ante_demo(arg),
             "anfl": lambda: self._ante_fl(arg),
+            "angame": lambda: self._ante_game(arg),
             "anpalace": lambda: self._ante_palace(arg),
             "anviva": lambda: self._ante_viva(arg),
+            "anmap": lambda: self._ante_map(),
         }
         fn = handlers.get(cmd)
         if fn is None:
-            return False
-        fn()
-        return True
+            return None
+        result = fn()
+        # let handlers return a richer ack (e.g. anmap's counts); default ok
+        return result if isinstance(result, dict) else {"ok": True}
 
     def set_current_deck(self, deck_id: DeckId) -> None:
         set_current_deck(parent=self.mw, deck_id=deck_id).success(
@@ -230,13 +245,15 @@ class DeckBrowser:
         self._ante_apply_order(did)
 
     def _ante_answer(self, arg: str) -> None:
-        # arg = "<ease>[:<confidence>]" (confidence = pre-flip self-rating)
+        # arg = "<ease>[:<confidence>[:<elapsed_ms>]]" (confidence = pre-flip
+        # self-rating; elapsed_ms = real think-time measured in the web view)
         from aqt.ante import answer_current_card
 
         try:
             parts = arg.split(":")
             conf = float(parts[1]) if len(parts) > 1 and parts[1] else None
-            answer_current_card(self.mw.col, int(parts[0]), conf)
+            elapsed = int(parts[2]) if len(parts) > 2 and parts[2] else None
+            answer_current_card(self.mw.col, int(parts[0]), conf, elapsed)
         except Exception:
             pass
 
@@ -350,6 +367,28 @@ class DeckBrowser:
         except Exception:
             pass
 
+    def _ante_game(self, arg: str) -> None:
+        # arg = "save:<game_id>:<base64(json state)>" | "clear:<game_id>" —
+        # in-progress game snapshots, so leaving a game never restarts it
+        import base64
+        import json
+
+        from aqt.ante import clear_game_state, save_game_state
+
+        try:
+            act, _, rest = arg.partition(":")
+            if act == "save":
+                gid, _, b64 = rest.partition(":")
+                state = json.loads(
+                    base64.b64decode(b64.encode("ascii")).decode("utf-8")
+                )
+                if gid and isinstance(state, dict):
+                    save_game_state(self.mw.col, gid, state)
+            elif act == "clear" and rest:
+                clear_game_state(self.mw.col, rest)
+        except Exception:
+            pass
+
     def _ante_palace(self, arg: str) -> None:
         # arg = "commission" (render new scenes for leeches) | "regen:<card_id>"
         from aqt.ante_studio import commission_palace_async, regenerate_scene
@@ -363,14 +402,9 @@ class DeckBrowser:
             pass
 
     def _ante_viva(self, arg: str) -> None:
-        # arg = "start:<b64topic>" | "answer:<b64answer>" | "close"
+        # arg = "start:<b64topic>" | "answer:<b64answer>" | "live:<on|off>"
+        #     | "close"
         import base64
-
-        from aqt.ante_studio import (
-            answer_viva,
-            commission_verdict_async,
-            start_viva,
-        )
 
         def dec(x: str) -> str:
             return base64.b64decode(x.encode("ascii")).decode("utf-8") if x else ""
@@ -378,24 +412,60 @@ class DeckBrowser:
         try:
             from aqt.ante import get_demo_state
 
-            demo = get_demo_state(self.mw.col).get("enabled")
+            demo = bool(get_demo_state(self.mw.col).get("enabled"))
             act, _, val = arg.partition(":")
             if act == "start":
-                start_viva(self.mw.col, dec(val))
+                self._ante_viva_start(dec(val), demo)
             elif act == "answer":
-                session = answer_viva(self.mw.col, dec(val))
-                # demo never commissions real media (it can't write to studio)
-                if not demo and session and session.get("status") in (
-                    "passed",
-                    "failed",
-                ):
-                    commission_verdict_async(self.mw, session)
+                self._ante_viva_answer(dec(val), demo)
+            elif act == "live":
+                # the web client joined/left the live (Realtime) table; while
+                # live, the turn-based TTS clips stay quiet
+                from aqt.ante_studio import set_viva_live_voice
+
+                if not demo:
+                    set_viva_live_voice(self.mw.col, val == "on")
             elif act == "close":
                 from aqt.ante_studio import _set_active_viva
 
                 _set_active_viva(self.mw.col, None)
         except Exception:
             pass
+
+    def _ante_viva_start(self, topic: str, demo: bool) -> None:
+        from aqt.ante_studio import commission_say_async, start_viva
+
+        start_viva(self.mw.col, topic)
+        # Sahir speaks his opening line (cached -> instant; cold -> rendered
+        # in the background while the student reads it)
+        if not demo:
+            commission_say_async(self.mw)
+
+    def _ante_viva_answer(self, answer: str, demo: bool) -> None:
+        from aqt.ante_studio import (
+            answer_viva,
+            commission_say_async,
+            commission_verdict_async,
+        )
+
+        session = answer_viva(self.mw.col, answer)
+        # demo never commissions real media (it can't write to studio)
+        if demo or not session:
+            return
+        if session.get("status") in ("passed", "failed"):
+            commission_verdict_async(self.mw, session)
+        else:
+            # a probe came back — give it Sahir's voice too
+            commission_say_async(self.mw)
+
+    def _ante_map(self) -> dict:
+        # Seat a third-party deck: tag untagged notes onto Circuit topics.
+        from aqt.ante import map_untagged_notes
+
+        try:
+            return map_untagged_notes(self.mw.col)
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
 
     def _ante_gsecret(self, arg: str) -> None:
         # arg = base64(client secret) — stored device-locally for the Google

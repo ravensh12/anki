@@ -81,7 +81,7 @@ PYTHONPATH=. out/pyenv/bin/python -m ante.ai.eval --offline --source <chapter.tx
 
 ```bash
 just bench out/mcat_seed.anki2          # p50/p95/worst, all within targets
-PYTHONPATH=. out/pyenv/bin/python -m ante.tools.calibrate --predictions out/sample_predictions.json
+PYTHONPATH=. out/pyenv/bin/python -m ante.tools.calibrate --predictions ante/data/sample_predictions.json
 PYTHONPATH=. out/pyenv/bin/python -m ante.experiment --reps-per-day 20 --days 5
 ```
 
@@ -102,6 +102,14 @@ Launch the desktop app (`just run`) and sign in at the door.
   the daily budget. Every answer already feeds the Circuit.
 - **The Back Room:** go heads-up with Sahir on a table near the bar — he
   probes exactly the rubric point you missed; win it and the plaque is yours.
+  With an `OPENAI_API_KEY` set, hit **Go live** for the showpiece: a real
+  streaming voice conversation (OpenAI Realtime) — Sahir asks the question
+  aloud, you answer by talking, he interrupts and probes, and speaks the
+  verdict. Say out loud what it proves: **the model never grades** —
+  `create_response` is off, every turn is scored by the same deterministic
+  rubric as a typed answer, and only then is Sahir handed a private ledger
+  cue. Casino charm, no casino dishonesty. No key? The same room still runs,
+  typed or spoken-in-takes.
 - **Nudges:** House Rules → _Send a test nudge_ (a real macOS banner:
   "The morning game opens"); toggle background nudges and note it registers
   launchd/Task Scheduler/systemd jobs so the cue arrives before the app is

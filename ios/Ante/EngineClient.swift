@@ -6,10 +6,12 @@
 // protocol, so the views never care whether the data is mocked or is coming from
 // the real Rust core over the FFI seam.
 //
-//   * MockEngine   — realistic sample data used today (and in previews/tests).
-//   * SyncedEngine — a typed skeleton that will call the shared `anki` Rust crate
-//                    (compiled as an xcframework) over the same single
-//                    `run_service_method` protobuf seam the desktop uses.
+//   * MockEngine   — deterministic sample data (previews, and the escape hatch
+//                    when the FFI backend cannot start).
+//   * SyncedEngine — the LIVE client: the shared `anki` Rust crate compiled
+//                    into AnkiEngine.xcframework, driven over the same single
+//                    `run_service_method` protobuf seam the desktop uses, and
+//                    synced two-way against the self-hosted Anki sync server.
 
 import Foundation
 
@@ -35,6 +37,18 @@ struct DueQueue {
     )
 }
 
+// MARK: - Live-engine surface
+
+/// How this seat is wired: which engine build is embedded, and which den
+/// (sync server account) it is joined to, if any.
+struct EngineStatus: Equatable {
+    var buildHash: String
+    var endpoint: String?
+    var username: String?
+
+    var connected: Bool { endpoint != nil }
+}
+
 // MARK: - The engine boundary
 
 protocol EngineClient {
@@ -44,6 +58,43 @@ protocol EngineClient {
     func fetchMastery() async throws -> [TopicMastery]
     /// The scheduled due stack for a session, in points-at-stake order.
     func fetchDue() async throws -> DueQueue
+
+    // Live-engine capabilities. Sample engines keep the defaults below.
+
+    /// nil when this client serves sample data; a status once the Rust core runs.
+    func liveStatus() async -> EngineStatus?
+    /// Join a den: log into the sync server, remember the key, first sync.
+    func connect(endpoint: String, username: String, password: String) async throws -> String
+    /// Forget the den (local collection stays).
+    func disconnect() async
+    /// Two-way sync against the joined den. Returns a short honest status line.
+    func sync() async throws -> String
+    /// Answer a dealt card through the real scheduler (rating 0–3 = Again…Easy).
+    func answer(cardID: String, rating: Int, millisecondsTaken: Int) async throws
+}
+
+enum EngineClientError: LocalizedError {
+    case unsupported
+    case notConnected
+    case unknownCard
+
+    var errorDescription: String? {
+        switch self {
+        case .unsupported: return "This build serves sample data — there is no live engine behind it."
+        case .notConnected: return "Not joined to a den yet — connect to your sync server first."
+        case .unknownCard: return "That card is no longer in the dealt batch — pull fresh work."
+        }
+    }
+}
+
+extension EngineClient {
+    func liveStatus() async -> EngineStatus? { nil }
+    func connect(endpoint: String, username: String, password: String) async throws -> String {
+        throw EngineClientError.unsupported
+    }
+    func disconnect() async {}
+    func sync() async throws -> String { throw EngineClientError.unsupported }
+    func answer(cardID: String, rating: Int, millisecondsTaken: Int) async throws {}
 }
 
 // MARK: - Mock engine
@@ -231,77 +282,397 @@ final class MockEngine: EngineClient {
     }
 }
 
-// MARK: - The shared-engine seam (skeleton)
+// MARK: - The live shared-engine client
 
-/// The single C-ABI entry point the Rust engine exposes, mirroring the desktop's
-/// `Backend::run_service_method(service, method, input) -> output`. It is the ONE
-/// seam every backend RPC travels through: a request protobuf goes in as bytes, a
-/// response protobuf comes back as bytes. Implemented later by the generated
-/// `AnkiFFI` xcframework (a thin C shim, or a UniFFI-generated Swift module) built
-/// from `rslib` for `aarch64-apple-ios` and the simulator. Kept as a protocol so
-/// `SyncedEngine` stays testable and the views never link the FFI module directly.
-protocol AnkiServiceBridge {
-    func runServiceMethod(service: Int32, method: Int32, input: Data) async throws -> Data
-}
-
-/// The backend RPCs this client uses, named for clarity. The generated backend
-/// index maps each name to the numeric (service, method) pair the FFI call takes;
-/// those indices are read from the generated protobuf descriptors at wiring time
-/// rather than hard-coded here, so a version bump can't silently misroute a call.
-enum BackendRPC {
-    /// `SchedulerService.GetTopicMastery` — the Ante engine change. Request:
-    /// { search: "", prefix: "mcat::", threshold: 0.9 }. Response rows carry total /
-    /// studied / mastered counts, average recall, and coverage per topic.
-    static let getTopicMastery = "SchedulerService.GetTopicMastery"
-    /// `SchedulerService.GetQueuedCards` — the due stack, already ordered by the
-    /// points-at-stake queue builder on the engine side.
-    static let getQueuedCards = "SchedulerService.GetQueuedCards"
-}
-
-/// The production engine client. It will:
+/// The production engine client. It:
 ///
-/// 1. Open the local `.anki2` collection through the shared Rust backend inside
-///    the xcframework (the exact same crate the desktop and the validated Android
-///    build use — not a re-implementation).
-/// 2. For each read, encode the request protobuf, hand the bytes to
-///    `bridge.runServiceMethod(...)`, and decode the response protobuf into the
-///    Swift model types above. `fetchMastery()` is a direct call to
-///    `BackendRPC.getTopicMastery`; `fetchDue()` uses `getQueuedCards` and then
-///    derives the three scores the same way the desktop's `ante` layer does.
-/// 3. Sync two-way against the self-hosted Anki sync server before/after a
-///    session, so application evidence answered on desktop reaches readiness here.
+/// 1. Opens the local `.anki2` collection through the shared Rust backend inside
+///    AnkiEngine.xcframework — the exact same modified crate the desktop uses,
+///    not a re-implementation.
+/// 2. Encodes each request protobuf by hand (ProtoWire/BackendMessages), hands
+///    the bytes to `run_service_method` via the C seam, and decodes the response
+///    into the Swift model types. `fetchMastery()` is a direct call to the Ante
+///    engine change (`GetTopicMastery`); `fetchDue()` walks `GetQueuedCards` —
+///    already in points-at-stake order when the deck preset uses the Ante queue.
+/// 3. Syncs two-way against the self-hosted Anki sync server, mirroring the
+///    proven sequence in `ante/tools/sync_test.py` (login → sync_collection →
+///    full download/upload when required → reopen).
 ///
-/// Until the xcframework is built and the protobuf message types are generated for
-/// Swift, this client has no bridge and serves the same sample data as `MockEngine`,
-/// which keeps the whole UI runnable. Swapping in a real `AnkiServiceBridge` is the
-/// only change needed to make it live.
-final class SyncedEngine: EngineClient {
-    private let bridge: AnkiServiceBridge?
+/// If the backend cannot start at all, it falls back to sample data so the app
+/// still opens (and says so through `liveStatus()` returning nil).
+actor SyncedEngine: EngineClient {
+    private let engine: AnkiEngine?
     private let fallback: EngineClient
 
-    init(bridge: AnkiServiceBridge? = nil, fallback: EngineClient = MockEngine()) {
-        self.bridge = bridge
+    /// UserDefaults-persisted link to the den (endpoint + username + hkey).
+    private struct Connection: Codable {
+        var endpoint: String
+        var username: String
+        var hkey: String
+    }
+
+    private static let connectionKey = "ante.engine.connection.v1"
+    private var connection: Connection?
+    private var collectionReady = false
+    /// Whether we've seated this run at the deck that holds the cards.
+    private var deckSelected = false
+    /// The last dealt batch, kept so an answer can echo the exact scheduling
+    /// states the engine dealt with the card (see PBQueuedCard).
+    private var dealtByID: [String: PBQueuedCard] = [:]
+
+    init(fallback: EngineClient = MockEngine()) {
         self.fallback = fallback
+        if ProcessInfo.processInfo.environment["ANTE_SAMPLE_DATA"] == "1" {
+            self.engine = nil
+        } else {
+            self.engine = try? AnkiEngine()
+        }
+        if let data = UserDefaults.standard.data(forKey: Self.connectionKey),
+            let saved = try? JSONDecoder().decode(Connection.self, from: data)
+        {
+            connection = saved
+        }
     }
 
-    /// True once the shared Rust engine is wired in behind the FFI seam.
-    var isLive: Bool { bridge != nil }
+    // MARK: Lifecycle
 
-    func fetchScores() async throws -> ScoresSnapshot {
-        // Real path: derive from getQueuedCards + the mastery RPC, mirroring the
-        // desktop readiness computation. No bridge yet -> honest sample data.
-        try await fallback.fetchScores()
+    private func ensureCollection() async throws {
+        guard let engine, !collectionReady else { return }
+        try await engine.openCollection(in: AnkiEngine.collectionDirectory())
+        collectionReady = true
     }
+
+    func liveStatus() async -> EngineStatus? {
+        guard engine != nil else { return nil }
+        return EngineStatus(
+            buildHash: AnkiEngine.buildHash,
+            endpoint: connection?.endpoint,
+            username: connection?.username
+        )
+    }
+
+    // MARK: Joining a den + sync
+
+    func connect(endpoint: String, username: String, password: String) async throws -> String {
+        guard let engine else { throw EngineClientError.unsupported }
+        try await ensureCollection()
+        let response = try await engine.run(
+            BackendIndices.syncLogin,
+            PBSyncLoginRequest.encode(username: username, password: password, endpoint: endpoint)
+        )
+        let auth = try PBSyncAuth.decode(response)
+        connection = Connection(
+            endpoint: auth.endpoint.isEmpty ? endpoint : auth.endpoint,
+            username: username,
+            hkey: auth.hkey
+        )
+        persistConnection()
+        let line = try await sync()
+        return "Seat linked. \(line)"
+    }
+
+    func disconnect() async {
+        connection = nil
+        persistConnection()
+    }
+
+    /// Mirrors ante/tools/sync_test.py: sync_collection performs the normal
+    /// sync; FULL_DOWNLOAD/FULL_SYNC pull the server's canonical copy (the
+    /// server holds the den's truth); FULL_UPLOAD pushes ours. After a full
+    /// transfer the collection file was swapped out underneath the backend,
+    /// so close + reopen before anyone reads again.
+    func sync() async throws -> String {
+        guard let engine else { throw EngineClientError.unsupported }
+        guard let connection else { throw EngineClientError.notConnected }
+        try await ensureCollection()
+        let auth = PBSyncAuth(hkey: connection.hkey, endpoint: connection.endpoint)
+        let response = try await engine.run(
+            BackendIndices.syncCollection,
+            PBSyncCollectionRequest.encode(auth: auth, syncMedia: false)
+        )
+        let outcome = try PBSyncCollectionResponse.decode(response)
+        if !outcome.newEndpoint.isEmpty, outcome.newEndpoint != connection.endpoint {
+            self.connection?.endpoint = outcome.newEndpoint
+            persistConnection()
+        }
+        dealtByID.removeAll()
+        switch outcome.required {
+        case .noChanges, .normalSync:
+            // sync_collection already exchanged any changes; "no changes" is
+            // what REMAINS required, not what happened.
+            return "Synced — this seat is current."
+        case .fullDownload, .fullSync:
+            _ = try await engine.run(
+                BackendIndices.fullUploadOrDownload,
+                PBFullUploadOrDownloadRequest.encode(auth: auth, upload: false)
+            )
+            await reopenCollection()
+            return "Pulled the den's full collection."
+        case .fullUpload:
+            _ = try await engine.run(
+                BackendIndices.fullUploadOrDownload,
+                PBFullUploadOrDownloadRequest.encode(auth: auth, upload: true)
+            )
+            await reopenCollection()
+            return "Uploaded this seat's collection to the den."
+        }
+    }
+
+    private func reopenCollection() async {
+        guard let engine else { return }
+        await engine.closeCollection()
+        collectionReady = false
+        deckSelected = false
+        try? await ensureCollection()
+    }
+
+    private func persistConnection() {
+        let defaults = UserDefaults.standard
+        if let connection, let data = try? JSONEncoder().encode(connection) {
+            defaults.set(data, forKey: Self.connectionKey)
+        } else {
+            defaults.removeObject(forKey: Self.connectionKey)
+        }
+    }
+
+    // MARK: Reads
 
     func fetchMastery() async throws -> [TopicMastery] {
-        // Real path: encode a GetTopicMasteryRequest, call BackendRPC.getTopicMastery
-        // over the bridge, decode the response rows. No bridge yet -> sample data.
-        try await fallback.fetchMastery()
+        guard engine != nil else { return try await fallback.fetchMastery() }
+        return try await masteryRows().map(Self.uiTopic)
+    }
+
+    func fetchScores() async throws -> ScoresSnapshot {
+        guard engine != nil else { return try await fallback.fetchScores() }
+        return Self.scores(from: try await masteryRows(), connected: connection != nil)
     }
 
     func fetchDue() async throws -> DueQueue {
-        // Real path: BackendRPC.getQueuedCards returns the points-at-stake-ordered
-        // stack straight from the engine. No bridge yet -> sample data.
-        try await fallback.fetchDue()
+        guard let engine else { return try await fallback.fetchDue() }
+        try await ensureCollection()
+        try await seatAtStudyDeck()
+        let queued = try PBQueuedCards.decode(
+            try await engine.run(
+                BackendIndices.getQueuedCards,
+                PBGetQueuedCardsRequest.encode(fetchLimit: 20)
+            )
+        )
+        dealtByID = Dictionary(
+            uniqueKeysWithValues: queued.cards.map { (String($0.card.id), $0) })
+
+        var cards: [ReviewCard] = []
+        var noteCache: [Int64: PBNote] = [:]
+        for dealt in queued.cards {
+            let noteID = dealt.card.noteID
+            if noteCache[noteID] == nil {
+                let raw = try await engine.run(BackendIndices.getNote, PBNoteID.encode(noteID))
+                noteCache[noteID] = try PBNote.decode(raw)
+            }
+            guard let note = noteCache[noteID] else { continue }
+            cards.append(Self.uiCard(id: dealt.card.id, note: note))
+        }
+        return DueQueue(
+            cards: cards,
+            items: [],
+            dueCardCount: queued.totalDue,
+            dueItemCount: 0,
+            bestNextTopic: cards.first?.topic
+        )
+    }
+
+    /// The queue deals from the CURRENT deck, which on a fresh seat is the
+    /// empty Default. Mirror the desktop den's `_ante_pick_deck`: select the
+    /// deck that actually holds the cards (largest, children included). Once
+    /// per run, and again after a sync swaps the collection.
+    private func seatAtStudyDeck() async throws {
+        guard let engine, !deckSelected else { return }
+        // A real timestamp matters: with now=0 the engine skips computing
+        // counts and every deck reads empty.
+        let tree = try PBDeckTreeNode.decode(
+            try await engine.run(
+                BackendIndices.deckTree,
+                PBDeckTreeRequest.encode(now: Int64(Date().timeIntervalSince1970))
+            )
+        )
+        if let best = tree.children.max(by: { $0.totalIncludingChildren < $1.totalIncludingChildren }),
+            best.totalIncludingChildren > 0
+        {
+            _ = try await engine.run(BackendIndices.setCurrentDeck, PBDeckID.encode(best.deckID))
+        }
+        deckSelected = true
+    }
+
+    // MARK: Answering
+
+    func answer(cardID: String, rating: Int, millisecondsTaken: Int) async throws {
+        guard let engine else { return }
+        guard let dealt = dealtByID[cardID] else { throw EngineClientError.unknownCard }
+        guard let pbRating = PBRating(rawValue: UInt64(max(0, min(3, rating)))) else { return }
+        let request = PBCardAnswer.encode(
+            cardID: dealt.card.id,
+            currentState: dealt.statesCurrent,
+            newState: dealt.newState(for: pbRating),
+            rating: pbRating,
+            answeredAtMillis: Int64(Date().timeIntervalSince1970 * 1000),
+            millisecondsTaken: UInt32(max(0, min(millisecondsTaken, 10 * 60 * 1000)))
+        )
+        _ = try await engine.run(BackendIndices.answerCard, request)
+        dealtByID.removeValue(forKey: cardID)
+    }
+
+    // MARK: Engine rows -> UI models
+
+    private func masteryRows() async throws -> [PBTopicMastery] {
+        guard let engine else { return [] }
+        try await ensureCollection()
+        let raw = try await engine.run(
+            BackendIndices.getTopicMastery,
+            PBGetTopicMasteryRequest.encode(search: "", topicPrefix: "mcat::", threshold: 0.9)
+        )
+        return try PBGetTopicMasteryResponse.decode(raw).topics
+    }
+
+    /// Map an engine mastery row to the Atlas tile. The engine's signal here is
+    /// FSRS recall (memory) — real, per-topic, from the shared crate. The
+    /// desktop's application-gated comprehension/bands need the den's response
+    /// logs, which don't sync to the phone yet, so tables without study stay
+    /// honestly unlisted and no bands are invented.
+    static func uiTopic(_ row: PBTopicMastery) -> TopicMastery {
+        let parts = row.topic.split(separator: ":", omittingEmptySubsequences: true)
+        let sectionID = parts.count >= 2 ? String(parts[1]) : ""
+        let studied = row.studiedCards > 0
+        let status: MasteryStatus
+        if !studied {
+            status = .locked
+        } else if row.averageRecall >= 0.85 && row.coverage >= 0.8 {
+            status = .mastered
+        } else if row.averageRecall < 0.55 {
+            status = .corrective
+        } else {
+            status = .active
+        }
+        return TopicMastery(
+            tag: row.topic,
+            name: TopicFormat.leaf(row.topic).capitalized,
+            section: MCATSection(rawValue: sectionID) ?? .bioBiochem,
+            status: status,
+            comprehension: studied ? row.averageRecall : nil,
+            bandLower: nil,
+            bandUpper: nil,
+            examWeight: row.weight,
+            hasEvidence: studied,
+            overconfidence: 0
+        )
+    }
+
+    /// The three scores, from what the phone can actually defend: memory reads
+    /// out of the shared engine's FSRS state; performance and readiness abstain
+    /// (their application evidence lives in the den's logs). NO LINE beats a
+    /// guess in a nice font — on the phone too.
+    static func scores(from rows: [PBTopicMastery], connected: Bool) -> ScoresSnapshot {
+        let studied = rows.filter { $0.studiedCards > 0 }
+        let studiedCards = studied.reduce(0) { $0 + $1.studiedCards }
+        let weightSum = studied.reduce(0.0) { $0 + $1.weight * Double($1.studiedCards) }
+        let recall =
+            weightSum > 0
+            ? studied.reduce(0.0) { $0 + $1.averageRecall * $1.weight * Double($1.studiedCards) } / weightSum
+            : nil
+        let spread: Double? = {
+            guard let recall, studied.count > 1 else { return nil }
+            let variance =
+                studied.reduce(0.0) { $0 + pow($1.averageRecall - recall, 2) } / Double(studied.count)
+            return sqrt(variance)
+        }()
+
+        let memory: ScoreReading
+        if let recall {
+            memory = ScoreReading(
+                kind: .memory,
+                value: recall,
+                lower: max(0, recall - (spread ?? 0.05)),
+                upper: min(1, recall + (spread ?? 0.05)),
+                abstained: false,
+                confidence: studiedCards >= 200 ? "medium" : "low",
+                reasons: [
+                    "FSRS retrievability across \(studiedCards) studied cards, straight from the shared engine."
+                ]
+            )
+        } else {
+            memory = ScoreReading(
+                kind: .memory,
+                abstained: true,
+                reasons: [
+                    connected
+                        ? "No studied cards on this seat yet — play a hand or sync a den with history."
+                        : "This seat hasn't joined a den yet — link your sync server in the Ledger."
+                ]
+            )
+        }
+
+        let performance = ScoreReading(
+            kind: .performance,
+            abstained: true,
+            reasons: [
+                "Application hands (quizzes + open-ended) are graded in the den's logs, which don't ride sync yet.",
+                "The phone won't dress memory up as transfer.",
+            ]
+        )
+        let readiness = ScoreReading(
+            kind: .readiness,
+            abstained: true,
+            reasons: [
+                "The Book posts a line only from graded application evidence — see the desktop's Observatory.",
+                "NO LINE — insufficient action on this seat.",
+            ]
+        )
+
+        let totalWeight = rows.reduce(0.0) { $0 + $1.weight }
+        let wonWeight = rows.filter { uiTopic($0).status == .mastered }.reduce(0.0) { $0 + $1.weight }
+        let coveredWeight = rows.reduce(0.0) { $0 + $1.weight * $1.coverage }
+        return ScoresSnapshot(
+            memory: memory,
+            performance: performance,
+            readiness: readiness,
+            overallComprehension: totalWeight > 0 ? wonWeight / totalWeight : nil,
+            evidencedFraction: totalWeight > 0 ? coveredWeight / totalWeight : nil,
+            selfTrust: nil
+        )
+    }
+
+    static func uiCard(id: Int64, note: PBNote) -> ReviewCard {
+        let topic = note.tags.first { $0.hasPrefix("mcat::") } ?? ""
+        let front = note.fields.first ?? ""
+        let back = note.fields.count > 1 ? note.fields[1] : ""
+        return ReviewCard(
+            id: String(id),
+            topic: topic,
+            question: PlainText.render(front),
+            answer: PlainText.render(back)
+        )
+    }
+}
+
+// MARK: - Field text -> screen text
+
+/// Card fields arrive as the HTML Anki stores. The phone renders them as
+/// plain text: tags stripped, a few entities decoded, cloze markup reduced to
+/// its answer, [sound:...] references dropped.
+enum PlainText {
+    static func render(_ html: String) -> String {
+        var s = html
+        s = s.replacingOccurrences(
+            of: #"\{\{c\d+::(.*?)(::[^}]*)?\}\}"#, with: "$1", options: .regularExpression)
+        s = s.replacingOccurrences(of: #"\[sound:[^\]]*\]"#, with: "", options: .regularExpression)
+        s = s.replacingOccurrences(
+            of: #"<br\s*/?>|</div>|</p>"#, with: "\n", options: [.regularExpression, .caseInsensitive])
+        s = s.replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
+        let entities = [
+            "&nbsp;": " ", "&amp;": "&", "&lt;": "<", "&gt;": ">",
+            "&quot;": "\"", "&#39;": "'",
+        ]
+        for (entity, plain) in entities {
+            s = s.replacingOccurrences(of: entity, with: plain)
+        }
+        return s.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

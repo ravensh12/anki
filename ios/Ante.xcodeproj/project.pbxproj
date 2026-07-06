@@ -8,34 +8,71 @@
 
 /* Begin PBXBuildFile section */
 		0B64719E22A29B1B2EFA745A /* AtlasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */; };
+		14C28A924983807050735F2B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E3CC5ADD61EAA0A3B5070D9 /* libiconv.tbd */; };
 		1BC961460BC7EACC5FE194A5 /* EngineClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */; };
+		1E1C00FCC49B8306ED9CA225 /* AnkiEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEBE05889AA907B0E587862C /* AnkiEngine.swift */; };
+		1FF78E6B99D121E688AB8C9C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BA2FBD2BDC24007CC56B46C6 /* libc++.tbd */; };
 		28A7199C951AE036BBC88A85 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF718BA8E43ECB5F8F73C /* OnboardingView.swift */; };
+		2906EEA4E3B4CD734C64DF0F /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59BCFA283EC2B5E38B58239 /* LoginView.swift */; };
+		3ED99A691FFAEF6CDB48C64C /* BackendIndices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DBC09425769F0ECCCBF7990 /* BackendIndices.swift */; };
+		433D7F8D0399364AF11B7802 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E27195D8DA2EE8108E4A83E0 /* Security.framework */; };
+		439B0C4AA0D78E1F3388CFBD /* ProtoWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6654667719978DE2EA130152 /* ProtoWire.swift */; };
 		74F52753F5AB7F12BE27FD87 /* AnteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91031C03526E51587B9E76BB /* AnteApp.swift */; };
 		7E23CBBB992AA7DBDE6A6F58 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6712FF25311D44161C69A988 /* Models.swift */; };
 		89F560EDC74C49BAF5D946C7 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927042F77B01FF6D4C93534B /* AppModel.swift */; };
 		8FD31852DEFBD2BE2DB5DC1A /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9181C925AA80A9F164970E7B /* NotificationScheduler.swift */; };
+		A8ADDD7A2B48F4B54F744A20 /* AnkiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030A1E2DD9EC04FB88B8B3F /* AnkiEngine.xcframework */; };
 		AD21E854CDA1C8CEA57BE765 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E114A6E91C1CB38038A91351 /* MainTabView.swift */; };
 		B0A5ED3D750E5158A54B3936 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E67177BB106617044CE797 /* Theme.swift */; };
 		B16C043F5726BB6A19B83D91 /* SessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E0669F03554236C3784896 /* SessionView.swift */; };
+		B51D89B018B7AA28BF46AA69 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A6F8D604DDE90C1D128808C /* SystemConfiguration.framework */; };
 		C1C2A22F14AA954DC37EF187 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59090820C306CD469236DFC6 /* TodayView.swift */; };
+		CF15D9BB77DC45F9EFF240B2 /* BackendMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9848515D4A303F1B940C57A /* BackendMessages.swift */; };
 		D9E4ECD31BB73C5A54EBFB7F /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F5F8E395BC18192265C3AE7 /* PlanView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		15E0669F03554236C3784896 /* SessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionView.swift; sourceTree = "<group>"; };
+		2A6F8D604DDE90C1D128808C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		59090820C306CD469236DFC6 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		5E3CC5ADD61EAA0A3B5070D9 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		6654667719978DE2EA130152 /* ProtoWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoWire.swift; sourceTree = "<group>"; };
 		6712FF25311D44161C69A988 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EngineClient.swift; sourceTree = "<group>"; };
+		7D68A93ADAE214C25A1F1678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7F5F8E395BC18192265C3AE7 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		9030A1E2DD9EC04FB88B8B3F /* AnkiEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AnkiEngine.xcframework; path = ../out/ios/AnkiEngine.xcframework; sourceTree = "<group>"; };
 		91031C03526E51587B9E76BB /* AnteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnteApp.swift; sourceTree = "<group>"; };
 		9181C925AA80A9F164970E7B /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		927042F77B01FF6D4C93534B /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		9DBC09425769F0ECCCBF7990 /* BackendIndices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendIndices.swift; sourceTree = "<group>"; };
 		A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtlasView.swift; sourceTree = "<group>"; };
+		AECAD2071DE038F88C2E8062 /* AnteBridging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnteBridging.h; sourceTree = "<group>"; };
+		B59BCFA283EC2B5E38B58239 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		BA2FBD2BDC24007CC56B46C6 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		C7BEF718BA8E43ECB5F8F73C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C9848515D4A303F1B940C57A /* BackendMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendMessages.swift; sourceTree = "<group>"; };
 		D2E67177BB106617044CE797 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E114A6E91C1CB38038A91351 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		E27195D8DA2EE8108E4A83E0 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		E6C95E01449980045E6A50D7 /* Ante.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Ante.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEBE05889AA907B0E587862C /* AnkiEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnkiEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ED00065107CDC5EE94D42788 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8ADDD7A2B48F4B54F744A20 /* AnkiEngine.xcframework in Frameworks */,
+				433D7F8D0399364AF11B7802 /* Security.framework in Frameworks */,
+				B51D89B018B7AA28BF46AA69 /* SystemConfiguration.framework in Frameworks */,
+				14C28A924983807050735F2B /* libiconv.tbd in Frameworks */,
+				1FF78E6B99D121E688AB8C9C /* libc++.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		41DF23A44FE31756A12ACDAE /* Products */ = {
@@ -46,13 +83,48 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4D2C134B8AAD9FC4047620E2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9030A1E2DD9EC04FB88B8B3F /* AnkiEngine.xcframework */,
+				BA2FBD2BDC24007CC56B46C6 /* libc++.tbd */,
+				5E3CC5ADD61EAA0A3B5070D9 /* libiconv.tbd */,
+				E27195D8DA2EE8108E4A83E0 /* Security.framework */,
+				2A6F8D604DDE90C1D128808C /* SystemConfiguration.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6F15A652386924421B145CD8 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				9DBC09425769F0ECCCBF7990 /* BackendIndices.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
+		7C55819050F8F8EF9C47EF30 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				FEBE05889AA907B0E587862C /* AnkiEngine.swift */,
+				AECAD2071DE038F88C2E8062 /* AnteBridging.h */,
+				C9848515D4A303F1B940C57A /* BackendMessages.swift */,
+				6654667719978DE2EA130152 /* ProtoWire.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
 		DF12D9A0C28BE9DC4B37D186 /* Ante */ = {
 			isa = PBXGroup;
 			children = (
+				7C55819050F8F8EF9C47EF30 /* Engine */,
+				6F15A652386924421B145CD8 /* Generated */,
 				91031C03526E51587B9E76BB /* AnteApp.swift */,
 				927042F77B01FF6D4C93534B /* AppModel.swift */,
 				A54FA37A8DF8B9AEFFA41A23 /* AtlasView.swift */,
 				75A0B5FBE367E1B09D9A4FBD /* EngineClient.swift */,
+				7D68A93ADAE214C25A1F1678 /* Info.plist */,
+				B59BCFA283EC2B5E38B58239 /* LoginView.swift */,
 				E114A6E91C1CB38038A91351 /* MainTabView.swift */,
 				6712FF25311D44161C69A988 /* Models.swift */,
 				9181C925AA80A9F164970E7B /* NotificationScheduler.swift */,
@@ -69,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				DF12D9A0C28BE9DC4B37D186 /* Ante */,
+				4D2C134B8AAD9FC4047620E2 /* Frameworks */,
 				41DF23A44FE31756A12ACDAE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -81,6 +154,7 @@
 			buildConfigurationList = 96F4DB19218EEA3E4BC1831F /* Build configuration list for PBXNativeTarget "Ante" */;
 			buildPhases = (
 				AD85F243800E4368C8E41FA4 /* Sources */,
+				ED00065107CDC5EE94D42788 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -131,15 +205,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E1C00FCC49B8306ED9CA225 /* AnkiEngine.swift in Sources */,
 				74F52753F5AB7F12BE27FD87 /* AnteApp.swift in Sources */,
 				89F560EDC74C49BAF5D946C7 /* AppModel.swift in Sources */,
 				0B64719E22A29B1B2EFA745A /* AtlasView.swift in Sources */,
+				3ED99A691FFAEF6CDB48C64C /* BackendIndices.swift in Sources */,
+				CF15D9BB77DC45F9EFF240B2 /* BackendMessages.swift in Sources */,
 				1BC961460BC7EACC5FE194A5 /* EngineClient.swift in Sources */,
+				2906EEA4E3B4CD734C64DF0F /* LoginView.swift in Sources */,
 				AD21E854CDA1C8CEA57BE765 /* MainTabView.swift in Sources */,
 				7E23CBBB992AA7DBDE6A6F58 /* Models.swift in Sources */,
 				8FD31852DEFBD2BE2DB5DC1A /* NotificationScheduler.swift in Sources */,
 				28A7199C951AE036BBC88A85 /* OnboardingView.swift in Sources */,
 				D9E4ECD31BB73C5A54EBFB7F /* PlanView.swift in Sources */,
+				439B0C4AA0D78E1F3388CFBD /* ProtoWire.swift in Sources */,
 				B16C043F5726BB6A19B83D91 /* SessionView.swift in Sources */,
 				B0A5ED3D750E5158A54B3936 /* Theme.swift in Sources */,
 				C1C2A22F14AA954DC37EF187 /* TodayView.swift in Sources */,
@@ -281,13 +360,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Ante;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../out/ios\"",
+				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../rslib/ios-ffi/include";
+				INFOPLIST_FILE = Ante/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -296,6 +374,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.ante.ios;
 				PRODUCT_NAME = Ante;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = Ante/Engine/AnteBridging.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -305,13 +384,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Ante;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../out/ios\"",
+				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../rslib/ios-ffi/include";
+				INFOPLIST_FILE = Ante/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -320,6 +398,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.ante.ios;
 				PRODUCT_NAME = Ante;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = Ante/Engine/AnteBridging.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

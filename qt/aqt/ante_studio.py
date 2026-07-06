@@ -326,6 +326,12 @@ def answer_viva(col: Collection, answer: str) -> dict | None:
     provider = get_provider()
     session = submit_answer(session, answer, provider=provider, cfg=CONFIG)
 
+    # a voice line rendered for an earlier round must not replay over the new
+    # probe; drop it unless it still matches what Sahir is asking
+    say = session.get("say")
+    if say and say.get("text") != (session.get("ask") or session.get("opening")):
+        session.pop("say", None)
+
     # demo: grade for real (pure logic) but never write to the account log
     if get_demo_state(col).get("enabled"):
         _set_active_viva(col, session if session.get("status") == "open" else None)
@@ -370,6 +376,75 @@ def _render_verdict_media(col: Collection, session: dict) -> dict:
         "speech": speech.filename if speech else None,
         "clip": clip.filename if clip else None,
     }
+
+
+def set_viva_live_voice(col: Collection, on: bool) -> None:
+    """Mark the active examination as running over the live (Realtime) table,
+    so the turn-based TTS pipeline stays quiet while Sahir speaks in person."""
+    session = get_active_viva(col)
+    if not session:
+        return
+    session["live_voice"] = bool(on)
+    _set_active_viva(col, session)
+
+
+def _pending_say_line(session: dict | None) -> str | None:
+    """The line Sahir should voice next, or None when no fresh speech is due
+    (no open session, the live table speaks for itself, or the current line
+    already carries its clip)."""
+    if not session or session.get("status") != "open":
+        return None
+    if session.get("live_voice"):
+        # the live table: Sahir already speaks every line himself
+        return None
+    text = str(session.get("ask") or session.get("opening") or "")
+    say = session.get("say") or {}
+    if not text or (say.get("text") == text and say.get("speech")):
+        return None
+    return text
+
+
+def _say_still_current(active: dict | None, text: str) -> bool:
+    """Is ``text`` still the line being asked? The student may have answered
+    while the clip rendered — a stale line must stay quiet."""
+    if not active or active.get("status") != "open":
+        return False
+    return str(active.get("ask") or active.get("opening") or "") == text
+
+
+def commission_say_async(mw) -> None:
+    """Give Sahir his voice mid-examination: render speech for the line he is
+    currently asking (the opening, or the latest probe) and attach it to the
+    active session as ``say``. Cached by content, so a pre-warmed demo topic
+    (ante/tools/warm_backroom.py) plays instantly; a cold line costs one TTS
+    call in the background and never blocks the exam."""
+    col = mw.col
+    if col is None or get_demo_state(col).get("enabled"):
+        return
+    text = _pending_say_line(get_active_viva(col))
+    if not text:
+        return
+    _ensure_ante_importable()
+
+    def work() -> dict | None:
+        speech = studio_for(col).speech(text, persona="dealer")
+        return {"text": text, "speech": speech.filename} if speech else None
+
+    def done(fut) -> None:
+        try:
+            say = fut.result()
+        except Exception:
+            say = None
+        if not say:
+            return
+        active = get_active_viva(col)
+        if not _say_still_current(active, say["text"]):
+            return
+        active["say"] = say
+        _set_active_viva(col, active)
+        _refresh_webview(mw)
+
+    mw.taskman.run_in_background(work, done)
 
 
 def commission_verdict_async(mw, session: dict) -> None:

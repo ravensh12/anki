@@ -31,6 +31,9 @@ WINDOW_HOURS: dict[str, tuple[int, int]] = {
     "during the day": (14, 0),
     "night": (21, 0),
 }
+# marked nights (quiz checkpoints / full-lengths) cue in the early evening —
+# after the day, with room to sit a timed test before the midnight game
+MARKED_NIGHT_AT: tuple[int, int] = (17, 0)
 
 # role -> notification kind
 _ROLE_KIND = {"new": "retrieval", "review": "review", "encode": "encode"}
@@ -44,6 +47,8 @@ class Reminder:
     kind: str
     title: str
     body: str
+    # ISO date for one-night reminders (marked nights); None = fires daily
+    date: str | None = None
 
     @property
     def minutes_of_day(self) -> int:
@@ -58,6 +63,7 @@ class Reminder:
             "title": self.title,
             "body": self.body,
             "at": f"{self.hour:02d}:{self.minute:02d}",
+            "date": self.date,
         }
 
 
@@ -96,9 +102,7 @@ def _copy(
             "them overnight — the cheapest minutes of the day."
         )
         if ahead:
-            body = (
-                f"Optional midnight hand (~{minutes} min) — light, then lights out."
-            )
+            body = f"Optional midnight hand (~{minutes} min) — light, then lights out."
     else:  # review
         title = "Midday — protect your stack"
         body = (
@@ -114,6 +118,24 @@ def _copy(
     return title, body
 
 
+def _marked_night_copy(marked_night: dict) -> tuple[str, str]:
+    """No-shame copy for a marked night (quiz checkpoint or full-length)."""
+    if marked_night.get("kind") == "full_length":
+        n = int(marked_night.get("test_no") or 1)
+        title = f"Marked night \u2014 full-length {n}"
+        body = "Clear the evening: every section, timed, one sitting. " + (
+            "This one sets your honest baseline."
+            if n == 1
+            else "The dress rehearsal \u2014 then taper into the exam."
+        )
+        return title, body
+    return (
+        "Marked night \u2014 the quiz checkpoint",
+        "Re-take the section quizzes tonight and re-measure your honest "
+        "baseline. The Book only trusts what you prove.",
+    )
+
+
 def build_schedule(
     profile: StudyProfile,
     slot_plan: list[dict],
@@ -122,9 +144,15 @@ def build_schedule(
     best_next_topic: str | None = None,
     days_remaining: int | None = None,
     sec_per_card: float | None = None,
+    marked_night: dict | None = None,
     cfg: AnteConfig | None = None,
 ) -> list[Reminder]:
-    """The day's reminder schedule (empty if the student turned reminders off)."""
+    """The day's reminder schedule (empty if the student turned reminders off).
+
+    ``marked_night`` is the next dated test milestone (a studyplan.marked_nights
+    entry); it becomes a date-scoped early-evening reminder so checkpoint and
+    full-length nights announce themselves instead of hiding in the calendar.
+    """
     cfg = cfg or CONFIG
     if not profile.reminders_enabled:
         return []
@@ -144,19 +172,41 @@ def build_schedule(
             kind, cards, minutes, due_count, days_remaining, best_next_topic
         )
         out.append(Reminder(hour, minute, window, kind, title, body))
+    if marked_night and marked_night.get("date"):
+        hour, minute = MARKED_NIGHT_AT
+        if not profile.in_quiet_hours(hour):
+            title, body = _marked_night_copy(marked_night)
+            out.append(
+                Reminder(
+                    hour,
+                    minute,
+                    "marked night",
+                    "checkpoint",
+                    title,
+                    body,
+                    date=str(marked_night["date"]),
+                )
+            )
     out.sort(key=lambda r: r.minutes_of_day)
     return out
 
 
 def next_reminder(
-    schedule: list[Reminder], now_hour: int, now_minute: int = 0
+    schedule: list[Reminder],
+    now_hour: int,
+    now_minute: int = 0,
+    today: str | None = None,
 ) -> Reminder | None:
-    """The next reminder at or after now; wraps to the first one tomorrow."""
-    if not schedule:
+    """The next reminder at or after now; wraps to the first one tomorrow.
+
+    ``today`` (ISO date) filters date-scoped reminders: a marked night that
+    isn't tonight is never offered as "next"."""
+    live = [r for r in schedule if not (r.date and today and r.date != today)]
+    if not live:
         return None
     now = now_hour * 60 + now_minute
-    upcoming = [r for r in schedule if r.minutes_of_day >= now]
-    return upcoming[0] if upcoming else schedule[0]
+    upcoming = [r for r in live if r.minutes_of_day >= now]
+    return upcoming[0] if upcoming else live[0]
 
 
 def what_to_do_now(

@@ -81,8 +81,9 @@ The iOS **Today** and **Atlas** surfaces call the shared engine's
 (each with a range) plus the mastery map, in the Ante editorial aesthetic.
 Readiness is built on **application** evidence (transfer items answered in the
 desktop Quiz, synced across), so the phone **abstains** until that evidence
-exists — honest by construction, and shown that way in the current scaffold's
-`MockEngine` (readiness stamped "ABSTAINING — HONESTLY" with its reasons).
+exists — honest by construction. When the live engine is unavailable and the app
+is serving `MockEngine` data, the surfaces carry a visible **SAMPLE DATA** badge
+so a mocked, abstaining reading is never mistaken for a real one.
 
 ## Why iOS is the right companion for _this_ product
 
@@ -125,21 +126,34 @@ are turned off. The Plan tab previews exactly what is armed on the device.
 
 ## Status (honest)
 
-- **Done** — the SwiftUI scaffold in [`ios/`](../../ios/): the full UI
-  (onboarding, Today, Atlas, Session, Plan), the date-first onboarding + the
-  recalibration/plan logic mirrored from `recalibrate.py`, the
-  `NotificationScheduler` (real `UNUserNotificationCenter` scheduling with the
-  `reminders.py` copy and quiet-hours), and a `MockEngine` serving realistic,
-  abstaining data. It builds and runs offline with no backend.
-- **Next** — replace `MockEngine` with a live `SyncedEngine`:
-  1. `cargo build` `rslib` for `aarch64-apple-ios` + `-sim`.
-  2. Package the xcframework and export the `run_service_method` C entry point.
-  3. Add the bridging header / UniFFI module + Swift protobuf types.
-  4. Implement `AnkiServiceBridge`, hand it to `SyncedEngine(bridge:)`, and add
-     two-way sync around sessions.
-
-  The seam is in place (`EngineClient` / `AnkiServiceBridge`), so this is wiring,
-  not a rewrite — and it is the exact path already proven on Android below.
+- **Done — the shared engine is live on the phone.** The app defaults to
+  `SyncedEngine` (`ios/Ante/AnteApp.swift`), which runs the **real** modified
+  `anki` Rust crate on-device:
+  1. `just ios-engine` cross-compiles `rslib` for `aarch64-apple-ios` + `-sim`
+     and packages `out/ios/AnkiEngine.xcframework`, asserting the Ante symbol
+     (`ante_backend_run`) is in the binary.
+  2. The C entry point is reached through a hand-rolled protobuf codec
+     (`ios/Ante/Engine/ProtoWire.swift`, `BackendMessages.swift`,
+     `Generated/BackendIndices.swift`) over the single
+     `run_service_method`-style seam — no per-RPC native glue, no rewrite.
+  3. `SyncedEngine` opens the collection, calls `GetTopicMastery`/`GetQueuedCards`,
+     answers cards, and derives the three scores the way the desktop `ante`
+     layer does. It **abstains** on readiness until synced application evidence
+     exists.
+  4. **Two-way sync is wired**: `connect()` → `syncLogin`; `sync()` runs the
+     normal `sync_collection`, and handles `FULL_DOWNLOAD`/`FULL_UPLOAD`/
+     `FULL_SYNC` against the self-hosted server, reopening the collection after a
+     full transfer — the exact sequence `ante/tools/sync_test.py` proves.
+- **Fallback (honest):** if the engine can't start, `SyncedEngine` falls back to
+  `MockEngine` and `liveStatus()` returns `nil`; the UI then shows a visible
+  **SAMPLE DATA** badge (see `AppModel.usingSampleData`) so mocked numbers are
+  never mistaken for real ones.
+- **Verify without Xcode:** `just ios-engine-smoke` (C caller) and
+  `just ios-swift-smoke` (the app's real Swift codec + FFI + `SyncedEngine`,
+  optionally full-download + answer + sync-back) exercise the production path
+  against the host-built engine.
+- **Next (packaging, not engine):** a paid Apple account for TestFlight; the
+  sideload build is the clean-device path today.
 
 ## Migration note — Android companion (superseded)
 

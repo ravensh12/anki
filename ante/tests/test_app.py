@@ -111,6 +111,29 @@ def test_dashboard_carries_ritual_bookends():
     assert rit["next"] == "last_light"
 
 
+def test_dashboard_announces_the_next_marked_night_as_a_dated_reminder():
+    from datetime import date, timedelta
+
+    # 42 days out: the exam-anchored 14-day cadence lands a quiz checkpoint
+    # on TONIGHT, and no full-length shares the night
+    today = date.today()
+    dash = build_dashboard(
+        _topics(),
+        due_count=40,
+        new_count=0,
+        n_reviews=50,
+        profile={"exam_date": (today + timedelta(days=42)).isoformat()},
+    )
+    marked = [r for r in dash["reminders"]["schedule"] if r["kind"] == "checkpoint"]
+    assert len(marked) == 1
+    assert marked[0]["date"] == today.isoformat()
+    assert marked[0]["at"] == "17:00"
+    assert "checkpoint" in marked[0]["title"].lower()
+    # the plan's milestones agree: a marked night sits at offset 0 for the den
+    tonight = [m for m in dash["study_plan"]["milestones"] if m["offset"] == 0]
+    assert any(m["kind"] == "practice_test" for m in tonight)
+
+
 def test_dashboard_folds_diagnostic_baseline_into_the_plan():
     import time
 

@@ -19,13 +19,13 @@ the seat time, because the schedule — not extra hours — does the work.
 
 ## What's in this fork
 
-| Path                | What it is                                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------------------------- |
-| [`ante/`](ante/)    | The product: mastery engine, the den web UI (`web/den.html`), AI tutor/studio, seed data, tests, and docs      |
-| [`ios/`](ios/)      | SwiftUI companion app — Tonight / Circuit / Table / Ledger, with native morning & midnight game notifications  |
-| `rslib/`            | Engine changes: points-at-stake queue order + `GetTopicMastery` RPC (`rslib/src/scheduler/topics.rs`)          |
-| `qt/aqt/ante*.py`   | Desktop integration: serves the den, auth, reminders, and the media studio inside the Anki app                 |
-| everything else     | Upstream Anki (see below)                                                                                       |
+| Path              | What it is                                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| [`ante/`](ante/)  | The product: mastery engine, the den web UI (`web/den.html`), AI tutor/studio, seed data, tests, and docs     |
+| [`ios/`](ios/)    | SwiftUI companion app — Tonight / Circuit / Table / Ledger, with native morning & midnight game notifications |
+| `rslib/`          | Engine changes: points-at-stake queue order + `GetTopicMastery` RPC (`rslib/src/scheduler/topics.rs`)         |
+| `qt/aqt/ante*.py` | Desktop integration: serves the den, auth, reminders, and the media studio inside the Anki app                |
+| everything else   | Upstream Anki (see below)                                                                                     |
 
 > This work lives on the **`speedrun`** branch; `main` tracks upstream Anki.
 

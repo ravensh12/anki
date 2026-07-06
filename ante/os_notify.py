@@ -44,6 +44,10 @@ class ReminderJob:
     minute: int
     title: str
     body: str
+    # ISO date for one-night jobs (marked nights); None = fires daily. The
+    # stable key means each re-sync REPLACES the previous dated job, so the
+    # registered night always tracks the current plan.
+    date: str | None = None
 
     @property
     def label(self) -> str:
@@ -52,6 +56,13 @@ class ReminderJob:
     @property
     def at(self) -> str:
         return f"{self.hour:02d}:{self.minute:02d}"
+
+    @property
+    def ymd(self) -> tuple[int, int, int] | None:
+        if not self.date:
+            return None
+        y, m, d = self.date.split("-")
+        return int(y), int(m), int(d)
 
 
 # evergreen copy per reminder kind (no live due-counts — safe for OS-scheduled
@@ -70,6 +81,13 @@ EVERGREEN: dict[str, tuple[str, str]] = {
         "The midnight game — last hand before lights out",
         "Play a light hand now and your brain banks it overnight. Then lights out.",
     ),
+    # marked nights (quiz checkpoints / full-lengths) — fallback copy; the
+    # schedule usually carries night-specific copy computed from the plan
+    "checkpoint": (
+        "Marked night — the checkpoint",
+        "Tonight's the re-measure: sit the scheduled quiz or full-length and "
+        "the Book resets your honest line.",
+    ),
 }
 # a fourth, non-scheduled surface: the surprise/mastery-reward nudge
 REWARD_COPY = (
@@ -81,13 +99,25 @@ REWARD_COPY = (
 
 def preview_notifications() -> list[dict]:
     """Every notification the app can send, for a preview gallery."""
-    default_at = {"retrieval": "08:00", "review": "14:00", "encode": "21:00"}
+    default_at = {
+        "retrieval": "08:00",
+        "review": "14:00",
+        "encode": "21:00",
+        "checkpoint": "17:00 on marked nights",
+    }
     out = []
     for kind, (title, body) in EVERGREEN.items():
         out.append(
             {"kind": kind, "at": default_at.get(kind, ""), "title": title, "body": body}
         )
-    out.append({"kind": "reward", "at": "on mastery", "title": REWARD_COPY[0], "body": REWARD_COPY[1]})
+    out.append(
+        {
+            "kind": "reward",
+            "at": "on mastery",
+            "title": REWARD_COPY[0],
+            "body": REWARD_COPY[1],
+        }
+    )
     return out
 
 
@@ -100,13 +130,33 @@ def copy_for_kind(kind: str) -> tuple[str, str]:
 def jobs_from_schedule(schedule: list[dict]) -> list[ReminderJob]:
     """Turn the reminder schedule (reminders.build_schedule dicts) into OS jobs.
 
-    The copy is evergreen (no live due-counts — the OS can't know them), while
-    keeping the learning-science cue of each window."""
+    The daily copy is evergreen (no live due-counts — the OS can't know them),
+    while keeping the learning-science cue of each window. A "checkpoint" entry
+    (the next marked night) becomes a DATE-SCOPED job instead of a daily one,
+    keeping its plan-computed copy — calendar facts, not live counts — so the
+    nudge fires on the right night even if Ante stays closed until then."""
     evergreen = EVERGREEN
     out: list[ReminderJob] = []
     seen: set[str] = set()
     for r in schedule or []:
         kind = str(r.get("kind", "review"))
+        if kind == "checkpoint":
+            date = str(r.get("date") or "")
+            if not date or "checkpoint" in seen:
+                continue  # a daily-recurring checkpoint job would be a lie
+            seen.add("checkpoint")
+            fb_title, fb_body = evergreen["checkpoint"]
+            out.append(
+                ReminderJob(
+                    key="checkpoint",
+                    hour=int(r.get("hour", 0)),
+                    minute=int(r.get("minute", 0)),
+                    title=str(r.get("title") or fb_title),
+                    body=str(r.get("body") or fb_body),
+                    date=date,
+                )
+            )
+            continue
         key = {"retrieval": "morning", "encode": "night"}.get(kind, "midday")
         if key in seen:
             continue
@@ -141,6 +191,12 @@ def osascript_notification(title: str, body: str, sound: str = "Glass") -> str:
 
 
 def launchd_plist(job: ReminderJob) -> bytes:
+    # dated jobs pin Month/Day so they fire on the marked night only (launchd
+    # has no Year key; the job is replaced on every re-sync long before that)
+    interval: dict[str, int] = {"Hour": job.hour, "Minute": job.minute}
+    if job.ymd:
+        _y, month, day = job.ymd
+        interval.update({"Month": month, "Day": day})
     return plistlib.dumps(
         {
             "Label": job.label,
@@ -149,7 +205,7 @@ def launchd_plist(job: ReminderJob) -> bytes:
                 "-e",
                 osascript_notification(job.title, job.body),
             ],
-            "StartCalendarInterval": {"Hour": job.hour, "Minute": job.minute},
+            "StartCalendarInterval": interval,
             "RunAtLoad": False,
         }
     )
@@ -227,13 +283,19 @@ def _install_windows(jobs: list[ReminderJob], base_dir: Path, run) -> list[str]:
         ps1 = scripts / f"{job.key}.ps1"
         ps1.write_text(powershell_toast_script(job), encoding="utf-8")
         task = f"{TASK_FOLDER}\\{job.key}"
+        if job.ymd:
+            # one-shot on the marked night (best-effort: /SD parsing follows
+            # the system locale; MM/DD/YYYY covers the common case)
+            year, month, day = job.ymd
+            when = ["/SC", "ONCE", "/SD", f"{month:02d}/{day:02d}/{year:04d}"]
+        else:
+            when = ["/SC", "DAILY"]
         run(
             [
                 "schtasks",
                 "/Create",
                 "/F",
-                "/SC",
-                "DAILY",
+                *when,
                 "/TN",
                 task,
                 "/ST",
@@ -249,7 +311,7 @@ def _install_windows(jobs: list[ReminderJob], base_dir: Path, run) -> list[str]:
 
 def _uninstall_windows(base_dir: Path, run) -> int:
     n = 0
-    for key in ("morning", "midday", "night"):
+    for key in ("morning", "midday", "night", "checkpoint"):
         res = run(
             ["schtasks", "/Delete", "/F", "/TN", f"{TASK_FOLDER}\\{key}"],
             check=False,
@@ -273,9 +335,11 @@ def systemd_units(job: ReminderJob) -> tuple[str, str]:
         "[Unit]\nDescription=Ante study reminder\n\n[Service]\nType=oneshot\n"
         f"ExecStart=/usr/bin/env notify-send -a Ante {_sh_quote(job.title)} {_sh_quote(job.body)}\n"
     )
+    # dated jobs fire once, on the marked night; daily jobs recur
+    on_calendar = f"{job.date} {job.at}:00" if job.date else f"*-*-* {job.at}:00"
     timer = (
         "[Unit]\nDescription=Ante study reminder timer\n\n[Timer]\n"
-        f"OnCalendar=*-*-* {job.at}:00\nPersistent=false\n\n"
+        f"OnCalendar={on_calendar}\nPersistent=false\n\n"
         "[Install]\nWantedBy=timers.target\n"
     )
     return service, timer

@@ -134,3 +134,66 @@ def test_linux_units_and_timers(tmp_path):
     assert "notify-send" in service
     assert "OnCalendar=*-*-* 07:30:00" in timer
     assert uninstall_all(platform="linux", home=tmp_path, run=run)["removed"] == 3
+
+
+# --------------------------------------------------------------------------- #
+# Marked nights (quiz checkpoints / full-lengths): date-scoped one-shot jobs
+# --------------------------------------------------------------------------- #
+
+_MARKED = {
+    "kind": "checkpoint",
+    "hour": 17,
+    "minute": 0,
+    "at": "17:00",
+    "date": "2026-07-19",
+    "title": "Marked night — the quiz checkpoint",
+    "body": "Re-take the section quizzes tonight and re-measure your baseline.",
+}
+
+
+def test_checkpoint_entry_becomes_a_dated_job_with_plan_copy():
+    jobs = jobs_from_schedule(_SCHEDULE + [_MARKED])
+    assert [j.key for j in jobs] == ["morning", "midday", "night", "checkpoint"]
+    cp = jobs[-1]
+    assert cp.date == "2026-07-19" and cp.ymd == (2026, 7, 19)
+    # the plan-computed copy (calendar facts) is carried, not evergreen copy
+    assert "quiz checkpoint" in cp.title
+    # daily jobs stay undated
+    assert all(j.date is None for j in jobs[:-1])
+
+
+def test_checkpoint_without_a_date_is_never_registered():
+    # a daily-recurring "checkpoint tonight" banner would be a lie
+    assert jobs_from_schedule([{"kind": "checkpoint", "hour": 17, "minute": 0}]) == []
+
+
+def test_macos_dated_job_pins_month_and_day():
+    jobs = jobs_from_schedule([_MARKED])
+    data = plistlib.loads(launchd_plist(jobs[0]))
+    assert data["StartCalendarInterval"] == {
+        "Hour": 17,
+        "Minute": 0,
+        "Month": 7,
+        "Day": 19,
+    }
+
+
+def test_linux_dated_timer_fires_on_the_marked_night_only():
+    (job,) = jobs_from_schedule([_MARKED])
+    _service, timer = systemd_units(job)
+    assert "OnCalendar=2026-07-19 17:00:00" in timer
+
+
+def test_windows_dated_task_is_scheduled_once(tmp_path):
+    run = _Run()
+    out = install(_SCHEDULE + [_MARKED], platform="win32", base_dir=tmp_path, run=run)
+    assert out["ok"] and len(out["installed"]) == 4
+    creates = [c for c in run.calls if c[:2] == ["schtasks", "/Create"]]
+    once = [c for c in creates if "ONCE" in c]
+    assert len(once) == 1
+    assert "07/19/2026" in once[0] and "17:00" in once[0]
+    # the daily jobs stay daily
+    assert sum(1 for c in creates if "DAILY" in c) == 3
+    # uninstall clears the checkpoint task alongside the daily ones
+    out = uninstall_all(platform="win32", base_dir=tmp_path, run=run)
+    assert out["ok"] and out["removed"] == 4

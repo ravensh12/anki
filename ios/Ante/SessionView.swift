@@ -44,6 +44,8 @@ struct SessionView: View {
 
     @State private var cardsDone = 0
     @State private var itemsDone = 0
+    /// When the current step was dealt — real per-card timing for the revlog.
+    @State private var stepStartedAt = Date()
 
     /// The pre-flip read, in the den's language (mirrors den.html tableReveal).
     private let preflip: [(title: String, sub: String, value: Double)] = [
@@ -175,10 +177,9 @@ struct SessionView: View {
                     .foregroundStyle(Color.anCardInk.opacity(0.6))
                     .lineSpacing(3)
                 HStack(spacing: AnSpace.sm) {
-                    ForEach(grades, id: \.name) { grade in
+                    ForEach(Array(grades.enumerated()), id: \.element.name) { rating, grade in
                         gradeButton(grade.name, grade.accent) {
-                            cardsDone += 1
-                            advance()
+                            answerCard(card, rating: rating)
                         }
                     }
                 }
@@ -392,9 +393,21 @@ struct SessionView: View {
         phase = steps.isEmpty ? .done : .running
     }
 
+    /// Grade the hand through the real scheduler (a no-op on sample data),
+    /// then move on. The revlog gets the true time-to-answer.
+    private func answerCard(_ card: ReviewCard, rating: Int) {
+        let elapsed = Int(Date().timeIntervalSince(stepStartedAt) * 1000)
+        cardsDone += 1
+        Task { await model.answerCard(id: card.id, rating: rating, millisecondsTaken: elapsed) }
+        advance()
+    }
+
     private func advance() {
         if current + 1 >= steps.count {
             phase = .done
+            // Bank the game: push tonight's reviews to the den so the desktop's
+            // Circuit (and anyone watching it) updates while the phone is warm.
+            Task { await model.syncNow() }
         } else {
             current += 1
             resetStepState()
@@ -412,6 +425,7 @@ struct SessionView: View {
         itemPhase = .choosing
         itemChosen = nil
         itemConfidence = nil
+        stepStartedAt = Date()
     }
 
     private func choiceColors(_ index: Int, _ item: ApplicationItem) -> (bg: Color, border: Color) {

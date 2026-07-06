@@ -53,6 +53,15 @@ HF_I2V_ENDPOINT = os.environ.get("HF_I2V_ENDPOINT", "/v1/image2video/dop")
 HF_SPEAK_ENDPOINT = os.environ.get("HF_SPEAK_ENDPOINT", "/v1/speak/higgsfield")
 HF_SOUL_MODEL = os.environ.get("HF_SOUL_MODEL", "soul")
 HF_I2V_MODEL = os.environ.get("HF_I2V_MODEL", "dop-turbo")
+# Every DoP render is pinned to one curated camera-motion preset (a locked-off
+# tripod move from the Higgsfield motion library). Free-roaming AI cameras are
+# what put a film rig drifting THROUGH the card table in earlier takes; a
+# pinned static preset keeps the room believable. Override with
+# HF_DOP_MOTION (set it empty to let the model improvise again).
+HF_DOP_MOTION = os.environ.get(
+    "HF_DOP_MOTION", "285f9746-ddbc-4644-b07f-7cbe2e7925ea"
+)
+HF_DOP_MOTION_STRENGTH = float(os.environ.get("HF_DOP_MOTION_STRENGTH", "0.7"))
 HF_POLL_S = 8
 HF_TIMEOUT_S = 900
 
@@ -71,10 +80,11 @@ HOUSE_STYLE = (
 # The cast. Each persona is an ElevenLabs voice + delivery settings, all
 # overridable (ANTE_VOICE_<PERSONA> / ANTE_TTS_MODEL).
 PERSONAS: dict[str, tuple[str, dict]] = {
-    # Sahir, the dealer: calm, warm, exacting authority (George)
+    # Sahir, the dealer: a grizzled old poker-room regular — gravel in the
+    # voice, forty years on the felt, unhurried and dry (Clyde)
     "dealer": (
-        "JBFqnCBsd6RMkjVDRZzb",
-        {"stability": 0.55, "similarity_boost": 0.8, "style": 0.3, "use_speaker_boost": True},
+        "2EiwWnXFnvU5JabPnv8n",
+        {"stability": 0.34, "similarity_boost": 0.78, "style": 0.62, "use_speaker_boost": True},
     ),
     # the midnight-game narrator: low, slow, hypnotic (Lily)
     "night": (
@@ -86,6 +96,16 @@ PERSONAS: dict[str, tuple[str, dict]] = {
         "onwK4e9ZLuTAKqWW03F9",
         {"stability": 0.6, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": True},
     ),
+}
+
+# The same cast on the OpenAI engine (keyless-ElevenLabs fallback). Sahir
+# runs on "onyx" — deep and weathered — with instructions that keep the old
+# poker-room cadence; lighter voices read too young for a dealer who's spent
+# decades on the felt.
+OPENAI_VOICES: dict[str, str] = {
+    "dealer": "onyx",
+    "night": "sage",
+    "chronicler": "echo",
 }
 
 
@@ -507,7 +527,11 @@ class Studio:
     def motion(self, spec: dict, still: AssetRef) -> AssetRef | None:
         """Animate a still into a short clip (DoP). None when offline — the UI
         falls back to the still with local motion (Ken Burns), same as the film."""
+        # the pinned camera preset is part of the spec: re-pinning the camera
+        # invalidates stale takes instead of replaying the drifting ones
         mspec = {"motion": spec.get("motion", ""), "of": still.key}
+        if HF_DOP_MOTION:
+            mspec["camera"] = HF_DOP_MOTION
         cached = self.lookup("motion", mspec)
         if cached:
             return cached
@@ -527,14 +551,16 @@ class Studio:
             return None
         try:  # pragma: no cover - live API
             key = self.key_for("motion", mspec)
-            url = self._hf_job(
-                HF_I2V_ENDPOINT,
-                {
-                    "model": HF_I2V_MODEL,
-                    "prompt": spec.get("motion", "subtle living movement, camera almost still"),
-                    "input_images": [{"type": "image_url", "image_url": image_url}],
-                },
-            )
+            params: dict = {
+                "model": HF_I2V_MODEL,
+                "prompt": spec.get("motion", "subtle living movement, camera almost still"),
+                "input_images": [{"type": "image_url", "image_url": image_url}],
+            }
+            if HF_DOP_MOTION:
+                params["motions"] = [
+                    {"id": HF_DOP_MOTION, "strength": HF_DOP_MOTION_STRENGTH}
+                ]
+            url = self._hf_job(HF_I2V_ENDPOINT, params)
             filename = f"motion_{key}.mp4"
             self._download(url, filename)
             self._spend()
@@ -551,12 +577,38 @@ class Studio:
     def speech(self, text: str, persona: str = "night") -> AssetRef | None:
         """Narration audio for a line. ElevenLabs preferred; OpenAI fallback;
         None offline (features must render without audio)."""
-        spec = {"text": text, "persona": persona}
+        # Resolve the actor the way the render will: engine + that engine's
+        # voice are part of the spec, so a cached take can never impersonate
+        # a different casting. (An OpenAI fallback once cached itself under
+        # the ElevenLabs voice id — half the film then spoke in the wrong
+        # actor until the mixed takes were regenerated.)
+        if elevenlabs_available() and not self.force_offline:
+            engine = "elevenlabs"
+            voice = PERSONAS.get(persona, PERSONAS["night"])[0]
+        else:
+            engine = "openai"
+            voice = OPENAI_VOICES.get(persona, "ash")
+        voice = os.environ.get(f"ANTE_VOICE_{persona.upper()}", voice)
+        spec: dict = {"text": text, "persona": persona, "voice": voice, "engine": engine}
+        # delivery settings are part of the spec so a recast invalidates stale
+        # takes instead of replaying the old warmth from cache
+        if engine == "elevenlabs":
+            _, settings = PERSONAS.get(persona, PERSONAS["night"])
+            spec["voice_settings"] = settings
+        elif persona == "dealer":
+            spec["casting"] = "poker-v1"
         cached = self.lookup("speech", spec)
         if cached:
             return cached
-        if self.force_offline:
-            return None
+        if self.force_offline or not (elevenlabs_available() or openai_available()):
+            # No way to render a fresh take — replay a legacy casting if one
+            # is in the can (pre-"engine" cache entries: a warmed demo must
+            # not go silent because today's keys differ). Otherwise, quiet.
+            legacy_voice = PERSONAS.get(persona, PERSONAS["night"])[0]
+            legacy_voice = os.environ.get(f"ANTE_VOICE_{persona.upper()}", legacy_voice)
+            return self.lookup(
+                "speech", {"text": text, "persona": persona, "voice": legacy_voice}
+            )
         key = self.key_for("speech", spec)
         filename = f"speech_{key}.mp3"
         try:
@@ -596,8 +648,11 @@ class Studio:
 
     def _openai_tts(self, text: str, persona: str, out: Path) -> None:
         instructions = {
-            "dealer": "Calm, precise warmth with a card dealer's poise — "
-            "examining a player they respect. Unhurried.",
+            "dealer": "You're a 65-year-old poker dealer who's worked the "
+            "same high-stakes room for forty years. Gravelly, unhurried, dry "
+            "wit — like you're talking to a regular at your table. Low voice "
+            "with a little smoke in it, never rushed, every line sounds like "
+            "you've said it a thousand times before the cards even hit the felt.",
             "night": "Very slow, low, and soft — a wind-down narration right "
             "before sleep. Almost a whisper.",
             "chronicler": "Measured documentary narration, quietly proud.",
@@ -605,7 +660,9 @@ class Studio:
         body = json.dumps(
             {
                 "model": os.environ.get("ANTE_TTS_MODEL", "gpt-4o-mini-tts"),
-                "voice": os.environ.get(f"ANTE_VOICE_{persona.upper()}", "ash"),
+                "voice": os.environ.get(
+                    f"ANTE_VOICE_{persona.upper()}", OPENAI_VOICES.get(persona, "ash")
+                ),
                 "input": text,
                 "instructions": instructions,
                 "response_format": "wav",

@@ -34,8 +34,8 @@ wheels:
 bench deck="out/mcat_seed.anki2" iters="200":
     PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.bench --deck {{ deck }} --iters {{ iters }}
 
-# Ante: generate a topic-tagged MCAT seed deck
-seed-deck per_topic="5" out="out/mcat_seed.anki2":
+# Ante: export the premade MCAT deck (curated only; per_topic>0 pads for benchmarks)
+seed-deck per_topic="0" out="out/mcat_seed.anki2":
     PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.generate_seed_deck --out {{ out }} --per-topic {{ per_topic }} --apkg out/mcat_seed.apkg
 
 # Ante: run the AI eval harness (offline by default; set ANTHROPIC_API_KEY for Claude)
@@ -45,6 +45,28 @@ ai-eval *args:
 # Ante: run the study-feature experiment (mastery-gating vs ablation vs plain)
 experiment *args:
     PYTHONPATH=. out/pyenv/bin/python -m ante.experiment {{ args }}
+
+# Ante: the paraphrase test (spec 7d) — 30 cards x 2 reworded questions.
+# With no args, runs the synthetic memorizer-vs-transfer demonstration.
+paraphrase *args:
+    PYTHONPATH=. out/pyenv/bin/python -m ante.paraphrase {{ args }}
+
+# Ante: memory calibration report + reliability SVG (Brier / log-loss / ECE)
+calibrate predictions="ante/data/sample_predictions.json" *args:
+    PYTHONPATH=. out/pyenv/bin/python -m ante.tools.calibrate \
+      --predictions {{ predictions }} --out-svg out/calibration.svg {{ args }}
+
+# Ante: leakage scan (spec 7e) — flags test items that leaked into training data
+leakage-check train test threshold="0.85":
+    PYTHONPATH=. out/pyenv/bin/python -m ante.leakage \
+      --train {{ train }} --test {{ test }} --threshold {{ threshold }}
+
+# Ante: pre-render Sahir's Back Room voice for a demo (zero on-stage latency).
+# Close Anki first (exclusive collection lock); needs a TTS key. Extra args
+# pass through, e.g. --topics mcat::bio_biochem::enzymes --clips
+warm-backroom collection *args:
+    PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.warm_backroom \
+      --collection {{ collection }} {{ args }}
 
 # Ante: set up the optional model/AI service venv (one-time; PRD 3.2 stack)
 ante-service-setup:
@@ -66,9 +88,67 @@ sync-test endpoint="http://127.0.0.1:27701/" user="ante" password="ante123":
     PYTHONPATH=out/pylib:pylib:. SYNC_ENDPOINT={{ endpoint }} SYNC_USER={{ user }} \
       SYNC_PASS={{ password }} out/pyenv/bin/python ante/tools/sync_test.py
 
+# Ante: crash-recovery test (spec 7g) — SIGKILL mid-review N times, 0 corruption
+crash-test deck="out/mcat_seed.anki2" trials="20":
+    PYTHONPATH=out/pylib:. out/pyenv/bin/python -m ante.tools.crash_test \
+      --deck {{ deck }} --trials {{ trials }}
+
 # Ante: run the dependency-free Ante unit tests (fast; no Anki build)
 test-ante *args:
     PYTHONPATH=. out/pyenv/bin/pytest ante/tests {{ args }}
+
+# Ante: cross-compile the shared engine and package AnkiEngine.xcframework
+# for the iOS app (device + Apple-silicon simulator). Needs Xcode CLTs.
+ios-engine:
+    rustup target add aarch64-apple-ios aarch64-apple-ios-sim
+    CARGO_TARGET_DIR=out/rust cargo build -p anki_ios_ffi --features native-tls --release --target aarch64-apple-ios
+    CARGO_TARGET_DIR=out/rust cargo build -p anki_ios_ffi --features native-tls --release --target aarch64-apple-ios-sim
+    nm -gU out/rust/aarch64-apple-ios/release/libanki_engine.a | grep -q _ante_backend_run
+    rm -rf out/ios/AnkiEngine.xcframework
+    mkdir -p out/ios
+    xcodebuild -create-xcframework \
+        -library out/rust/aarch64-apple-ios/release/libanki_engine.a -headers rslib/ios-ffi/include \
+        -library out/rust/aarch64-apple-ios-sim/release/libanki_engine.a -headers rslib/ios-ffi/include \
+        -output out/ios/AnkiEngine.xcframework
+    @echo "xcframework at out/ios/AnkiEngine.xcframework"
+
+# Ante: engine C-ABI smoke test on the host (buildhash + open a collection
+# + one RPC through a plain C caller; no Xcode required)
+ios-engine-smoke:
+    CARGO_TARGET_DIR=out/rust cargo build -p anki_ios_ffi --features native-tls --release
+    mkdir -p out
+    cc rslib/ios-ffi/ctest/smoke.c -Irslib/ios-ffi/include \
+        out/rust/release/libanki_engine.a \
+        -framework Security -framework CoreFoundation -framework SystemConfiguration \
+        -framework IOKit \
+        -liconv -o out/ios_ffi_smoke
+    ./out/ios_ffi_smoke
+
+# Ante: exercise the iOS app's PRODUCTION Swift engine path (hand-rolled
+# protobuf codec + FFI bridge + SyncedEngine) against the host-built engine.
+# With SYNC_ENDPOINT/SYNC_USER/SYNC_PASS set and a sync server running, it
+# also full-downloads the den, answers a card, and syncs it back — the exact
+# call sequence the phone runs.
+ios-swift-smoke:
+    CARGO_TARGET_DIR=out/rust cargo build -p anki_ios_ffi --features native-tls --release
+    mkdir -p out
+    xcrun -sdk macosx swiftc -parse-as-library \
+        -import-objc-header rslib/ios-ffi/include/anki_engine.h \
+        ios/Ante/Engine/ProtoWire.swift ios/Ante/Engine/BackendMessages.swift \
+        ios/Ante/Generated/BackendIndices.swift ios/Ante/Engine/AnkiEngine.swift \
+        ios/Ante/EngineClient.swift ios/Ante/Models.swift ios/hosttest/HostSmoke.swift \
+        out/rust/release/libanki_engine.a \
+        -framework Security -framework CoreFoundation -framework SystemConfiguration \
+        -framework IOKit -liconv -o out/ios_swift_smoke
+    ANTE_COLLECTION_DIR="$(mktemp -d)" ./out/ios_swift_smoke
+
+# Ante: build the desktop installer for THIS platform into out/installer/dist/.
+# Bundles the ante/ package (den UI, seed data) so the app runs on a clean
+# machine. Locally it is adhoc-signed; the release workflow produces the
+# signed/notarized installers. See ante/docs/installer.md.
+installer:
+    {{ if os() == "windows" { "$env:RELEASE='2'; tools\\ninja installer" } else { "RELEASE=2 ./ninja installer" } }}
+    @echo "installer artifacts -> out/installer/dist/"
 
 # Build and run all checks (lint + test) - lets ninja handle dependencies
 check:

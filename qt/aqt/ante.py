@@ -12,12 +12,19 @@ unit-tested ``ante`` package.
 from __future__ import annotations
 
 import random
+import secrets
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
 
 from anki.collection import Collection
+
+# Per-boot access token for the den's HTTP endpoints. The in-app page embeds
+# it (dashboard_body) and mediasrv requires it on ante requests, so an
+# arbitrary local process can't read per-account study data off the localhost
+# port. Dev mode and Bearer-key callers are exempt (see mediasrv).
+ANTE_TOKEN = secrets.token_urlsafe(24)
 
 
 def _ensure_ante_importable() -> None:
@@ -56,6 +63,8 @@ def build_dashboard_payload(col: Collection, budget_minutes: int = 75) -> dict:
         payload["notifications"] = notification_previews(col)
         # the den uses the real cinematic plates when they exist, in demo too
         payload["world_assets"] = world_assets_present()
+        # demo play is throwaway — never resume the real account's games there
+        payload["game_state"] = {}
         return payload
 
     # Account gate: when nobody is signed in, return only the auth state so the
@@ -115,7 +124,7 @@ def build_dashboard_payload(col: Collection, budget_minutes: int = 75) -> dict:
     )
 
     genuine_by_day, today_ordinal = _genuine_reviews_by_day(col)
-    newly_mastered = _newly_mastered_count(col, topic_performance)
+    newly_mastered = _newly_mastered_count(col, resp, topic_performance)
     profile = get_profile(col)
     prof_dict = profile.as_dict()
     # pre-onboarding, let the live budget query drive the daily plan
@@ -162,12 +171,18 @@ def build_dashboard_payload(col: Collection, budget_minutes: int = 75) -> dict:
         events_today=events_today(col),
         studio_status=studio_status(col),
         overnight=_overnight_counts(col),
+        readiness_history=get_readiness_history(col),
+        fl_results=get_fl_results(col),
     )
+    # Persist today's posted line so the Book can score its own past guesses
+    # against future full-lengths (spec section 1 honesty rule).
+    record_readiness_line(col, payload.get("scores", {}).get("readiness", {}))
     payload["auth"] = auth
     payload["world_assets"] = world_assets_present()
     payload["quiz_status"] = _quiz_status(col)
     payload["notifications"] = notification_previews(col)
     payload["fl_results"] = get_fl_results(col)
+    payload["game_state"] = get_game_state(col)
 
     from ante.palace import gallery_payload
     from aqt.ante_studio import get_active_viva, get_palace
@@ -231,29 +246,182 @@ def build_viva_payload(col: Collection) -> dict:
     from ante.viva import eligible_topics
     from aqt.ante_studio import get_active_viva, get_viva_log
 
+    rt_on = realtime_available()
     if get_demo_state(col).get("enabled"):
-        # a live, playable Back Room on the tour — real rubric grading, but the
-        # session is transient (ante_studio stores it off the real account)
+        # a live, playable Back Room on the tour — real rubric grading and, with
+        # a key, the real live table too (the session is transient: ante_studio
+        # stores it off the real account, but it grades and speaks for real)
         log = get_viva_log(col)
+        active, last, silence_cue = _attach_realtime_cues(
+            get_active_viva(col), log[-1] if log else None, rt_on
+        )
         return {
-            "active": get_active_viva(col),
-            "last": log[-1] if log else None,
+            "active": active,
+            "last": last,
             "suggested": _demo_viva_suggested(),
             "demo": True,
+            "realtime": rt_on,
+            "rt_silence_cue": silence_cue,
         }
 
-    topic_perf = _topic_application_performance(col)
-    resp = col._backend.get_topic_mastery(
-        search="", topic_prefix="", mastery_threshold=CONFIG.r_threshold
-    )
-    perf_point = {k: v[0] for k, v in (topic_perf or {}).items()}
-    mastery = compute_mastery(stats_from_mastery_response(resp, perf_point), cfg=CONFIG)
     log = get_viva_log(col)
+    active_session = get_active_viva(col)
+    active, last, silence_cue = _attach_realtime_cues(
+        active_session, log[-1] if log else None, rt_on
+    )
+    # The eligible-topics list is only rendered when no examination is open, but
+    # the Back Room polls this endpoint every few seconds mid-exam. Skip the full
+    # topic-mastery scan (and the mastery recompute) whenever a session is live.
+    if active_session and active_session.get("status") == "open":
+        suggested: list[dict] = []
+    else:
+        topic_perf = _topic_application_performance(col)
+        resp = col._backend.get_topic_mastery(
+            search="", topic_prefix="", mastery_threshold=CONFIG.r_threshold
+        )
+        perf_point = {k: v[0] for k, v in (topic_perf or {}).items()}
+        mastery = compute_mastery(
+            stats_from_mastery_response(resp, perf_point), cfg=CONFIG
+        )
+        suggested = eligible_topics(mastery, get_open_responses(col), CONFIG)
     return {
-        "active": get_active_viva(col),
-        "last": log[-1] if log else None,
-        "suggested": eligible_topics(mastery, get_open_responses(col), CONFIG),
+        "active": active,
+        "last": last,
+        "suggested": suggested,
         "demo": False,
+        # the live table: heads-up over streaming speech (OpenAI Realtime).
+        # Feature-gated on the key; the rubric still does all grading.
+        "realtime": rt_on,
+        "rt_silence_cue": silence_cue,
+    }
+
+
+def _attach_realtime_cues(active, last, rt_on: bool):
+    """Attach the private [LEDGER] cues Sahir is fed on the live table. Every
+    word comes from the same pure module that grades (ante/viva.py); the web
+    page is only a pipe. Returns (active, last, silence_cue)."""
+    if not rt_on:
+        return active, last, None
+    from ante.viva import (
+        realtime_opening_cue,
+        realtime_silence_cue,
+        realtime_turn_context,
+    )
+
+    if active and active.get("status") == "open":
+        active = dict(active)
+        active["rt_cue"] = (
+            realtime_opening_cue(active)
+            if not active.get("rounds")
+            else realtime_turn_context(active)
+        )
+    if last and last.get("status") in ("passed", "failed"):
+        last = dict(last)
+        last["rt_cue"] = realtime_turn_context(last)
+    return active, last, realtime_silence_cue()
+
+
+# --------------------------------------------------------------------------- #
+# The live table — ephemeral Realtime session minting (Sahir speaks live;
+# the deterministic ledger still grades every turn)
+# --------------------------------------------------------------------------- #
+
+REALTIME_MINT_URL = "https://api.openai.com/v1/realtime/client_secrets"
+
+
+def realtime_available() -> bool:
+    """Live speech needs an OpenAI key; everything degrades to tap-to-speak
+    without one (Principle: AI-optional, never required)."""
+    import os
+
+    return bool(os.environ.get("OPENAI_API_KEY")) and not os.environ.get(
+        "ANTE_REALTIME_DISABLED"
+    )
+
+
+def build_realtime_session_config(session: dict) -> dict:
+    """The GA Realtime session object for one Back Room examination.
+
+    create_response=false is the honesty lever: the model may never respond on
+    its own — after every player turn the web client grades the transcript
+    through the same submit_answer() path as a typed answer, injects the
+    private [LEDGER] note, and only then requests a response.
+    """
+    import os
+
+    _ensure_ante_importable()
+    from ante.viva import realtime_instructions
+
+    return {
+        "type": "realtime",
+        "model": os.environ.get("ANTE_REALTIME_MODEL", "gpt-realtime"),
+        "instructions": realtime_instructions(session),
+        "output_modalities": ["audio"],
+        "audio": {
+            "input": {
+                "transcription": {
+                    "model": os.environ.get(
+                        "ANTE_REALTIME_STT", "gpt-4o-mini-transcribe"
+                    ),
+                    "language": "en",
+                },
+                "noise_reduction": {"type": "near_field"},
+                "turn_detection": {
+                    # semantic VAD with low eagerness: an examiner who lets
+                    # the student think before deciding they have finished
+                    "type": "semantic_vad",
+                    "eagerness": "low",
+                    "create_response": False,
+                    "interrupt_response": True,
+                },
+            },
+            "output": {
+                "voice": os.environ.get("ANTE_REALTIME_VOICE", "cedar"),
+            },
+        },
+    }
+
+
+def mint_realtime_secret(col: Collection) -> dict:
+    """Mint an ephemeral client secret bound to the active examination.
+
+    Returns {ok, value, expires_at, model} or {ok: False, reason}. The real
+    API key never reaches the web page; the page only ever sees the
+    short-lived ek_ token, exactly as the Realtime WebRTC docs prescribe.
+    """
+    import json
+    import os
+    import urllib.request
+
+    from aqt.ante_studio import get_active_viva
+
+    # The demo Back Room grades for real (transient session, off the account),
+    # so it speaks for real too — the live table is part of the tour.
+    if not realtime_available():
+        return {"ok": False, "reason": "no key"}
+    session = get_active_viva(col)
+    if not session or session.get("status") != "open":
+        return {"ok": False, "reason": "no active examination"}
+
+    body = json.dumps({"session": build_realtime_session_config(session)}).encode(
+        "utf-8"
+    )
+    req = urllib.request.Request(REALTIME_MINT_URL, data=body, method="POST")
+    req.add_header("Authorization", f"Bearer {os.environ['OPENAI_API_KEY']}")
+    req.add_header("Content-Type", "application/json")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except Exception as exc:
+        return {"ok": False, "reason": f"mint failed: {exc.__class__.__name__}"}
+    value = str(data.get("value", ""))
+    if not value:
+        return {"ok": False, "reason": "mint returned no secret"}
+    return {
+        "ok": True,
+        "value": value,
+        "expires_at": data.get("expires_at"),
+        "model": (data.get("session") or {}).get("model"),
     }
 
 
@@ -264,6 +432,61 @@ def get_fl_results(col: Collection) -> dict:
     """Recorded full-length results, keyed by test number ('1'/'2')."""
     data = _get_acct(col, FL_RESULTS_KEY, {})
     return data if isinstance(data, dict) else {}
+
+
+READINESS_HISTORY_KEY = "ante_readiness_history"
+# keep the log bounded — a rolling window is plenty to score past lines
+_READINESS_HISTORY_MAX = 120
+
+
+def get_readiness_history(col: Collection) -> list:
+    """Past readiness lines the Book has posted (for the track record)."""
+    data = _get_acct(col, READINESS_HISTORY_KEY, [])
+    return data if isinstance(data, list) else []
+
+
+def record_readiness_line(col: Collection, readiness: dict) -> None:
+    """Append today's posted line to the history (deduped per day). Demo play is
+    throwaway; abstaining lines are ignored by append_line."""
+    if get_demo_state(col).get("enabled"):
+        return
+    _ensure_ante_importable()
+    from ante.trackrecord import append_line
+
+    history = get_readiness_history(col)
+    updated = append_line(history, readiness, now=time.time())
+    if updated is not history and updated != history:
+        _set_acct(col, READINESS_HISTORY_KEY, updated[-_READINESS_HISTORY_MAX:])
+
+
+GAME_STATE_KEY = "ante_game_state"
+
+
+def get_game_state(col: Collection) -> dict:
+    """In-progress game snapshots (practice quiz, full-lengths, the buy-in,
+    per-day tallies), keyed by game id and namespaced per account. Leaving a
+    game must never restart it — the web app saves after every answer and
+    restores from here on open."""
+    data = _get_acct(col, GAME_STATE_KEY, {})
+    return data if isinstance(data, dict) else {}
+
+
+def save_game_state(col: Collection, game_id: str, state: dict) -> None:
+    """Persist one game's in-progress snapshot (demo play is throwaway)."""
+    if get_demo_state(col).get("enabled"):
+        return
+    data = get_game_state(col)
+    data[str(game_id)] = state
+    _set_acct(col, GAME_STATE_KEY, data)
+
+
+def clear_game_state(col: Collection, game_id: str) -> None:
+    """Drop a finished/abandoned game's snapshot (completion, skip, submit)."""
+    if get_demo_state(col).get("enabled"):
+        return
+    data = get_game_state(col)
+    if data.pop(str(game_id), None) is not None:
+        _set_acct(col, GAME_STATE_KEY, data)
 
 
 def build_fl_payload(col: Collection, test_no: int) -> dict:
@@ -405,20 +628,22 @@ def world_assets_present() -> dict[str, bool]:
 MASTERED_SEEN_KEY = "ante_mastered_seen"
 
 
-def _newly_mastered_count(col: Collection, topic_performance: dict | None) -> int:
+def _newly_mastered_count(col: Collection, resp, topic_performance: dict | None) -> int:
     """Topics that crossed into mastered since the last payload build.
 
     The momentum + surprise-reward surfaces must fire only on NEW mastery —
     re-announcing the running total on every refresh would turn a competence
-    signal into confetti. The last-seen total is tracked per account."""
+    signal into confetti. The last-seen total is tracked per account.
+
+    Reuses the GetTopicMastery response already fetched for the payload rather
+    than issuing a second full-collection scan on every dashboard build."""
     _ensure_ante_importable()
     from ante.config import CONFIG
-    from ante.mastery import MasteryStatus, compute_mastery
-
-    resp = col._backend.get_topic_mastery(
-        search="", topic_prefix="", mastery_threshold=CONFIG.r_threshold
+    from ante.mastery import (
+        MasteryStatus,
+        compute_mastery,
+        stats_from_mastery_response,
     )
-    from ante.mastery import stats_from_mastery_response
 
     perf_point = {k: v[0] for k, v in (topic_performance or {}).items()}
     stats = stats_from_mastery_response(resp, perf_point)
@@ -526,6 +751,8 @@ _ACCOUNT_SCOPED = (
     "ante_target_score",
     "ante_diagnostic",
     "ante_fl_results",
+    # in-progress game snapshots (quiz / full-length / buy-in resume points)
+    "ante_game_state",
     # v4 generative layer: the Palace index + Viva history/active session
     "ante_palace",
     "ante_viva",
@@ -832,9 +1059,14 @@ def set_profile(col: Collection, updates: dict) -> dict:
 
 def build_reminder_schedule(col: Collection) -> list[dict]:
     """Today's reminder schedule (lightweight; no full dashboard build) for the
-    Qt notification scheduler. Empty when reminders are off or no collection."""
+    Qt notification scheduler. Empty when reminders are off or no collection.
+
+    Includes the next marked night (quiz checkpoint / full-length) as a
+    date-scoped entry: the in-app scheduler fires it only on its night, and
+    the OS sync registers it as a dated job."""
     _ensure_ante_importable()
     from ante.reminders import build_schedule
+    from ante.studyplan import marked_nights
 
     prof = get_profile(col)
     if not prof.reminders_enabled:
@@ -849,11 +1081,13 @@ def build_reminder_schedule(col: Collection) -> list[dict]:
     from ante.recalibrate import recalibrate
 
     recal = recalibrate(prof, due_count=int(due_count))
+    upcoming = marked_nights(recal.days_remaining)
     schedule = build_schedule(
         prof,
         recal.slot_plan,
         due_count=int(due_count),
         days_remaining=recal.days_remaining,
+        marked_night=upcoming[0] if upcoming else None,
     )
     return [r.as_dict() for r in schedule]
 
@@ -1036,12 +1270,20 @@ def grade_and_record_open(
 
 def _hour_outcomes(col: Collection) -> list[tuple[int, int]]:
     """(hour_of_day, correct) for every graded review, for Peak Hours analysis.
-    ``correct`` = the review was not an 'Again' (ease > 1)."""
+    ``correct`` = the review was not an 'Again' (ease > 1).
+
+    Aggregated in SQL to at most 48 (hour, correct) buckets so a large revlog is
+    not marshalled a row at a time on every dashboard build; the expanded list
+    is an identical multiset (peak_windows only counts per window)."""
     rows = col.db.all(
         "select cast(strftime('%H', id/1000, 'unixepoch', 'localtime') as int) as h, "
-        "ease from revlog where ease > 0"
+        "case when ease > 1 then 1 else 0 end as correct, count() "
+        "from revlog where ease > 0 group by h, correct"
     )
-    return [(int(h), 1 if int(e) > 1 else 0) for h, e in rows]
+    out: list[tuple[int, int]] = []
+    for h, correct, n in rows:
+        out.extend([(int(h), int(correct))] * int(n))
+    return out
 
 
 def _topic_application_performance(
@@ -1410,6 +1652,92 @@ def read_asset(name: str) -> tuple[bytes | None, str]:
 
 
 # --------------------------------------------------------------------------- #
+# Premade content: the MCAT deck ships with the app and self-seeds
+# --------------------------------------------------------------------------- #
+
+SEED_DECK_NAME = "MCAT"
+# bumping the version re-seeds only topics that still have no cards (never
+# duplicates), so shipping more premade cards later reaches existing users
+SEED_VERSION = 1
+SEED_DONE_KEY = "ante_seed_version"
+
+
+def ensure_seed_deck(col: Collection) -> int:
+    """Guarantee the premade MCAT deck is present so the den is never empty and
+    the student never has to import anything — content is ready out of the box.
+
+    Idempotent and safe to call on every home render: it no-ops once the current
+    seed version is recorded, and it only adds cards for topics that have none
+    (so a student who prunes cards is never re-seeded, and re-runs never
+    duplicate). Runs on the main thread (adds notes to the live collection)."""
+    try:
+        if int(col.get_config(SEED_DONE_KEY, 0) or 0) >= SEED_VERSION:
+            return 0
+    except Exception:
+        pass
+
+    _ensure_ante_importable()
+    import json as _json
+
+    import ante
+    from anki.decks import DeckId
+    from ante.outline import load_outline
+
+    basic = col.models.by_name("Basic")
+    if basic is None:
+        return 0
+
+    try:
+        path = Path(ante.__file__).resolve().parent / "data" / "seed_cards.json"
+        cards_by_topic = _json.loads(path.read_text(encoding="utf-8")).get("cards", {})
+    except Exception:
+        cards_by_topic = {}
+    if not cards_by_topic:
+        return 0
+
+    outline = load_outline()
+    deck_id = DeckId(col.decks.id(SEED_DECK_NAME))
+    added = 0
+    for topic in outline.all_topics():
+        pairs = cards_by_topic.get(topic) or []
+        if not pairs:
+            continue
+        # skip topics that already carry cards, so re-seeds never duplicate
+        try:
+            if col.find_cards(f'"tag:{topic}"'):
+                continue
+        except Exception:
+            pass
+        added += _seed_topic_cards(col, basic, deck_id, topic, pairs)
+
+    try:
+        col.set_config(SEED_DONE_KEY, SEED_VERSION)
+    except Exception:
+        pass
+    if added:
+        try:
+            ensure_study_deck(col)
+        except Exception:
+            pass
+    return added
+
+
+def _seed_topic_cards(col: Collection, basic, deck_id, topic: str, pairs) -> int:
+    """Add one topic's premade (front, back) pairs; returns the count added."""
+    added = 0
+    for pair in pairs:
+        if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+            continue
+        note = col.new_note(basic)
+        note["Front"] = str(pair[0])
+        note["Back"] = str(pair[1])
+        note.tags = [topic]
+        col.add_note(note, deck_id)
+        added += 1
+    return added
+
+
+# --------------------------------------------------------------------------- #
 # Custom-view data (replacing Anki's stock Study / Add / Browse screens)
 # --------------------------------------------------------------------------- #
 
@@ -1522,7 +1850,10 @@ def get_flash_confidence(col: Collection) -> list:
 
 
 def answer_current_card(
-    col: Collection, ease: int, confidence: float | None = None
+    col: Collection,
+    ease: int,
+    confidence: float | None = None,
+    elapsed_ms: int | None = None,
 ) -> None:
     if get_demo_state(col).get("enabled"):
         return  # demo cards are synthetic; nothing to record against the deck
@@ -1530,17 +1861,26 @@ def answer_current_card(
     if card is None:
         return
     rating = max(1, min(4, int(ease)))
-    # capture the pre-flip confidence vs. actual recall BEFORE answering (the
-    # card timer, started when the card was served, gives an honest response time)
+    # ``col.sched.getCard`` restarts the card timer, but the think-time actually
+    # happened in the web view. When it reports the elapsed time, rebase the
+    # timer so the revlog — and the genuine-review effort gate that drives the
+    # streak, the bookends and the consolidation counts — records the true
+    # duration instead of the ~0ms between fetching and answering the card.
+    if elapsed_ms is not None and int(elapsed_ms) >= 0:
+        card.timer_started = time.time() - int(elapsed_ms) / 1000.0
+    # capture the pre-flip confidence vs. actual recall BEFORE answering
     if confidence is not None:
         try:
             topic = next((t for t in card.note().tags if t.startswith("mcat::")), "")
         except Exception:
             topic = ""
-        try:
-            elapsed_ms = int(card.time_taken())
-        except Exception:
-            elapsed_ms = 0
+        if elapsed_ms is not None and int(elapsed_ms) >= 0:
+            ms = int(elapsed_ms)
+        else:
+            try:
+                ms = int(card.time_taken())
+            except Exception:
+                ms = 0
         log = get_flash_confidence(col)
         log.append(
             [
@@ -1548,37 +1888,11 @@ def answer_current_card(
                 1 if rating >= 3 else 0,
                 time.time(),
                 topic,
-                elapsed_ms,
+                ms,
             ]
         )
         _set_acct(col, FLASH_CONF_KEY, log[-_FLASH_CONF_CAP:])
     col.sched.answerCard(card, rating)  # type: ignore[arg-type]
-
-
-def build_add_info(col: Collection) -> dict:
-    from anki.models import NotetypeId
-
-    notetypes = []
-    for nt in col.models.all_names_and_ids():
-        model = col.models.get(NotetypeId(nt.id))
-        if not model:
-            continue
-        notetypes.append(
-            {
-                "id": nt.id,
-                "name": nt.name,
-                "fields": [f["name"] for f in model["flds"]],
-            }
-        )
-    decks = [{"id": d.id, "name": d.name} for d in col.decks.all_names_and_ids()]
-    return {
-        "notetypes": notetypes,
-        "decks": decks,
-        "current_deck": col.decks.get_current_id(),
-        "current_notetype": col.models.current()["id"]
-        if col.models.current()
-        else None,
-    }
 
 
 def add_note_from_payload(col: Collection, payload: dict) -> dict:
@@ -1603,67 +1917,48 @@ def add_note_from_payload(col: Collection, payload: dict) -> dict:
     return {"ok": True, "note_id": note.id}
 
 
-def _demo_library(query: str, limit: int = 300) -> dict:
-    """The seed deck as the Library in demo mode (the real collection is empty)."""
-    _ensure_ante_importable()
-    import json as _json
-
-    import ante
-
-    try:
-        path = Path(ante.__file__).resolve().parent / "data" / "seed_cards.json"
-        cards = _json.loads(path.read_text(encoding="utf-8")).get("cards", {})
-    except Exception:
-        cards = {}
-    q = (query or "").strip().lower()
-    rows = []
-    for topic, pairs in cards.items():
-        for front, back in pairs:
-            if (
-                q
-                and q not in front.lower()
-                and q not in back.lower()
-                and q not in topic.lower()
-            ):
-                continue
-            rows.append(
-                {
-                    "id": 0,
-                    "front": front[:120],
-                    "back": back[:160],
-                    "tags": [topic],
-                    "topic": topic,
-                }
-            )
-    return {"total": len(rows), "shown": len(rows[:limit]), "cards": rows[:limit]}
-
-
-def build_library_payload(col: Collection, query: str, limit: int = 300) -> dict:
+def map_untagged_notes(col: Collection) -> dict:
+    """Seat a third-party deck onto the Circuit: for every note that carries no
+    ``mcat::`` topic tag, ask the tagger for a confident, unambiguous topic and
+    add that tag. Conservative by design — cards the tagger can't place are left
+    untagged (honest). One undoable operation. Returns {tagged, skipped}."""
     if get_demo_state(col).get("enabled"):
-        return _demo_library(query, limit)
-    query = (query or "").strip()
-    try:
-        nids = col.find_notes(query) if query else col.find_notes("")
-    except Exception:
-        nids = []
-    total = len(nids)
-    rows = []
-    for nid in nids[:limit]:
+        return {"ok": True, "demo": True, "tagged": 0, "skipped": 0}
+    _ensure_ante_importable()
+    from ante.tagger import match_topic
+
+    deck_name_cache: dict[int, str] = {}
+
+    def deck_name_for(note) -> str:
+        cards = note.cards()
+        if not cards:
+            return ""
+        did = cards[0].did
+        if did not in deck_name_cache:
+            deck_name_cache[did] = col.decks.name(did)
+        return deck_name_cache[did]
+
+    changed = []
+    skipped = 0
+    # only notes that aren't already seated at a table
+    nids = col.find_notes("-tag:mcat::*")
+    for nid in nids:
         note = col.get_note(nid)
         flds = note.fields
         front = _strip_html(flds[0]) if flds else ""
         back = _strip_html(flds[1]) if len(flds) > 1 else ""
-        topic = next((t for t in note.tags if t.startswith("mcat::")), "")
-        rows.append(
-            {
-                "id": nid,
-                "front": front[:120],
-                "back": back[:160],
-                "tags": note.tags,
-                "topic": topic,
-            }
+        m = match_topic(
+            front, back, deck_name=deck_name_for(note), tags=list(note.tags)
         )
-    return {"total": total, "shown": len(rows), "cards": rows}
+        if m is None:
+            skipped += 1
+            continue
+        note.tags.append(m.tag)
+        changed.append(note)
+
+    if changed:
+        col.update_notes(changed)
+    return {"ok": True, "tagged": len(changed), "skipped": skipped}
 
 
 def _strip_html(s: str) -> str:
@@ -1897,6 +2192,8 @@ def dashboard_body() -> str:
     for injection into Anki's main web view via AnkiWebView.stdHtml. This renders
     Ante natively as the app's home screen rather than navigating to a URL,
     which the main view does not retain."""
+    import json as _json
+
     full = dashboard_html()
     style = ""
     s = full.find("<style>")
@@ -1906,4 +2203,7 @@ def dashboard_body() -> str:
     b = full.find("<body>")
     be = full.rfind("</body>")
     body_inner = full[b + len("<body>") : be] if b != -1 and be != -1 else full
-    return style + body_inner
+    # only the in-app page carries the token; the raw /_anki/ante shell must
+    # not leak it to other local processes
+    token = f"<script>window.ANTE_TOKEN={_json.dumps(ANTE_TOKEN)};</script>"
+    return style + token + body_inner

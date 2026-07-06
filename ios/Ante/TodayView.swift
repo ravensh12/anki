@@ -14,6 +14,7 @@ struct TodayView: View {
     var body: some View {
         AnScreen(issue: issueLine) {
             countdown
+            wireStrip
             primaryCTA
             SectionHeader(number: "♦", title: "The Book's line", meta: "scale 472–528")
             verdict
@@ -21,6 +22,49 @@ struct TodayView: View {
             bookends
         }
         .task { await model.refresh() }
+    }
+
+    // MARK: The wire (live engine + den sync, at a glance)
+
+    @ViewBuilder
+    private var wireStrip: some View {
+        if let status = model.engineStatus {
+            HStack(spacing: AnSpace.sm) {
+                Circle()
+                    .fill(status.connected ? Color.anGood : Color.anMuted)
+                    .frame(width: 7, height: 7)
+                if status.connected {
+                    Text(model.isSyncing ? "syncing…" : (model.syncLine ?? "wired to the den"))
+                        .anMicroLabel(color: .anMuted, size: 9.5)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    Button {
+                        Task { await model.syncNow() }
+                    } label: {
+                        Text("Sync").anMicroLabel(color: .anBrass, size: 10)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(model.isSyncing)
+                } else {
+                    Text("shared engine live · not wired to a den")
+                        .anMicroLabel(color: .anMuted, size: 9.5)
+                    Spacer(minLength: 0)
+                    Button {
+                        model.selectedTab = .plan
+                    } label: {
+                        Text("Wire it").anMicroLabel(color: .anBrass, size: 10)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Color.anPanel)
+            .overlay(
+                RoundedRectangle(cornerRadius: AnSpace.radius)
+                    .strokeBorder(Color.anRule, lineWidth: 1)
+            )
+        }
     }
 
     private var issueLine: String {

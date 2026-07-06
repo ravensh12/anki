@@ -130,3 +130,81 @@ def test_llm_probe_used_when_available():
     s = viva.submit_answer(s, "vague", provider=Provider(), now=1.0, cfg=cfg)
     if s["status"] == viva.OPEN_STATUS:
         assert "molecular level" in s["ask"]
+
+
+def test_stale_spoken_line_is_dropped_when_the_probe_moves_on():
+    """Sahir's voice is attached per line; once the exam advances to a new
+    probe, a `say` cached for the previous line must not linger (it would
+    replay the wrong sentence). Mirrors the guard in answer_viva."""
+    cfg = AnteConfig(viva_pass_score=0.99, viva_probe_rounds=2)
+    s = viva.start_viva(TOPIC, cfg=cfg)
+    # a voice line was rendered for the opening
+    s["say"] = {"text": s["opening"], "speech": "speech_opening.mp3"}
+    s = viva.submit_answer(s, "partial", now=1.0, cfg=cfg)
+    if s["status"] == viva.OPEN_STATUS and s.get("ask") != s["opening"]:
+        assert s.get("say") is None, "stale opening voice line should be cleared"
+
+
+def test_verdict_lines_match_the_pre_renderable_helpers():
+    """The closing verdict must be exactly passed_line/failed_line so the warm
+    tool can pre-render it (content-addressed speech cache)."""
+    cfg = AnteConfig(viva_pass_score=0.5, viva_probe_rounds=1)
+    s = viva.start_viva(TOPIC, cfg=cfg)
+    while s["status"] == viva.OPEN_STATUS:
+        s = viva.submit_answer(s, _model_answer_for(s), now=1000.0, cfg=cfg)
+    assert s["verdict"]["line"] == viva.passed_line(s["topic_name"])
+
+
+# --------------------------------------------------------------------------- #
+# the live table (realtime) — the voice performs, the ledger decides
+# --------------------------------------------------------------------------- #
+
+
+def test_realtime_instructions_frame_the_exam_without_leaking_rubric():
+    s = viva.start_viva(TOPIC)
+    text = viva.realtime_instructions(s)
+    assert s["topic_name"] in text
+    assert s["question"] in text
+    assert "never grade" in text.lower()
+    assert "Never reveal" in text
+    # instructions must not enumerate rubric points
+    item = viva._item_of(s)
+    for point in item.rubric_points:
+        assert point not in text
+
+
+def test_realtime_opening_cue_carries_opening_and_question_verbatim():
+    s = viva.start_viva(TOPIC)
+    cue = viva.realtime_opening_cue(s)
+    assert s["opening"] in cue
+    assert s["question"] in cue
+    assert cue.startswith("[LEDGER")
+
+
+def test_realtime_turn_context_steers_to_first_cumulative_miss():
+    cfg = AnteConfig(viva_pass_score=0.99, viva_probe_rounds=2)
+    s = viva.start_viva(TOPIC, cfg=cfg)
+    s = viva.submit_answer(s, "something vague", now=1.0, cfg=cfg)
+    if s["status"] != viva.OPEN_STATUS:
+        return  # the vague answer somehow closed it; nothing to steer
+    cue = viva.realtime_turn_context(s)
+    assert cue.startswith("[LEDGER")
+    missing = s.get("cumulative_missing") or []
+    if missing:
+        # the cue may reveal exactly the one target the template probe would
+        assert missing[0] in cue
+        for hidden in missing[1:]:
+            assert hidden not in cue
+    # the deterministic fallback probe rides along verbatim
+    assert s["ask"] in cue
+
+
+def test_realtime_turn_context_delivers_verdict_verbatim_on_close():
+    cfg = AnteConfig(viva_pass_score=0.5, viva_probe_rounds=1)
+    s = viva.start_viva(TOPIC, cfg=cfg)
+    while s["status"] == viva.OPEN_STATUS:
+        s = viva.submit_answer(s, _model_answer_for(s), now=1000.0, cfg=cfg)
+    cue = viva.realtime_turn_context(s)
+    assert "[LEDGER — FINAL" in cue
+    assert s["verdict"]["line"] in cue
+    assert ("WON the table" in cue) == bool(s["verdict"]["passed"])

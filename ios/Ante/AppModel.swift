@@ -23,6 +23,14 @@ final class AppModel: ObservableObject {
     /// The selected tab, so a screen's primary CTA can route to another surface.
     @Published var selectedTab: AppTab = .today
 
+    // The live engine + den link (nil while the client serves sample data).
+    @Published private(set) var engineStatus: EngineStatus?
+    /// "Just show me the den" — waves the door away for this launch only.
+    @Published private(set) var accountSkipped = false
+    @Published private(set) var isSyncing = false
+    /// The last sync outcome, verbatim and honest ("Up to date with the den.").
+    @Published private(set) var syncLine: String?
+
     let engine: EngineClient
     let notifications: NotificationScheduler
 
@@ -31,6 +39,8 @@ final class AppModel: ObservableObject {
     private let ritualKey = "ante.ritual.v1"
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private var autoConnectAttempted = false
+    private var initialSyncDone = false
 
     // MARK: Init
 
@@ -46,6 +56,22 @@ final class AppModel: ObservableObject {
             ?? .default
         self.ritual = Self.load(RitualState.self, key: ritualKey, from: defaults, decoder: decoder)
             ?? .empty
+        // Demo/e2e hook: a launch environment that names a den skips the
+        // hand-onboarding so the seat can be driven end-to-end unattended.
+        if !profile.onboarded, Self.launchDen() != nil {
+            var auto = profile
+            auto.examDate = Calendar.current.date(byAdding: .day, value: 90, to: Date())
+            auto.onboarded = true
+            profile = auto
+            persist(auto, key: profileKey)
+        }
+        // Demo/e2e hook: open on a chosen surface (ANTE_TAB=atlas|session|plan).
+        switch ProcessInfo.processInfo.environment["ANTE_TAB"] {
+        case "atlas": selectedTab = .atlas
+        case "session": selectedTab = .session
+        case "plan": selectedTab = .plan
+        default: break
+        }
         normalizeRitualForToday()
     }
 
@@ -71,6 +97,25 @@ final class AppModel: ObservableObject {
         Dictionary(grouping: mastery, by: \.section)
     }
 
+    /// Show the door after onboarding until this seat has signed in with a
+    /// local den account (email + name), mirroring the desktop's account gate.
+    /// Env-driven launches (demo/e2e) seat themselves and never see the door.
+    var needsAccount: Bool {
+        profile.onboarded
+            && profile.account == nil
+            && !accountSkipped
+            && Self.launchDen() == nil
+    }
+
+    /// True when the screen is showing `MockEngine` sample data rather than the
+    /// live Rust engine — i.e. the engine could not start (`liveStatus()` is
+    /// nil) once the first status read has settled. The UI surfaces a visible
+    /// "SAMPLE DATA" badge in this state so mocked, abstaining numbers are never
+    /// mistaken for a real reading (the honesty rule: no made-up numbers).
+    var usingSampleData: Bool {
+        engineStatusResolved && engineStatus == nil
+    }
+
     // MARK: Intents
 
     /// Finish first-run onboarding: mark onboarded, persist, arm notifications.
@@ -92,6 +137,8 @@ final class AppModel: ObservableObject {
         normalizeRitualForToday()
         isLoading = true
         lastError = nil
+        engineStatus = await engine.liveStatus()
+        await autoConnectIfLaunchedWithDen()
         do {
             self.scores = try await engine.fetchScores()
             self.mastery = try await engine.fetchMastery()
@@ -101,6 +148,117 @@ final class AppModel: ObservableObject {
         }
         isLoading = false
         await rescheduleNotifications()
+        // First read of a wired seat brings it current without a tap.
+        if !initialSyncDone, engineStatus?.connected == true {
+            initialSyncDone = true
+            Task { await syncNow() }
+        }
+    }
+
+    // MARK: The den link (sync)
+
+    /// Join a den: log into the self-hosted sync server and pull its collection.
+    func connectDen(endpoint: String, username: String, password: String) async {
+        isSyncing = true
+        lastError = nil
+        do {
+            syncLine = try await engine.connect(
+                endpoint: endpoint, username: username, password: password)
+        } catch {
+            lastError = error.localizedDescription
+        }
+        isSyncing = false
+        engineStatus = await engine.liveStatus()
+        await refresh()
+    }
+
+    func disconnectDen() async {
+        await engine.disconnect()
+        syncLine = nil
+        engineStatus = await engine.liveStatus()
+    }
+
+    // MARK: The door (local account — mirrors the desktop's email sign-in)
+
+    /// Sign in with a local den account (email + optional name), then persist.
+    /// Identity only, like the desktop's email sign-in; sync stays separate.
+    func signInAccount(email: String, name: String) {
+        var next = profile
+        next.account = AnteAccount(
+            email: email.trimmingCharacters(in: .whitespaces),
+            name: name.trimmingCharacters(in: .whitespaces)
+        )
+        applyProfile(next)
+    }
+
+    /// Sign out of the local account, returning this seat to the door.
+    func signOutAccount() {
+        var next = profile
+        next.account = nil
+        accountSkipped = false
+        applyProfile(next)
+    }
+
+    /// "Just show me the den" — dismisses the door until the next launch.
+    func skipAccount() {
+        accountSkipped = true
+    }
+
+    /// Two-way sync with the joined den, then re-read everything.
+    func syncNow() async {
+        guard engineStatus?.connected == true, !isSyncing else { return }
+        isSyncing = true
+        lastError = nil
+        do {
+            syncLine = try await engine.sync()
+        } catch {
+            lastError = error.localizedDescription
+        }
+        isSyncing = false
+        await refresh()
+    }
+
+    /// Answer a dealt card through the real scheduler (rating 0–3 = Again…Easy).
+    func answerCard(id: String, rating: Int, millisecondsTaken: Int) async {
+        do {
+            try await engine.answer(
+                cardID: id, rating: rating, millisecondsTaken: millisecondsTaken)
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    /// Launch-environment den for unattended demo/e2e runs
+    /// (ANTE_SYNC_ENDPOINT / ANTE_SYNC_USER / ANTE_SYNC_PASS).
+    private static func launchDen() -> (endpoint: String, user: String, pass: String)? {
+        let env = ProcessInfo.processInfo.environment
+        guard let endpoint = env["ANTE_SYNC_ENDPOINT"], !endpoint.isEmpty else { return nil }
+        return (endpoint, env["ANTE_SYNC_USER"] ?? "ante", env["ANTE_SYNC_PASS"] ?? "ante123")
+    }
+
+    private func autoConnectIfLaunchedWithDen() async {
+        guard !autoConnectAttempted,
+            let den = Self.launchDen(),
+            let status = engineStatus
+        else { return }
+        autoConnectAttempted = true
+        isSyncing = true
+        do {
+            if status.connected {
+                // Already wired: an env-driven launch just brings the seat
+                // current, so demo runs are idempotent.
+                syncLine = try await engine.sync()
+            } else {
+                syncLine = try await engine.connect(
+                    endpoint: den.endpoint, username: den.user, password: den.pass)
+            }
+        } catch {
+            lastError = error.localizedDescription
+        }
+        // Visible on the launch console so unattended runs can be verified.
+        print("[ante] auto-wire \(den.endpoint): \(syncLine ?? lastError ?? "no outcome")")
+        isSyncing = false
+        engineStatus = await engine.liveStatus()
     }
 
     /// Record that a bookend session (morning or night) was completed, advancing

@@ -173,12 +173,21 @@ def build_demo_dashboard(
         conf = _demo_conf(score >= cfg.open_pass_score, overconfident, rng)
         ts = now_ts - rng.randint(0, min(day, 20)) * _SECOND_PER_DAY
         open_responses[oit.id] = [[score, ts, conf, rng.randint(9000, 26000)]]
-    # flashcard confidence log (familiarity trap): overconfident feels sure, misses
+    # flashcard confidence log (familiarity trap): overconfident feels sure, misses.
+    # Each read carries a covered topic so the calibration chart can break the
+    # tell down by section, same as the real log.
+    covered_topics = list(acc_by_topic) or [""]
     for _ in range(min(200, day * 6)):
         felt_correct = rng.random() < (0.5 + 0.4 * p)
         conf = _demo_conf(felt_correct, overconfident, rng)
         flash_confidence.append(
-            [round(conf, 2), 1 if felt_correct else 0, now_ts, "", rng.randint(2000, 12000)]
+            [
+                round(conf, 2),
+                1 if felt_correct else 0,
+                now_ts,
+                rng.choice(covered_topics),
+                rng.randint(2000, 12000),
+            ]
         )
 
     topic_perf = combined_topic_performance(quiz_responses, open_responses)
@@ -228,6 +237,11 @@ def build_demo_dashboard(
         "onboarded": True,
     }
 
+    # full-lengths taken so far + a synthetic history of lines posted BEFORE
+    # each, so the Book's own track record is populated in the demo.
+    fl_results = _demo_fl_results(day, days_remaining, now_ts)
+    readiness_history = _demo_readiness_history(fl_results, now_ts)
+
     payload = build_dashboard(
         topics,
         due_count=max(0, 60 - day),
@@ -255,6 +269,8 @@ def build_demo_dashboard(
         palace_by_topic=palace_by_topic,
         palace_total=len(demo_palace),
         events_today=events_today,
+        readiness_history=readiness_history,
+        fl_results=fl_results,
         now=today,
         outline=outline,
         cfg=cfg,
@@ -271,7 +287,7 @@ def build_demo_dashboard(
     }
     # quiz_status for the calendar/plan (mirror the Qt helper, on synthetic data)
     payload["quiz_status"] = _demo_quiz_status(quiz_responses, open_responses)
-    payload["fl_results"] = _demo_fl_results(day, days_remaining, now_ts)
+    payload["fl_results"] = fl_results
     payload["film_clips"] = {}
     payload["studio"] = {
         "providers": {"offline_only": True},
@@ -354,6 +370,32 @@ def _demo_palace_gallery(records: list[dict]) -> dict:
     return gallery_payload(records)
 
 
+def _demo_readiness_history(fl_results: dict, now_ts: float) -> list[dict]:
+    """A synthetic log of lines the Book posted a few days BEFORE each
+    full-length, so the demo's track record has real checks to show. One line
+    lands inside its range, one just misses — an honest, non-perfect record."""
+    history: list[dict] = []
+    # deterministic small offsets so FL1's line is a hit and FL2's a near-miss
+    offsets = {"1": (3, 4), "2": (-6, 4)}  # (point delta from actual, half-range)
+    for n, res in sorted(fl_results.items()):
+        taken = res.get("taken_at")
+        total = res.get("total")
+        if taken is None or total is None:
+            continue
+        dp, half = offsets.get(str(n), (0, 5))
+        proj = int(total) + dp
+        history.append(
+            {
+                "ts": float(taken) - 4 * _SECOND_PER_DAY,
+                "projected_total": proj,
+                "low": proj - half,
+                "high": proj + half,
+                "confidence": "low",
+            }
+        )
+    return history
+
+
 def _demo_fl_results(day: int, days_remaining: int, now_ts: float) -> dict:
     """Synthesized full-length results: a test reads as taken once its plan
     day is behind you, with scores that show the climb (FL1 505 -> FL2 513)."""
@@ -427,8 +469,6 @@ def _demo_jumps() -> list[dict]:
     """Named day targets the control bar offers (skip-to buttons)."""
     return [
         {"label": "First night", "day": 1},
-        {"label": "Week 2", "day": 14},
         {"label": "The Bridge", "day": RUNWAY - 40},
-        {"label": "The Sharpen", "day": RUNWAY - 12},
         {"label": "Final Table eve", "day": RUNWAY - 1},
     ]

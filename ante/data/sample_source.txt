@@ -1,0 +1,19 @@
+Enzyme Kinetics (textbook excerpt)
+
+Enzymes are biological catalysts that lower the activation energy of a reaction
+without being consumed. The Michaelis-Menten model describes how reaction
+velocity depends on substrate concentration. Km, the Michaelis constant, is the
+substrate concentration at which the reaction proceeds at half of its maximum
+velocity (Vmax). A low Km indicates high affinity between the enzyme and its
+substrate, because little substrate is needed to reach half-maximal velocity.
+
+Inhibitors change enzyme behavior in characteristic ways. A competitive
+inhibitor binds the active site and competes with substrate; it raises the
+apparent Km but leaves Vmax unchanged, because adding enough substrate can still
+outcompete the inhibitor. A noncompetitive inhibitor binds an allosteric site,
+lowering Vmax while leaving Km unchanged. Understanding these patterns lets you
+read a Lineweaver-Burk plot and identify the mechanism of inhibition.
+
+Temperature and pH affect enzyme activity. Each enzyme has an optimal pH and
+temperature at which its active site holds the ideal conformation. Beyond these
+optima, the enzyme denatures and loses catalytic function.

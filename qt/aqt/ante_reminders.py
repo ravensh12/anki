@@ -113,9 +113,13 @@ class _Scheduler:
         if not col or not self._schedule:
             return
         cur = now.hour * 60 + now.minute
+        today_iso = now.date().isoformat()
         for r in self._schedule:
             at = r.get("at")
             if not at or at in self._fired:
+                continue
+            # date-scoped entries (marked nights) only fire on their night
+            if r.get("date") and r["date"] != today_iso:
                 continue
             rmin = int(r.get("hour", 0)) * 60 + int(r.get("minute", 0))
             # fire within a 5-minute window of the scheduled time
@@ -213,11 +217,14 @@ def fire_test(mw) -> None:
                     r["kind"],
                     r["title"],
                     r["body"],
+                    date=r.get("date"),
                 )
                 for r in build_reminder_schedule(col)
             ]
             now = _dt.now()
-            nxt = next_reminder(sched, now.hour, now.minute)
+            nxt = next_reminder(
+                sched, now.hour, now.minute, today=now.date().isoformat()
+            )
             if nxt is not None:
                 title, body = (
                     nxt.title,

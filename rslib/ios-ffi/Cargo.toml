@@ -1,0 +1,26 @@
+[package]
+name = "anki_ios_ffi"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+rust-version.workspace = true
+description = "C ABI over the Anki backend for the Ante iOS companion"
+
+[lib]
+name = "anki_engine"
+# staticlib feeds the xcframework; rlib lets the unit tests link it normally
+crate-type = ["staticlib", "rlib"]
+
+[dependencies]
+anki.workspace = true
+
+[dev-dependencies]
+anki_proto.workspace = true
+prost.workspace = true
+tempfile.workspace = true
+
+[features]
+rustls = ["anki/rustls"]
+native-tls = ["anki/native-tls"]

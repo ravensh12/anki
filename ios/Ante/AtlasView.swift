@@ -44,7 +44,7 @@ struct AtlasView: View {
                     .foregroundStyle(Color.anInk)
                 Text("of the tour won").anMicroLabel(color: .anMuted, size: 11)
             }
-            Text("Your standing on the Circuit — measured only from what you can do at the tables, never from how a flashcard felt.")
+            Text(heroLine)
                 .font(.system(size: 14, design: .serif))
                 .foregroundStyle(Color.anMuted)
                 .lineSpacing(3)
@@ -61,6 +61,15 @@ struct AtlasView: View {
             }
         }
         .anPanel(fill: .anPanel2, stroke: .anRule, padding: 18)
+    }
+
+    /// Honest about what this seat measures: live mode reads the shared
+    /// engine's recall signal; application-gated wins live in the den's logs.
+    private var heroLine: String {
+        if model.engineStatus != nil {
+            return "This seat reads the shared engine's live recall signal, straight from FSRS. Tables are won outright at the den — application hands and the Back Room — and this map carries the result."
+        }
+        return "Your standing on the Circuit — measured only from what you can do at the tables, never from how a flashcard felt."
     }
 
     // MARK: Legend

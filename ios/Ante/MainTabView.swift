@@ -43,6 +43,7 @@ struct MainTabView: View {
 struct AnScreen<Content: View>: View {
     var issue: String
     @ViewBuilder var content: () -> Content
+    @EnvironmentObject private var model: AppModel
 
     var body: some View {
         ZStack {
@@ -56,6 +57,9 @@ struct AnScreen<Content: View>: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: AnSpace.lg) {
                     masthead
+                    if model.usingSampleData {
+                        sampleDataBadge
+                    }
                     content()
                 }
                 .padding(.horizontal, AnSpace.lg)
@@ -78,5 +82,23 @@ struct AnScreen<Content: View>: View {
                 .frame(height: 2)
         }
         .padding(.top, AnSpace.sm)
+    }
+
+    /// Honest label shown whenever the live engine is unavailable and these
+    /// numbers come from `MockEngine`. Never let mocked data read as real.
+    private var sampleDataBadge: some View {
+        HStack(spacing: AnSpace.sm) {
+            Image(systemName: "exclamationmark.triangle.fill")
+            Text("SAMPLE DATA — engine offline; these figures are illustrative, not a real reading")
+                .anMicroLabel(color: .anSignal, size: 10)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .foregroundStyle(Color.anSignal)
+        .padding(AnSpace.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(
+            Rectangle().stroke(Color.anSignal.opacity(0.5), lineWidth: 1)
+        )
     }
 }

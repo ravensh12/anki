@@ -11,11 +11,22 @@ portraits; the cards themselves stay crisp HTML composited on top.
 The library (see also qt/aqt/ante.py::world_assets_present):
 
   * ``den_{dawn,day,dusk,night}.jpg``  — the Emerald Room by hour (Soul)
-  * ``den_{dawn,day,dusk,night}.mp4``  — living loops of the same plates (DoP)
+  * ``den_{dawn,day,dusk,night}.mp4``  — living loops of the same plates (DoP),
+    each with a ``.webm`` (VP9) twin written automatically: Anki's
+    QtWebEngine ships no H.264, so the den only plays the webm
   * ``dealer.jpg`` / ``dealer_idle.mp4`` — Sahir at the table (Soul + DoP)
   * ``city_*.jpg`` + ``final_table.jpg`` — one signature plate per Circuit stop
   * ``avatar_1..6.jpg``                — seat portraits for the avatar picker
-  * ``vo_{seat,morning,midnight}.mp3`` — optional dealer voice lines (ElevenLabs)
+  * ``vo_{seat,morning,midnight,call_*}.mp3`` + ``vo_film_1..8.mp3`` — dealer
+    voice lines (ElevenLabs preferred; OpenAI TTS fallback, transcoded to
+    mp3). One actor per render: the speech cache is keyed on engine+voice,
+    so a full ``--voice`` pass always recasts every line together
+
+Camera discipline: every DoP job is pinned to a single curated camera-motion
+preset (``HF_DOP_MOTION`` in ante/ai/studio.py) and MOTION_RULES bans film
+rigs in frame and rain indoors — free-roaming AI cameras once drifted a rig
+through the felt, and one take rained inside the room. Curate hard: reroll
+any drifted shot with ``--take N`` and keep only clean frames.
 
 Character consistency: the repo's Soul integration is prompt-only, so Sahir is
 locked by ``SAHIR`` (one fixed, detailed character prompt reused verbatim in
@@ -64,7 +75,18 @@ ROOM = (
 STYLE = (
     "Cinematic photorealistic still, film-noir warmth, anamorphic shallow "
     "depth of field, rich blacks, consistent color grade, no text, no "
-    "lettering, no watermark"
+    "lettering, no watermark, rain only outside the window glass, the "
+    "interior perfectly dry"
+)
+
+# Appended to every DoP motion prompt. Two curation bugs shipped once and are
+# banned forever here: a film rig drifting into (and through) the card table,
+# and rain falling inside the room. The camera is additionally pinned by the
+# HF_DOP_MOTION preset in ante/ai/studio.py — prompt and preset together.
+MOTION_RULES = (
+    "locked-off tripod camera, no camera movement, no dolly, no zoom, "
+    "no film equipment or camera rig in frame, rain stays outside the "
+    "window glass, the interior stays dry"
 )
 
 # scene id -> (output file, prompt, motion prompt for the optional DoP loop)
@@ -211,8 +233,9 @@ VOICE_LINES = {
     "vo_call_done.mp3": (
         "That's the hand. Go on with your day — I'll hold the table."
     ),
-    # the cold open — one line per shot. The four big statements are the
-    # BrainLift's DOK-4 theses, spoken by the dealer as the house truths.
+    # the cold open — one line per shot: the hook (1–3), the walkthrough
+    # (4–7: play a hand, follow the data, the quiz-only mastery gate, the
+    # published receipts), then the logo close (8).
     "vo_film_1.mp3": (
         "You're pre-med. Motivation was never your problem — "
         "nobody chooses this path without plenty of it."
@@ -228,21 +251,28 @@ VOICE_LINES = {
         "exactly the cards you're about to forget."
     ),
     "vo_film_4.mp3": (
-        "First truth: for the MCAT, when you study determines your score "
-        "more than how much you study. The schedule is the lever."
+        "Here's the whole game. A card comes up. Before it turns you tell "
+        "me where you stand — check, call, or raise. Turn it over. Then "
+        "grade it honestly: again, hard, good, or easy. That's one hand."
     ),
     "vo_film_5.mp3": (
-        "Second: motivation is not the problem — the system is. "
-        "The stack decides your next card, so willpower doesn't have to."
+        "Your answer doesn't vanish. The grade, the raise, even your "
+        "hesitation feed the engine, and it fits your personal forgetting "
+        "curve. Then it deals that card back on the exact night you'd start "
+        "to lose it — three days, eight, twenty-one. That's why the cards "
+        "repeat."
     ),
     "vo_film_6.mp3": (
-        "Third: finishing the content is a meaningless milestone. "
-        "Until you've proven recall, you haven't learned it — "
-        "you've only met it."
+        "And hear this: rating your own flashcards never wins a table. "
+        "Cards only decide when you review. The Circuit moves on proof — "
+        "quiz questions and open answers, graded cold. Cross the bar on "
+        "application, and the table is yours."
     ),
     "vo_film_7.mp3": (
-        "And fourth: encouragement is a sedative. Honesty is the cure. "
-        "I'll never tell you you're ready until the evidence says so."
+        "Don't take my word for it. Tested beats re-read, sixty-one to "
+        "forty, one week out. Spacing beats cramming across eight hundred "
+        "thirty-nine assessments. And of every study technique measured, "
+        "two rate high. You're looking at both."
     ),
     "vo_film_8.mp3": "Ante. The MCAT, played right. Take your seat.",
 }
@@ -256,6 +286,26 @@ def _studio() -> Studio:
 def _copy(src: Path, dest: Path) -> None:
     dest.write_bytes(src.read_bytes())
     print(f"  wrote {dest.relative_to(ASSETS.parent.parent)}")
+
+
+def _webm_twin(mp4: Path) -> None:
+    """Transcode a curated mp4 loop to VP9 next to it. Anki's QtWebEngine
+    ships without proprietary codecs — H.264 decodes to a black rectangle —
+    so the den only plays a loop when its .webm twin exists."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("ffmpeg"):
+        print("  ffmpeg not found — skipped the .webm twin (the den needs it)")
+        return
+    out = mp4.with_suffix(".webm")
+    subprocess.run(
+        ["ffmpeg", "-loglevel", "error", "-y", "-i", str(mp4),
+         "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "33", "-row-mt", "1",
+         "-pix_fmt", "yuv420p", "-an", str(out)],
+        check=True,
+    )
+    print(f"  wrote {out.relative_to(ASSETS.parent.parent)}")
 
 
 def gen_scene(studio: Studio, scene: str, motion: bool, take: int = 0) -> None:
@@ -278,9 +328,11 @@ def gen_scene(studio: Studio, scene: str, motion: bool, take: int = 0) -> None:
     _copy(studio.path_of(still), ASSETS / filename)
     if motion and motion_prompt and scene in MOTION_OUT:
         print(f"[{scene}] animating loop …", flush=True)
-        clip = studio.motion({"motion": motion_prompt}, still)
+        clip = studio.motion({"motion": f"{motion_prompt}. {MOTION_RULES}"}, still)
         if clip:
-            _copy(studio.path_of(clip), ASSETS / MOTION_OUT[scene])
+            dest = ASSETS / MOTION_OUT[scene]
+            _copy(studio.path_of(clip), dest)
+            _webm_twin(dest)
         else:
             print(f"[{scene}] motion unavailable (budget/keys) — still only")
 
@@ -292,10 +344,33 @@ def gen_voice(studio: Studio) -> None:
         if ref is None:
             print("  no ELEVENLABS_API_KEY / OPENAI_API_KEY — skipped")
             continue
+        src = studio.path_of(ref)
         out = ASSETS / filename
         if ref.filename.endswith(".wav") and filename.endswith(".mp3"):
-            out = out.with_suffix(".wav")
-        _copy(studio.path_of(ref), out)
+            # the OpenAI fallback emits WAV; the den looks the mp3 name up in
+            # world_assets, so transcode when ffmpeg is around (else ship WAV)
+            mp3 = _mp3_from_wav(src)
+            if mp3 is None:
+                out = out.with_suffix(".wav")
+            else:
+                src = mp3
+        _copy(src, out)
+
+
+def _mp3_from_wav(wav: Path) -> Path | None:
+    import shutil
+    import subprocess
+
+    if not shutil.which("ffmpeg"):
+        return None
+    out = wav.with_suffix(".mp3")
+    if not out.is_file():
+        subprocess.run(
+            ["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav),
+             "-codec:a", "libmp3lame", "-qscale:a", "3", str(out)],
+            check=True,
+        )
+    return out
 
 
 def main() -> None:

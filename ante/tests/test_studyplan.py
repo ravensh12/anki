@@ -3,7 +3,7 @@
 
 """Tests for the done-for-you study plan + calendar."""
 
-from datetime import date
+from datetime import date, timedelta
 
 from ante.mastery import MasteryStatus, TopicMastery
 from ante.studyplan import build_study_plan
@@ -64,6 +64,8 @@ def test_today_prescription_is_concrete_and_decision_free():
     # focus is a real unmastered topic (the rotation cycles weak spots)
     assert t["focus_tag"] in {
         "mcat::bio_biochem::enzymes",
+        "mcat::bio_biochem::metabolism",
+        "mcat::chem_phys::thermo",
         "mcat::psych_soc::learning",
         "mcat::cars",
     }
@@ -74,14 +76,57 @@ def test_today_prescription_is_concrete_and_decision_free():
 
 
 def test_focus_rotates_across_days():
-    # the daily focus interleaves weak spots instead of pinning one topic
+    # as real days pass, the daily focus interleaves weak spots instead of
+    # pinning one topic
     focuses = {
         build_study_plan(
-            _mastery(), days_remaining=90 - k, daily_minutes=75, now=date(2026, 7, 2)
+            _mastery(),
+            days_remaining=90 - k,
+            daily_minutes=75,
+            now=date(2026, 7, 2) + timedelta(days=k),
         )["today"]["focus_tag"]
         for k in range(3)
     }
     assert len(focuses) >= 2
+
+
+def test_calendar_interleaves_topics_and_keeps_dates_stable():
+    # the regression: with two topics left, the block plan pinned ONE of them
+    # for five straight weeks ("why am I doing the same thing every day")
+    two = {
+        "mcat::psych_soc::sensation": _m(
+            "mcat::psych_soc::sensation", "psych_soc", 0.8, 0.7
+        ),
+        "mcat::cars": _m("mcat::cars", "cars", 0.6, 0.5),
+    }
+    sunday = date(2026, 7, 5)
+    plan = build_study_plan(
+        two, days_remaining=89, daily_minutes=120, now=sunday, calendar_days=21
+    )
+    study = [d for d in plan["calendar"] if not d["is_rest"] and not d["is_exam"]]
+    # both topics appear, and consecutive study nights always change topic
+    assert {d["focus_tag"] for d in study} == set(two)
+    assert all(a["focus_tag"] != b["focus_tag"] for a, b in zip(study, study[1:]))
+
+    # rebuilding a day later keeps each date's topic — the plan must not
+    # drift forward every morning
+    tomorrow = build_study_plan(
+        two,
+        days_remaining=88,
+        daily_minutes=120,
+        now=sunday + timedelta(days=1),
+        calendar_days=21,
+    )
+    topic_by_date = {d["date"]: d["focus_tag"] for d in study}
+    for d in tomorrow["calendar"]:
+        if not d["is_rest"] and not d["is_exam"] and d["date"] in topic_by_date:
+            assert d["focus_tag"] == topic_by_date[d["date"]]
+
+    # the standing rest night is a real weekday (Saturday) that arrives,
+    # not a forever-six-days-away offset
+    rests = [d["date"] for d in plan["calendar"] if d["is_rest"]]
+    assert rests
+    assert all(date.fromisoformat(x).weekday() == 5 for x in rests)
 
 
 def test_calendar_has_rest_days_exam_and_today():
@@ -155,6 +200,37 @@ def test_milestones_include_sections_and_exam():
     assert last["date"] == "2026-09-01"
 
 
+def test_checkpoints_are_exam_anchored_and_actually_arrive():
+    from ante.studyplan import checkpoint_offsets, marked_nights
+
+    # as a real day passes, every checkpoint keeps its calendar DATE (a
+    # today-anchored "+14" would drift forward daily and never come due)
+    d0 = date(2026, 7, 2)
+    first = {
+        m["date"] for m in marked_nights(60, today=d0) if m["kind"] == "practice_test"
+    }
+    next_day = {
+        m["date"]
+        for m in marked_nights(59, today=d0 + timedelta(days=1))
+        if m["kind"] == "practice_test"
+    }
+    assert first and next_day == first
+
+    # when the cadence comes due, the checkpoint lands on TONIGHT (offset 0):
+    # 42 days out = 3 x 14, and no full-length shares that night
+    assert checkpoint_offsets(42)[0] == 0
+    tonight = marked_nights(42, today=d0)[0]
+    assert tonight["kind"] == "practice_test" and tonight["offset"] == 0
+    assert tonight["date"] == d0.isoformat()
+
+    # a full-length sharing a night is the headline event
+    shared = [m for m in marked_nights(28, today=d0) if m["offset"] == 0]
+    assert shared[0]["kind"] == "full_length"
+
+    # short runways drop the cadence instead of inventing a past checkpoint
+    assert checkpoint_offsets(10) == []
+
+
 def test_day_is_split_into_paced_windows():
     slot_plan = [
         {
@@ -180,7 +256,11 @@ def test_day_is_split_into_paced_windows():
         _mastery(), days_remaining=90, daily_minutes=120, slot_plan=slot_plan
     )
     slots = plan["today"]["slots"]
-    assert [s["label"] for s in slots] == ["Morning Game", "Midday Hold", "Midnight Game"]
+    assert [s["label"] for s in slots] == [
+        "Morning Game",
+        "Midday Hold",
+        "Midnight Game",
+    ]
     # each window carries its own bounded dose, and the morning (more minutes)
     # has a bigger dose than the night
     assert slots[0]["flashcards"] > slots[2]["flashcards"]

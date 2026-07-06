@@ -3,17 +3,20 @@
 
 """Generate a topic-tagged MCAT seed deck (no AI required).
 
-Every topic in the AAMC outline gets at least one card. Topics with curated
-real Q/A (ante/data/seed_cards.json) use those; every topic is then padded
-with synthetic but well-formed cards up to ``--per-topic`` so the deck exercises
-the whole coverage map and can be grown to a benchmarking size.
+By default the deck is built purely from the curated, premade Q/A in
+``ante/data/seed_cards.json`` (real high-yield cards for every AAMC-outline
+topic) — the same content the app self-seeds, so there is no synthetic filler.
+Passing ``--per-topic N`` treats N as a *minimum* per topic and pads any topic
+below it with synthetic but well-formed cards, purely to grow the deck to a
+benchmarking size.
 
 Usage (from the repo root, with the built pyenv):
 
+    # premade curated deck (default): every real card, no padding
     PYTHONPATH=out/pylib out/pyenv/bin/python -m ante.tools.generate_seed_deck \\
-        --out out/mcat_seed.anki2 --per-topic 5 --apkg out/mcat_seed.apkg
+        --out out/mcat_seed.anki2 --apkg out/mcat_seed.apkg
 
-For a 50k-card benchmark deck, raise --per-topic (≈ 720 across 70 topics).
+For a large benchmark deck, pass --per-topic (e.g. 720 across the topics).
 """
 
 from __future__ import annotations
@@ -60,7 +63,8 @@ def build_deck(out_path: str, per_topic: int, apkg: str | None = None) -> int:
             label = _topic_label(topic, outline.topic_prefix)
             curated = seed_cards.get(topic, [])
             cards: list[tuple[str, str]] = [(q, a) for q, a in curated]
-            # pad with synthetic cards up to per_topic
+            # per_topic is a MINIMUM: with the default of 0 the deck is pure
+            # curated content (no synthetic filler); raise it to grow the deck.
             i = 0
             while len(cards) < per_topic:
                 i += 1
@@ -105,7 +109,10 @@ def main() -> None:
         "--out", default="out/mcat_seed.anki2", help="output .anki2 collection"
     )
     parser.add_argument(
-        "--per-topic", type=int, default=5, help="cards per topic (min)"
+        "--per-topic",
+        type=int,
+        default=0,
+        help="minimum cards per topic; 0 (default) means curated only, no padding",
     )
     parser.add_argument("--apkg", default=None, help="also export an .apkg here")
     args = parser.parse_args()

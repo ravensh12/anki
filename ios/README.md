@@ -8,18 +8,20 @@ desktop — the same stakes-ordered queue and the `GetTopicMastery` RPC —
 consumed on-device as an xcframework (see
 [Shared engine](#shared-engine-the-next-step)).
 
-This directory is a complete, buildable scaffold: the full UI, onboarding,
-notification scheduler, and a mock engine are implemented today; the Rust
-xcframework build and sync wiring are the documented next step.
+This is a complete, buildable app: the full UI, onboarding, notification
+scheduler, **and the live shared Rust engine** (`SyncedEngine`, the default)
+with two-way sync are implemented. A `MockEngine` remains only as a labelled
+fallback for previews and for when the engine can't start — the UI shows a
+visible **SAMPLE DATA** badge whenever mocked data is on screen.
 
 ## The four surfaces
 
-| Tab         | What it is                                                                                                            |
-| ----------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Tonight** | The countdown to the final table, one CTA (take your seat), the Book's line (or its honest abstention), the two games, and the 30-night run. |
+| Tab         | What it is                                                                                                                                                                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tonight** | The countdown to the final table, one CTA (take your seat), the Book's line (or its honest abstention), the two games, and the 30-night run.                              |
 | **Circuit** | The world tour: New York's Emerald Room, Monte Carlo's Salon Bleu, Havana's Casa Verde, Macau's Jade House — topic tables with won / open / low-table / roped-off states. |
-| **Table**   | The dealt game: cream card faces on dark felt, Check/Call/Raise before every flip, Again/Hard/Good/Easy after, an application hand every fourth step. |
-| **Ledger**  | The plan recalibrated to the exam date: pacing, shape of the day, the day's calls, and the levers (exam date, target score, quiet hours, the run). |
+| **Table**   | The dealt game: cream card faces on dark felt, Check/Call/Raise before every flip, Again/Hard/Good/Easy after, an application hand every fourth step.                     |
+| **Ledger**  | The plan recalibrated to the exam date: pacing, shape of the day, the day's calls, and the levers (exam date, target score, quiet hours, the run).                        |
 
 ## Requirements
 
@@ -87,20 +89,20 @@ real Rust core, so the UI never changes when the engine is swapped in.
 
 ### Files (`Ante/`)
 
-| File                          | Responsibility                                                                                                                                                              |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AnteApp.swift`               | `@main` App; injects `AppModel`; shows onboarding until `profile.onboarded`, then the tabs. Forces the den's dark scheme.                                                   |
+| File                          | Responsibility                                                                                                                                                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AnteApp.swift`               | `@main` App; injects `AppModel`; shows onboarding until `profile.onboarded`, then the tabs. Forces the den's dark scheme.                                                                                                                        |
 | `Theme.swift`                 | The Ante palette (felt/panel/ink/brass/ember/card, mirroring `ante/web/den.html`), spacing, serif/mono type modifiers, and shared chrome (`TickBar`, `Wordmark`, `SectionHeader`, `AnCTAButton`, `AnSegmented`, `AnMeter`, `ChipStack`, panels). |
-| `Models.swift`                | Pure-Foundation data + logic: `StudyProfile`, `ScoresSnapshot`, `TopicMastery`, `RitualState`, the Circuit's city/table vocabulary, session items, and the `RecalibrationPlan` / `ReminderBuilder` logic mirrored from the desktop. |
-| `EngineClient.swift`          | The `EngineClient` protocol, `MockEngine` (realistic sample data, the Book abstains), and `SyncedEngine` (the typed skeleton for the real Rust core over `run_service_method`). |
-| `AppModel.swift`              | `ObservableObject` store: persists the profile, fetches from the engine, tracks the two games and the run, keeps calls in sync, and owns tab routing.                       |
-| `NotificationScheduler.swift` | Requests authorization and turns game calls into repeating calendar notifications; reschedules on change, cancels when off, and can read back what's armed.                 |
-| `OnboardingView.swift`        | The date-first, three-step flow plus the "Recalibrating…" interstitial that ends at the Emerald Room.                                                                       |
-| `MainTabView.swift`           | The four surfaces and the shared den page scaffold (`AnScreen`).                                                                                                            |
-| `TodayView.swift`             | Tonight: countdown, one CTA, the Book's line (or the abstention stamp), the Morning/Midnight Games, and the 30-night run tracker.                                           |
-| `AtlasView.swift`             | The Circuit: city-by-city table map with states, chip stakes, percentages, and confidence bands.                                                                            |
-| `SessionView.swift`           | The Table: pre-flip Check/Call/Raise, Again/Hard/Good/Easy on cream card faces, and an application hand every fourth step with a confidence lock-in.                        |
-| `PlanView.swift`              | The Ledger: the recalibration summary, shape-of-the-day slots, the call preview, and inline exam/target editing.                                                            |
+| `Models.swift`                | Pure-Foundation data + logic: `StudyProfile`, `ScoresSnapshot`, `TopicMastery`, `RitualState`, the Circuit's city/table vocabulary, session items, and the `RecalibrationPlan` / `ReminderBuilder` logic mirrored from the desktop.              |
+| `EngineClient.swift`          | The `EngineClient` protocol, `MockEngine` (realistic sample data, the Book abstains), and `SyncedEngine` (the typed skeleton for the real Rust core over `run_service_method`).                                                                  |
+| `AppModel.swift`              | `ObservableObject` store: persists the profile, fetches from the engine, tracks the two games and the run, keeps calls in sync, and owns tab routing.                                                                                            |
+| `NotificationScheduler.swift` | Requests authorization and turns game calls into repeating calendar notifications; reschedules on change, cancels when off, and can read back what's armed.                                                                                      |
+| `OnboardingView.swift`        | The date-first, three-step flow plus the "Recalibrating…" interstitial that ends at the Emerald Room.                                                                                                                                            |
+| `MainTabView.swift`           | The four surfaces and the shared den page scaffold (`AnScreen`).                                                                                                                                                                                 |
+| `TodayView.swift`             | Tonight: countdown, one CTA, the Book's line (or the abstention stamp), the Morning/Midnight Games, and the 30-night run tracker.                                                                                                                |
+| `AtlasView.swift`             | The Circuit: city-by-city table map with states, chip stakes, percentages, and confidence bands.                                                                                                                                                 |
+| `SessionView.swift`           | The Table: pre-flip Check/Call/Raise, Again/Hard/Good/Easy on cream card faces, and an application hand every fourth step with a confidence lock-in.                                                                                             |
+| `PlanView.swift`              | The Ledger: the recalibration summary, shape-of-the-day slots, the call preview, and inline exam/target editing.                                                                                                                                 |
 
 ### Design system
 
@@ -121,41 +123,36 @@ before lights out"), and any window inside quiet hours is dropped before
 scheduling. On the desktop this needs a launch agent; on the phone it is
 native.
 
-## Shared engine: the next step
+## Shared engine (live)
 
-`SyncedEngine` is a typed skeleton. To make it live, compile the modified
-`anki` crate (the Ante engine change from `rslib`) for iOS and drop it in
-behind the `AnkiServiceBridge` protocol:
+`SyncedEngine` runs the **real** modified `anki` Rust crate on-device — the same
+`points-at-stake` order and `GetTopicMastery` RPC as the desktop. Build it once:
 
-1. **Build the static libs** for device and simulator:
+```bash
+just ios-engine        # cross-compiles rslib → out/ios/AnkiEngine.xcframework
+                       # (device arm64 + Apple-silicon sim); asserts the Ante
+                       # symbol ante_backend_run is present in the binary
+```
 
-   ```bash
-   rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
-   cargo build -p anki --release --target aarch64-apple-ios
-   cargo build -p anki --release --target aarch64-apple-ios-sim
-   ```
+Then `xcodegen generate && open Ante.xcodeproj` links the xcframework
+(`project.yml`). How the pieces fit:
 
-2. **Package an xcframework** from the resulting `libanki` static libraries
-   (`xcodebuild -create-xcframework -library … -headers …`), exposing the single
-   C-ABI entry point `run_service_method(service, method, input_bytes) →
-   output_bytes` — the same seam the desktop uses. A thin C shim (or a
-   UniFFI-generated Swift module) is the bridging layer.
+1. **Bridge:** `Ante/Engine/AnteBridging.h` → `rslib/ios-ffi/include/anki_engine.h`
+   exposes the single C entry point; `Ante/Engine/AnkiEngine.swift` wraps it.
+2. **Codec:** a hand-rolled protobuf encoder/decoder
+   (`Ante/Engine/ProtoWire.swift`, `BackendMessages.swift`,
+   `Generated/BackendIndices.swift`) encodes requests / decodes responses over
+   the one `run_service_method`-style seam — no per-RPC native glue.
+3. **Client:** `SyncedEngine` opens the collection, calls
+   `GetTopicMastery`/`GetQueuedCards`, answers cards, derives the three scores,
+   and does two-way sync (`syncLogin` → `sync_collection` →
+   full up/download as required) against the self-hosted server.
 
-3. **Add a bridging header** (or import the UniFFI module) so Swift can call the
-   entry point, and generate the protobuf message types for Swift so requests and
-   responses can be encoded/decoded (`GetTopicMasteryRequest`, the queued-cards
-   messages, etc.).
-
-4. **Implement `AnkiServiceBridge`** over that entry point and pass it to
-   `SyncedEngine(bridge:)`. Replace the mock fallbacks: `fetchMastery()` calls
-   `SchedulerService.GetTopicMastery`, `fetchDue()` uses `GetQueuedCards`, and
-   `fetchScores()` derives the three scores the way the desktop `ante` layer
-   does. Add two-way sync against the self-hosted Anki sync server around
-   sessions so application evidence from the desktop reaches the Book here.
-
-Nothing in the UI or `AppModel` changes when this lands — only the engine behind
-the protocol. See `../ante/docs/mobile-and-sync.md` for the full engine + sync
-story and the honest status of this build.
+`MockEngine` is used only when the engine can't start; the UI then shows a
+visible **SAMPLE DATA** badge (`AppModel.usingSampleData`) so mocked, abstaining
+numbers are never mistaken for real ones. Verify the whole path without the Xcode
+UI via `just ios-engine-smoke` and `just ios-swift-smoke`. See
+`../ante/docs/mobile-and-sync.md` for the full engine + sync story.
 
 ## License
 

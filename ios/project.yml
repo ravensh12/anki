@@ -1,14 +1,17 @@
 # XcodeGen spec for the Ante iOS companion.
 #
 #   brew install xcodegen
+#   just ios-engine          # build AnkiEngine.xcframework from rslib (once)
 #   cd ios && xcodegen generate
 #   open Ante.xcodeproj
 #
-# One application target, no packages, no external dependencies. The Info.plist
-# is generated from the INFOPLIST_KEY_* settings below. Notifications need NO
-# plist key — permission is requested at runtime via UNUserNotificationCenter —
-# and there is no UIBackgroundModes entry because local notifications fire from
-# the system scheduler with the app closed, so no background execution is needed.
+# One application target, no packages, no external dependencies beyond the
+# shared Rust engine: AnkiEngine.xcframework (built by `just ios-engine` from
+# rslib/ios-ffi) is linked statically and reached from Swift through the
+# bridging header (Ante/Engine/AnteBridging.h -> anki_engine.h). Notifications
+# need NO plist key — permission is requested at runtime via
+# UNUserNotificationCenter — and there is no UIBackgroundModes entry because
+# local notifications fire from the system scheduler with the app closed.
 
 name: Ante
 
@@ -34,15 +37,41 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: Ante
+    dependencies:
+      # The shared Anki engine (with the Ante changes), cross-compiled from
+      # rslib by `just ios-engine`. Static libraries — nothing to embed.
+      - framework: ../out/ios/AnkiEngine.xcframework
+        embed: false
+      # System libraries the Rust engine links against (native-tls/reqwest,
+      # rusqlite, and friends).
+      - sdk: Security.framework
+      - sdk: SystemConfiguration.framework
+      - sdk: libiconv.tbd
+      - sdk: libc++.tbd
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: app.ante.ios
         PRODUCT_NAME: Ante
         TARGETED_DEVICE_FAMILY: "1,2"
-        GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Ante
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
-        INFOPLIST_KEY_UIUserInterfaceStyle: Dark
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        SWIFT_OBJC_BRIDGING_HEADER: Ante/Engine/AnteBridging.h
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/../rslib/ios-ffi/include"
+    info:
+      path: Ante/Info.plist
+      properties:
+        CFBundleDisplayName: Ante
+        UILaunchScreen: {}
+        UIApplicationSupportsIndirectInputEvents: true
+        UIUserInterfaceStyle: Dark
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad:
+          [
+            UIInterfaceOrientationPortrait,
+            UIInterfaceOrientationPortraitUpsideDown,
+            UIInterfaceOrientationLandscapeLeft,
+            UIInterfaceOrientationLandscapeRight,
+          ]
+        # The den's sync server is self-hosted plain HTTP on the local network
+        # (see `just sync-server`); this is a dev companion, not a store build.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        NSLocalNetworkUsageDescription: Ante syncs with your own den — a self-hosted Anki sync server on your local network.

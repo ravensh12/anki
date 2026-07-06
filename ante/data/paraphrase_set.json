@@ -1,0 +1,336 @@
+{
+  "note": "The paraphrase test (spec 7d): 30 real seed cards, each paired with TWO exam-style questions that test the SAME idea in new words. Scoring compares the student's recall on the source card against their accuracy on the two reworded questions; a small gap means the 'performance' signal is just memory in disguise. Cards are drawn from ante/data/seed_cards.json (front/back verbatim). Questions are application/transfer style, not 'what is X' recall.",
+  "reassess_days": 21,
+  "cards": [
+    {
+      "card_id": "pp_aa_achiral",
+      "topic": "mcat::bio_biochem::amino_acids",
+      "card_front": "Which amino acid is achiral?",
+      "card_back": "Glycine (its side chain is a single hydrogen).",
+      "idea": "glycine is the only standard amino acid with no chiral alpha carbon",
+      "questions": [
+        {"id": "pp_aa_achiral_q1", "stem": "A chemist needs the one standard amino acid whose alpha carbon is NOT a stereocenter. Which should they pick?", "choices": ["Alanine", "Glycine", "Serine", "Threonine"], "correct_index": 1},
+        {"id": "pp_aa_achiral_q2", "stem": "Why does glycine, unlike the other standard amino acids, fail to rotate plane-polarized light?", "choices": ["Its side chain is a second hydrogen, so the alpha carbon lacks four different groups", "It exists only as a zwitterion", "Its side chain is aromatic", "It has two carboxyl groups"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_protein_helix",
+      "topic": "mcat::bio_biochem::protein_structure",
+      "card_front": "What stabilizes the alpha helix?",
+      "card_back": "Hydrogen bonds between backbone carbonyl (C=O) and amide (N-H) groups.",
+      "idea": "the alpha helix is held by backbone hydrogen bonds, not side-chain interactions",
+      "questions": [
+        {"id": "pp_protein_helix_q1", "stem": "A mutation replaces several residues but leaves the polypeptide backbone intact. Which interaction that maintains an alpha helix is LEAST likely to be disrupted?", "choices": ["Backbone C=O to N-H hydrogen bonds", "Disulfide bridges", "Salt bridges between side chains", "Hydrophobic side-chain packing"], "correct_index": 0},
+        {"id": "pp_protein_helix_q2", "stem": "In an alpha helix, a backbone carbonyl oxygen hydrogen-bonds to which partner?", "choices": ["The amide N-H roughly four residues away", "A neighboring side-chain hydroxyl", "A bound water molecule only", "The C-terminal carboxylate"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_enzyme_competitive",
+      "topic": "mcat::bio_biochem::enzymes",
+      "card_front": "What does a competitive inhibitor do to Km and Vmax?",
+      "card_back": "Increases apparent Km; Vmax unchanged.",
+      "idea": "competitive inhibition raises apparent Km but leaves Vmax reachable at high substrate",
+      "questions": [
+        {"id": "pp_enzyme_competitive_q1", "stem": "Adding a drug raises the substrate concentration needed for half-maximal velocity but the enzyme still reaches the same maximum rate at saturating substrate. What kind of inhibitor is it?", "choices": ["Competitive", "Noncompetitive", "Uncompetitive", "Irreversible"], "correct_index": 0},
+        {"id": "pp_enzyme_competitive_q2", "stem": "Why can a competitive inhibitor's effect be overcome by adding more substrate?", "choices": ["It binds the active site reversibly, so substrate can outcompete it", "It permanently denatures the enzyme", "It binds only the enzyme-substrate complex", "It lowers Vmax regardless of substrate"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_nucleic_basepair",
+      "topic": "mcat::bio_biochem::nucleic_acids",
+      "card_front": "Which bonds hold complementary DNA strands together?",
+      "card_back": "Hydrogen bonds between base pairs.",
+      "idea": "the two DNA strands are held by hydrogen bonds between paired bases",
+      "questions": [
+        {"id": "pp_nucleic_basepair_q1", "stem": "A DNA duplex rich in G-C pairs melts at a higher temperature than an A-T-rich one. The best explanation is that G-C pairs form:", "choices": ["Three hydrogen bonds versus two", "Covalent bonds versus ionic", "Phosphodiester bonds versus hydrogen bonds", "No bonds, only stacking"], "correct_index": 0},
+        {"id": "pp_nucleic_basepair_q2", "stem": "Gently heating DNA separates the two strands without breaking the sugar-phosphate backbone. Which interaction is being disrupted?", "choices": ["Hydrogen bonds between complementary bases", "Phosphodiester bonds within a strand", "Peptide bonds", "Glycosidic bonds to the bases"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_dna_pol_direction",
+      "topic": "mcat::bio_biochem::dna_replication",
+      "card_front": "In which direction does DNA polymerase synthesize?",
+      "card_back": "5' to 3' (reading the template 3' to 5').",
+      "idea": "new DNA is always extended at the 3' end, reading the template antiparallel",
+      "questions": [
+        {"id": "pp_dna_pol_direction_q1", "stem": "Because DNA polymerase can only add nucleotides to a free 3'-OH, one new strand must be made in short pieces. Those pieces are the:", "choices": ["Okazaki fragments on the lagging strand", "Primers on the leading strand", "Telomeres", "Introns"], "correct_index": 0},
+        {"id": "pp_dna_pol_direction_q2", "stem": "If a template strand runs 3'->5' left to right, the new complementary strand is synthesized:", "choices": ["Left to right, 5'->3'", "Right to left, 3'->5'", "In both directions at once from the middle", "Only after the template is fully copied"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_transcription_enzyme",
+      "topic": "mcat::bio_biochem::transcription_translation",
+      "card_front": "What enzyme carries out transcription?",
+      "card_back": "RNA polymerase.",
+      "idea": "RNA polymerase synthesizes RNA from a DNA template",
+      "questions": [
+        {"id": "pp_transcription_enzyme_q1", "stem": "A toxin blocks the enzyme that copies DNA into messenger RNA. Which activity is directly inhibited?", "choices": ["RNA polymerase", "DNA polymerase", "The ribosome", "Aminoacyl-tRNA synthetase"], "correct_index": 0},
+        {"id": "pp_transcription_enzyme_q2", "stem": "Unlike DNA polymerase, the enzyme that performs transcription does NOT require a primer because it:", "choices": ["Can initiate an RNA strand de novo", "Uses deoxyribonucleotides", "Proofreads with a 3'->5' exonuclease", "Works only in the cytoplasm"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_glycolysis_atp",
+      "topic": "mcat::bio_biochem::glycolysis",
+      "card_front": "Net ATP yield of glycolysis per glucose?",
+      "card_back": "2 ATP (4 produced, 2 consumed).",
+      "idea": "glycolysis nets 2 ATP because 2 are invested and 4 are produced",
+      "questions": [
+        {"id": "pp_glycolysis_atp_q1", "stem": "Glycolysis makes 4 ATP by substrate-level phosphorylation but spends some in its early steps. What is the NET ATP per glucose?", "choices": ["2", "4", "0", "6"], "correct_index": 0},
+        {"id": "pp_glycolysis_atp_q2", "stem": "A cell with no oxygen still runs glycolysis. How many ATP does it net per glucose from glycolysis alone?", "choices": ["2", "30-32", "0", "36"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_citric_location",
+      "topic": "mcat::bio_biochem::citric_acid_cycle",
+      "card_front": "Where does the citric acid cycle occur in eukaryotes?",
+      "card_back": "The mitochondrial matrix.",
+      "idea": "the citric acid cycle runs in the mitochondrial matrix",
+      "questions": [
+        {"id": "pp_citric_location_q1", "stem": "A researcher isolates intact mitochondria and ruptures the outer membrane only. Citric acid cycle activity is still found in which compartment?", "choices": ["The matrix", "The cytosol", "The intermembrane space", "The nucleus"], "correct_index": 0},
+        {"id": "pp_citric_location_q2", "stem": "Pyruvate made in the cytosol must be imported into which location before the citric acid cycle can process its carbons?", "choices": ["The mitochondrial matrix", "The smooth ER", "The lysosome", "The peroxisome"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_oxphos_acceptor",
+      "topic": "mcat::bio_biochem::oxidative_phosphorylation",
+      "card_front": "Final electron acceptor in the electron transport chain?",
+      "card_back": "Molecular oxygen (O2).",
+      "idea": "O2 is the terminal electron acceptor; without it the chain backs up",
+      "questions": [
+        {"id": "pp_oxphos_acceptor_q1", "stem": "Cyanide blocks the last complex of the electron transport chain. Electrons can no longer be passed to their final acceptor, which normally is:", "choices": ["Oxygen", "NAD+", "Carbon dioxide", "Pyruvate"], "correct_index": 0},
+        {"id": "pp_oxphos_acceptor_q2", "stem": "Without oxygen, the electron transport chain halts and NADH accumulates because there is nothing to accept electrons at the:", "choices": ["End of the chain (Complex IV)", "Start of glycolysis", "Ribosome", "Golgi apparatus"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_cell_fluid_mosaic",
+      "topic": "mcat::bio_biochem::cell_biology",
+      "card_front": "What is the fluid mosaic model?",
+      "card_back": "A fluid phospholipid bilayer with embedded, mobile proteins.",
+      "idea": "membranes are a fluid bilayer with laterally mobile embedded proteins",
+      "questions": [
+        {"id": "pp_cell_fluid_mosaic_q1", "stem": "Fusing two labeled cells shows their membrane proteins intermix within minutes. This best supports which membrane property?", "choices": ["Lateral fluidity of the bilayer", "Covalent cross-linking of lipids", "A rigid protein lattice", "An absence of proteins"], "correct_index": 0},
+        {"id": "pp_cell_fluid_mosaic_q2", "stem": "Adding more cholesterol at body temperature tends to reduce membrane fluidity. This is consistent with a membrane best described as:", "choices": ["A dynamic fluid bilayer whose fluidity can be modulated", "A static covalent sheet", "A pure protein film", "A single lipid monolayer"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_atomic_quantum",
+      "topic": "mcat::chem_phys::atomic_structure",
+      "card_front": "What do the quantum numbers n, l, ml, and ms describe?",
+      "card_back": "Shell, subshell shape, orbital orientation, and electron spin.",
+      "idea": "the four quantum numbers uniquely specify an electron's state",
+      "questions": [
+        {"id": "pp_atomic_quantum_q1", "stem": "Two electrons occupy the same orbital. By the Pauli exclusion principle they must differ in which quantum number?", "choices": ["ms (spin)", "n (shell)", "l (subshell)", "ml (orientation)"], "correct_index": 0},
+        {"id": "pp_atomic_quantum_q2", "stem": "Which quantum number determines whether an orbital is s, p, d, or f shaped?", "choices": ["l (azimuthal)", "n (principal)", "ml (magnetic)", "ms (spin)"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_periodic_radius",
+      "topic": "mcat::chem_phys::periodic_trends",
+      "card_front": "How does atomic radius change left to right across a period?",
+      "card_back": "It decreases.",
+      "idea": "atomic radius shrinks across a period as nuclear charge pulls electrons in",
+      "questions": [
+        {"id": "pp_periodic_radius_q1", "stem": "Comparing Na and Cl in the same period, which is the smaller atom and why?", "choices": ["Cl, because higher nuclear charge pulls the same shell in tighter", "Na, because it has more protons", "They are identical in size", "Cl, because it has fewer electrons"], "correct_index": 0},
+        {"id": "pp_periodic_radius_q2", "stem": "Moving rightward across period 3, atomic radius generally decreases. The main driver is:", "choices": ["Increasing effective nuclear charge on the same principal shell", "Adding new electron shells", "Decreasing proton count", "Increasing shielding faster than charge"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_bonding_ionic_covalent",
+      "topic": "mcat::chem_phys::bonding",
+      "card_front": "Ionic vs covalent bond: what is the difference?",
+      "card_back": "Ionic transfers electrons; covalent shares them.",
+      "idea": "ionic bonds transfer electrons; covalent bonds share them",
+      "questions": [
+        {"id": "pp_bonding_ionic_covalent_q1", "stem": "A compound between a metal and a nonmetal with a large electronegativity difference is best described as bonded by:", "choices": ["Electron transfer (ionic)", "Equal electron sharing (nonpolar covalent)", "Metallic bonding", "Hydrogen bonding"], "correct_index": 0},
+        {"id": "pp_bonding_ionic_covalent_q2", "stem": "Two identical nonmetal atoms bond. Because their electronegativities are equal, the bond is:", "choices": ["Nonpolar covalent (electrons shared equally)", "Ionic (electrons transferred)", "Metallic", "A hydrogen bond"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_thermo_spontaneous",
+      "topic": "mcat::chem_phys::thermodynamics",
+      "card_front": "Sign of delta G for a spontaneous process?",
+      "card_back": "Negative.",
+      "idea": "a spontaneous process has negative Gibbs free energy change",
+      "questions": [
+        {"id": "pp_thermo_spontaneous_q1", "stem": "A reaction proceeds forward on its own at constant temperature and pressure. What must be true of its Gibbs free energy change?", "choices": ["delta G < 0", "delta G > 0", "delta G = 0", "delta H > 0 always"], "correct_index": 0},
+        {"id": "pp_thermo_spontaneous_q2", "stem": "An endothermic reaction (delta H > 0) is still spontaneous at high temperature. This happens when:", "choices": ["A large positive delta S makes T*delta S exceed delta H, so delta G < 0", "delta S is negative", "delta G is positive", "T is near absolute zero"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_kinetics_rds",
+      "topic": "mcat::chem_phys::kinetics",
+      "card_front": "What does the rate-determining step control?",
+      "card_back": "The overall reaction rate (it is the slowest step).",
+      "idea": "the slowest elementary step sets the overall reaction rate",
+      "questions": [
+        {"id": "pp_kinetics_rds_q1", "stem": "A multi-step mechanism has one slow step and several fast ones. The experimentally observed rate law reflects:", "choices": ["The slow (rate-determining) step", "The fastest step", "The final fast step only", "The sum of all steps equally"], "correct_index": 0},
+        {"id": "pp_kinetics_rds_q2", "stem": "A catalyst speeds a reaction primarily by:", "choices": ["Lowering the activation energy of the rate-determining step", "Increasing the temperature", "Shifting the equilibrium constant", "Raising the concentration of products"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_equilibrium_lechatelier",
+      "topic": "mcat::chem_phys::equilibrium",
+      "card_front": "What does Le Chatelier's principle predict?",
+      "card_back": "A system shifts to counteract an applied stress.",
+      "idea": "a system at equilibrium shifts to oppose an imposed stress",
+      "questions": [
+        {"id": "pp_equilibrium_lechatelier_q1", "stem": "Adding more product to a reaction at equilibrium will:", "choices": ["Shift the reaction toward reactants", "Shift it further toward products", "Have no effect on the position", "Change the value of K"], "correct_index": 0},
+        {"id": "pp_equilibrium_lechatelier_q2", "stem": "For an exothermic reaction at equilibrium, raising the temperature will:", "choices": ["Favor the reactants (shift left)", "Favor the products (shift right)", "Leave the position unchanged", "Stop the reaction"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_acids_ph",
+      "topic": "mcat::chem_phys::acids_bases",
+      "card_front": "What is the pH of a 0.01 M strong acid solution?",
+      "card_back": "2 (-log(0.01)).",
+      "idea": "for a strong monoprotic acid, pH = -log[H+]",
+      "questions": [
+        {"id": "pp_acids_ph_q1", "stem": "A strong monoprotic acid is diluted to 0.001 M. What is the approximate pH?", "choices": ["3", "2", "1", "11"], "correct_index": 0},
+        {"id": "pp_acids_ph_q2", "stem": "Solution A has pH 2 and solution B has pH 4. Solution A's hydrogen-ion concentration is how many times B's?", "choices": ["100 times", "2 times", "Half", "The same"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_kinematics_g",
+      "topic": "mcat::chem_phys::kinematics",
+      "card_front": "Acceleration due to gravity near Earth's surface?",
+      "card_back": "About 9.8 m/s^2 downward.",
+      "idea": "free-fall acceleration near Earth is ~9.8 m/s^2 regardless of mass",
+      "questions": [
+        {"id": "pp_kinematics_g_q1", "stem": "Ignoring air resistance, a bowling ball and a marble are dropped together. Their downward accelerations are:", "choices": ["Equal, about 9.8 m/s^2", "Greater for the bowling ball", "Greater for the marble", "Zero for both"], "correct_index": 0},
+        {"id": "pp_kinematics_g_q2", "stem": "An object is thrown straight up. At the top of its path, its acceleration is:", "choices": ["About 9.8 m/s^2 downward", "Zero", "9.8 m/s^2 upward", "Equal to its launch speed"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_force_newton2",
+      "topic": "mcat::chem_phys::force_energy",
+      "card_front": "State Newton's second law.",
+      "card_back": "F = m*a (net force equals mass times acceleration).",
+      "idea": "net force equals mass times acceleration",
+      "questions": [
+        {"id": "pp_force_newton2_q1", "stem": "The same net force is applied to a 2 kg cart and a 4 kg cart. The 4 kg cart's acceleration is:", "choices": ["Half that of the 2 kg cart", "Twice that of the 2 kg cart", "The same", "Zero"], "correct_index": 0},
+        {"id": "pp_force_newton2_q2", "stem": "A 10 N net force acts on a 5 kg object. Its acceleration is:", "choices": ["2 m/s^2", "50 m/s^2", "0.5 m/s^2", "15 m/s^2"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_circuits_ohm",
+      "topic": "mcat::chem_phys::circuits",
+      "card_front": "Ohm's law?",
+      "card_back": "V = I * R.",
+      "idea": "voltage equals current times resistance",
+      "questions": [
+        {"id": "pp_circuits_ohm_q1", "stem": "At fixed voltage, if a resistor's resistance is doubled, the current through it:", "choices": ["Halves", "Doubles", "Stays the same", "Quadruples"], "correct_index": 0},
+        {"id": "pp_circuits_ohm_q2", "stem": "A 12 V source drives 3 A through a resistor. Its resistance is:", "choices": ["4 ohms", "36 ohms", "0.25 ohms", "15 ohms"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_sensation_threshold",
+      "topic": "mcat::psych_soc::sensation_perception",
+      "card_front": "What is the absolute threshold?",
+      "card_back": "The minimum stimulus intensity detectable 50% of the time.",
+      "idea": "absolute threshold is the smallest stimulus detectable half the time",
+      "questions": [
+        {"id": "pp_sensation_threshold_q1", "stem": "A hearing test finds the faintest tone a listener detects on 50% of trials. This value is the:", "choices": ["Absolute threshold", "Difference threshold", "Weber fraction", "Signal-to-noise ratio"], "correct_index": 0},
+        {"id": "pp_sensation_threshold_q2", "stem": "The smallest difference between two stimuli that a person can notice 50% of the time is the just-noticeable difference, which is distinct from the absolute threshold because it measures:", "choices": ["A change between two stimuli, not detection of one faint stimulus", "The loudest tolerable stimulus", "The average of all stimuli", "Only visual stimuli"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_cognition_piaget",
+      "topic": "mcat::psych_soc::cognition",
+      "card_front": "What are Piaget's four stages of cognitive development?",
+      "card_back": "Sensorimotor, preoperational, concrete operational, formal operational.",
+      "idea": "Piaget's stages progress from sensorimotor to formal operational",
+      "questions": [
+        {"id": "pp_cognition_piaget_q1", "stem": "A child first understands that a hidden object still exists (object permanence). Piaget places this achievement at the end of which stage?", "choices": ["Sensorimotor", "Formal operational", "Concrete operational", "Preoperational"], "correct_index": 0},
+        {"id": "pp_cognition_piaget_q2", "stem": "An adolescent can reason about hypothetical 'what if' scenarios and abstract logic. In Piaget's scheme this marks the:", "choices": ["Formal operational stage", "Sensorimotor stage", "Preoperational stage", "Concrete operational stage"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_memory_hippocampus",
+      "topic": "mcat::psych_soc::memory",
+      "card_front": "Which brain structure is critical for forming new long-term memories?",
+      "card_back": "The hippocampus.",
+      "idea": "the hippocampus is required to consolidate new explicit long-term memories",
+      "questions": [
+        {"id": "pp_memory_hippocampus_q1", "stem": "A patient with bilateral hippocampal damage can recall childhood events but cannot form new lasting memories. This dissociation implicates the hippocampus in:", "choices": ["Consolidating new long-term memories", "Retrieving remote memories", "Motor coordination", "Regulating heart rate"], "correct_index": 0},
+        {"id": "pp_memory_hippocampus_q2", "stem": "Which finding would most directly support the hippocampus's role in forming new declarative memories?", "choices": ["Its damage causes anterograde amnesia", "Its damage abolishes vision", "It controls breathing rhythm", "It stores procedural skills permanently"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_learning_cs",
+      "topic": "mcat::psych_soc::learning",
+      "card_front": "In classical conditioning, what is the CS before conditioning?",
+      "card_back": "A neutral stimulus.",
+      "idea": "before conditioning, the conditioned stimulus is a neutral stimulus",
+      "questions": [
+        {"id": "pp_learning_cs_q1", "stem": "A bell that initially produces no salivation later triggers it after being paired with food. Before pairing, the bell was best described as a:", "choices": ["Neutral stimulus", "Unconditioned stimulus", "Conditioned response", "Reinforcer"], "correct_index": 0},
+        {"id": "pp_learning_cs_q2", "stem": "After conditioning, the previously neutral stimulus becomes the conditioned stimulus and the salivation it now evokes is the:", "choices": ["Conditioned response", "Unconditioned stimulus", "Neutral stimulus", "Negative reinforcer"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_emotion_jameslange",
+      "topic": "mcat::psych_soc::motivation_emotion",
+      "card_front": "What is the James-Lange theory of emotion?",
+      "card_back": "Emotion follows the body's physiological response.",
+      "idea": "James-Lange: physiological arousal comes first and emotion is its interpretation",
+      "questions": [
+        {"id": "pp_emotion_jameslange_q1", "stem": "'I feel afraid because my heart is racing.' This ordering (bodily response first, then emotion) matches which theory?", "choices": ["James-Lange", "Cannon-Bard", "Schachter-Singer two-factor", "Yerkes-Dodson"], "correct_index": 0},
+        {"id": "pp_emotion_jameslange_q2", "stem": "Which claim would most directly contradict the James-Lange theory?", "choices": ["Emotion and physiological arousal occur simultaneously and independently", "Bodily changes precede felt emotion", "Different emotions have distinct bodily signatures", "Blocking arousal weakens felt emotion"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_identity_selfconcept",
+      "topic": "mcat::psych_soc::identity",
+      "card_front": "What is self-concept?",
+      "card_back": "The sum of one's beliefs about oneself.",
+      "idea": "self-concept is the collection of beliefs one holds about oneself",
+      "questions": [
+        {"id": "pp_identity_selfconcept_q1", "stem": "A student lists 'I am a runner, a sister, and shy.' This set of self-descriptions is best labeled her:", "choices": ["Self-concept", "Self-efficacy", "Locus of control", "Reference group"], "correct_index": 0},
+        {"id": "pp_identity_selfconcept_q2", "stem": "Self-concept differs from self-esteem primarily because self-concept refers to:", "choices": ["What one believes about oneself, not how positively one evaluates it", "Only physical appearance", "One's IQ score", "Others' opinions exclusively"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_social_fae",
+      "topic": "mcat::psych_soc::social_thinking",
+      "card_front": "What is the fundamental attribution error?",
+      "card_back": "Overattributing others' behavior to disposition over situation.",
+      "idea": "the fundamental attribution error overweights disposition and underweights situation for others",
+      "questions": [
+        {"id": "pp_social_fae_q1", "stem": "A driver cuts you off and you think 'what a rude person,' ignoring that they might be rushing to an emergency. This bias is the:", "choices": ["Fundamental attribution error", "Self-serving bias", "Just-world hypothesis", "Halo effect"], "correct_index": 0},
+        {"id": "pp_social_fae_q2", "stem": "The fundamental attribution error is often contrasted with the actor-observer bias because, for OTHERS' behavior, people tend to over-emphasize:", "choices": ["Internal disposition", "Situational pressures", "Random chance", "Their own mood"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_social_perspectives",
+      "topic": "mcat::psych_soc::social_structure",
+      "card_front": "What are the three major sociological perspectives?",
+      "card_back": "Functionalism, conflict theory, and symbolic interactionism.",
+      "idea": "the three classic sociological lenses are functionalism, conflict, and symbolic interactionism",
+      "questions": [
+        {"id": "pp_social_perspectives_q1", "stem": "A sociologist analyzes how face-to-face exchanges and shared symbols build meaning between individuals. Which perspective is this?", "choices": ["Symbolic interactionism", "Functionalism", "Conflict theory", "Rational choice"], "correct_index": 0},
+        {"id": "pp_social_perspectives_q2", "stem": "Viewing society as competing groups struggling over scarce resources and power reflects which perspective?", "choices": ["Conflict theory", "Functionalism", "Symbolic interactionism", "Behaviorism"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_demographic_transition",
+      "topic": "mcat::psych_soc::demographics",
+      "card_front": "What is the demographic transition model?",
+      "card_back": "The shift from high to low birth and death rates as a society industrializes.",
+      "idea": "the demographic transition moves from high to low birth and death rates with development",
+      "questions": [
+        {"id": "pp_demographic_transition_q1", "stem": "A country's death rate falls first while birth rates stay high, causing rapid population growth before birth rates later decline. This sequence is described by the:", "choices": ["Demographic transition model", "Malthusian catastrophe", "Dependency ratio", "Urbanization index"], "correct_index": 0},
+        {"id": "pp_demographic_transition_q2", "stem": "In the late stage of the demographic transition, a society is characterized by:", "choices": ["Low birth and low death rates", "High birth and high death rates", "High birth and low death rates", "Rapidly rising death rates"], "correct_index": 0}
+      ]
+    },
+    {
+      "card_id": "pp_biobehavior_sympathetic",
+      "topic": "mcat::psych_soc::biological_behavior",
+      "card_front": "Which division of the nervous system drives 'fight or flight'?",
+      "card_back": "The sympathetic nervous system.",
+      "idea": "the sympathetic nervous system mediates fight-or-flight arousal",
+      "questions": [
+        {"id": "pp_biobehavior_sympathetic_q1", "stem": "During a sudden fright, heart rate rises, pupils dilate, and digestion slows. Which division is activated?", "choices": ["Sympathetic", "Parasympathetic", "Somatic motor", "Enteric only"], "correct_index": 0},
+        {"id": "pp_biobehavior_sympathetic_q2", "stem": "After the threat passes, heart rate falls and digestion resumes. This 'rest and digest' return is driven by the division that opposes the sympathetic one, the:", "choices": ["Parasympathetic nervous system", "Sympathetic nervous system", "Central nervous system", "Endocrine system alone"], "correct_index": 0}
+      ]
+    }
+  ]
+}

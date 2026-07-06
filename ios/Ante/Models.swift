@@ -243,6 +243,26 @@ enum TopicFormat {
     }
 }
 
+// MARK: - Den account (mirrors the desktop's local email/name sign-in)
+
+/// A local den account. Identity only, exactly like the desktop's email
+/// sign-in: it gates the door and labels the seat but namespaces nothing
+/// on-device (the engine reads the collection directly). Sync is separate —
+/// the Ledger's "Wire" panel — so the same two-layer model as the desktop
+/// (account gate + separate sync) holds on both platforms.
+struct AnteAccount: Codable, Equatable {
+    var email: String
+    var name: String
+
+    /// A friendly seat label, falling back to the email's local part.
+    var displayName: String {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        if !trimmed.isEmpty { return trimmed }
+        let local = email.split(separator: "@").first.map(String.init) ?? email
+        return local.replacingOccurrences(of: ".", with: " ").capitalized
+    }
+}
+
 // MARK: - Study profile (mirrors ante/profile.py)
 
 struct StudyProfile: Codable, Equatable {
@@ -256,6 +276,8 @@ struct StudyProfile: Codable, Equatable {
     var quietEndHour: Int
     var rewardsOptIn: Bool
     var onboarded: Bool
+    /// The signed-in local account (nil until the door is passed).
+    var account: AnteAccount? = nil
 
     static let `default` = StudyProfile(
         examDate: nil,

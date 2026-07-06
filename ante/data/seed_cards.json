@@ -1,67 +1,635 @@
 {
-    "note": "Hand-checked MCAT Q/A used to seed a tagged deck without any AI. Keyed by full topic tag (must match ids in mcat_outline.json). The generator pads each topic with synthetic cards to reach a target deck size for benchmarking.",
+    "note": "Premade, hand-checked high-yield MCAT flashcards, keyed by full topic tag (must match ids in mcat_outline.json). This is the deck the app auto-loads on first run so content is ALWAYS ready and the student never has to import anything. Facts are curated across every topic in the AAMC outline; phrasing is original. Every listed topic ships with real cards (no synthetic padding).",
     "cards": {
         "mcat::bio_biochem::amino_acids": [
             ["Which amino acid is achiral?", "Glycine (its side chain is a single hydrogen)."],
-            ["What is the net charge of an amino acid at its isoelectric point (pI)?", "Zero."]
-        ],
-        "mcat::bio_biochem::enzymes": [
-            ["What does a competitive inhibitor do to Km and Vmax?", "Increases apparent Km; Vmax unchanged."],
-            ["What does a noncompetitive inhibitor do to Km and Vmax?", "Km unchanged; Vmax decreases."]
-        ],
-        "mcat::bio_biochem::glycolysis": [
-            ["Net ATP yield of glycolysis per glucose?", "2 ATP (4 produced, 2 consumed)."],
-            ["Rate-limiting enzyme of glycolysis?", "Phosphofructokinase-1 (PFK-1)."]
-        ],
-        "mcat::bio_biochem::oxidative_phosphorylation": [
-            ["Final electron acceptor in the electron transport chain?", "Molecular oxygen (O2)."],
-            ["What does the proton-motive force drive?", "ATP synthesis via ATP synthase."]
-        ],
-        "mcat::bio_biochem::nucleic_acids": [
-            ["Which bonds hold complementary DNA strands together?", "Hydrogen bonds between base pairs."],
-            ["Purines vs pyrimidines: which are double-ringed?", "Purines (adenine, guanine)."]
+            [
+                "What is the net charge of an amino acid at its isoelectric point (pI)?",
+                "Zero (it exists as a zwitterion)."
+            ],
+            [
+                "Which three amino acids are basic (positively charged at physiological pH)?",
+                "Lysine, arginine, and histidine."
+            ],
+            ["Which two amino acids are acidic (negatively charged at physiological pH)?", "Aspartate and glutamate."],
+            ["Which amino acid forms disulfide bonds?", "Cysteine (through its thiol side chain)."],
+            ["Which amino acids are aromatic?", "Phenylalanine, tyrosine, and tryptophan."],
+            ["How is a peptide bond formed?", "By a condensation (dehydration) reaction that releases water."],
+            [
+                "At a pH below its pI, what is the net charge of an amino acid?",
+                "Positive (pH < pI gives net positive charge)."
+            ],
+            ["Which amino acid has a secondary amine and introduces kinks in a chain?", "Proline."],
+            [
+                "When pH equals a side chain's pKa, what is its protonation state?",
+                "50% protonated and 50% deprotonated."
+            ]
         ],
         "mcat::bio_biochem::protein_structure": [
-            ["What stabilizes the alpha helix?", "Hydrogen bonds between backbone carbonyl and amide groups."],
+            [
+                "What stabilizes the alpha helix?",
+                "Hydrogen bonds between backbone carbonyl (C=O) and amide (N-H) groups."
+            ],
             [
                 "What level of protein structure are disulfide bonds associated with?",
                 "Tertiary (and quaternary) structure."
+            ],
+            ["What is primary structure?", "The linear sequence of amino acids joined by peptide bonds."],
+            ["What are the two main types of secondary structure?", "Alpha helices and beta pleated sheets."],
+            [
+                "What defines quaternary structure?",
+                "The assembly of multiple polypeptide subunits into one functional protein."
+            ],
+            [
+                "What force primarily drives a globular protein to fold in water?",
+                "The hydrophobic effect (nonpolar residues cluster inside)."
+            ],
+            ["What is denaturation?", "Loss of a protein's 3-D shape and function without breaking peptide bonds."],
+            [
+                "Sickle cell anemia results from what change in primary structure?",
+                "A single glutamate-to-valine substitution in beta-globin."
+            ],
+            [
+                "What holds adjacent strands of a beta-pleated sheet together?",
+                "Backbone hydrogen bonds between the strands."
+            ],
+            ["Why is the peptide bond planar?", "It has partial double-bond character from resonance."]
+        ],
+        "mcat::bio_biochem::enzymes": [
+            ["What does a competitive inhibitor do to Km and Vmax?", "Increases apparent Km; Vmax unchanged."],
+            ["What does a noncompetitive inhibitor do to Km and Vmax?", "Km unchanged; Vmax decreases."],
+            [
+                "How do enzymes speed up reactions?",
+                "By lowering activation energy; they do not change delta G or the equilibrium."
+            ],
+            [
+                "What is Km in Michaelis-Menten kinetics?",
+                "The substrate concentration at which the rate is half of Vmax."
+            ],
+            ["What does a low Km indicate about enzyme-substrate affinity?", "High affinity."],
+            ["What does an uncompetitive inhibitor do to Km and Vmax?", "Decreases both Km and Vmax."],
+            ["What is feedback inhibition?", "When a pathway's end product inhibits an upstream enzyme."],
+            ["Where does a competitive inhibitor bind?", "The active site."],
+            ["What are zymogens?", "Inactive enzyme precursors activated by cleavage (e.g., trypsinogen to trypsin)."],
+            [
+                "Cofactor vs coenzyme: which is organic?",
+                "Coenzymes are organic (often vitamin-derived); cofactors are inorganic ions."
             ]
         ],
-        "mcat::chem_phys::acids_bases": [
-            ["What is the pH of a 0.01 M strong acid solution?", "2 (-log(0.01))."],
-            ["At the half-equivalence point of a weak acid titration, pH equals what?", "pKa."]
+        "mcat::bio_biochem::carbohydrates": [
+            ["What is the general empirical formula of a carbohydrate?", "(CH2O)n."],
+            ["What glycosidic bond links glucose in cellulose?", "Beta-1,4."],
+            ["What glycosidic bonds are found in glycogen?", "Alpha-1,4 (linear) with alpha-1,6 branches."],
+            ["Which sugar stereochemistry (D or L) dominates in biology?", "D-sugars."],
+            [
+                "Aldose vs ketose: what is the difference?",
+                "An aldose has a terminal aldehyde; a ketose has an internal ketone."
+            ],
+            ["What are anomers?", "Stereoisomers differing at the anomeric carbon (alpha vs beta)."],
+            ["What is a reducing sugar?", "A sugar with a free anomeric carbon that can be oxidized."],
+            ["Glucose + fructose forms which disaccharide?", "Sucrose."],
+            ["What are epimers?", "Diastereomers differing at a single chiral center (e.g., glucose vs galactose)."],
+            ["What is the storage polysaccharide in animals?", "Glycogen (in liver and muscle)."]
+        ],
+        "mcat::bio_biochem::lipids": [
+            ["What makes a fatty acid saturated?", "It has no carbon-carbon double bonds."],
+            [
+                "Why do unsaturated fats have lower melting points?",
+                "Cis double bonds kink the chains and prevent tight packing."
+            ],
+            ["What is the structure of a triacylglycerol?", "Glycerol esterified to three fatty acids."],
+            [
+                "What property of phospholipids drives membrane formation?",
+                "They are amphipathic (polar head, nonpolar tails)."
+            ],
+            ["What is the precursor of all steroid hormones?", "Cholesterol."],
+            ["What does cholesterol do in a membrane?", "It buffers membrane fluidity against temperature changes."],
+            ["What are the fat-soluble vitamins?", "A, D, E, and K."],
+            ["What bond links a fatty acid to glycerol?", "An ester bond."],
+            ["What are the products of triacylglycerol saponification?", "Glycerol and fatty acid salts (soap)."],
+            ["Which lipoprotein is the 'good cholesterol'?", "HDL (returns cholesterol to the liver)."]
+        ],
+        "mcat::bio_biochem::nucleic_acids": [
+            ["Which bonds hold complementary DNA strands together?", "Hydrogen bonds between base pairs."],
+            ["Purines vs pyrimidines: which are double-ringed?", "Purines (adenine, guanine)."],
+            ["How many hydrogen bonds form between G and C?", "Three."],
+            ["How many hydrogen bonds form between A and T?", "Two."],
+            ["What sugar is in DNA vs RNA?", "Deoxyribose in DNA; ribose in RNA."],
+            ["In which direction is a nucleic acid strand synthesized?", "5' to 3'."],
+            ["Which base replaces thymine in RNA?", "Uracil."],
+            ["What are the pyrimidines in DNA?", "Cytosine and thymine."],
+            ["What bond joins nucleotides within a strand?", "Phosphodiester bonds."],
+            ["What does Chargaff's rule state?", "In DNA, %A = %T and %G = %C."]
+        ],
+        "mcat::bio_biochem::dna_replication": [
+            ["In which direction does DNA polymerase synthesize?", "5' to 3' (reading the template 3' to 5')."],
+            [
+                "Why is the lagging strand made in Okazaki fragments?",
+                "It runs antiparallel, so it is synthesized discontinuously."
+            ],
+            ["What enzyme unwinds the double helix?", "Helicase."],
+            ["What enzyme joins Okazaki fragments?", "DNA ligase."],
+            ["What provides the 3'-OH primer for DNA polymerase?", "An RNA primer made by primase."],
+            [
+                "Is DNA replication conservative or semiconservative?",
+                "Semiconservative (each daughter has one old and one new strand)."
+            ],
+            ["What relieves supercoiling ahead of the fork?", "Topoisomerase (e.g., DNA gyrase)."],
+            ["What proofreading activity does DNA polymerase have?", "3' to 5' exonuclease activity."],
+            ["What enzyme extends the ends of linear chromosomes?", "Telomerase."],
+            ["Leading vs lagging strand: which is continuous?", "The leading strand."]
+        ],
+        "mcat::bio_biochem::transcription_translation": [
+            ["What enzyme carries out transcription?", "RNA polymerase."],
+            ["Where does eukaryotic transcription occur?", "In the nucleus."],
+            ["What three modifications process a eukaryotic pre-mRNA?", "5' cap, poly-A tail, and intron splicing."],
+            ["What is a codon?", "Three mRNA nucleotides coding for one amino acid."],
+            ["What is the start codon, and which amino acid does it code for?", "AUG; methionine."],
+            ["What are the three stop codons?", "UAA, UAG, and UGA."],
+            ["What molecule brings amino acids to the ribosome?", "tRNA (matched by its anticodon)."],
+            [
+                "What does it mean that the genetic code is degenerate?",
+                "Multiple codons can specify the same amino acid."
+            ],
+            ["Introns vs exons: which are expressed?", "Exons (introns are spliced out)."],
+            ["In which direction is mRNA read during translation?", "5' to 3'."]
+        ],
+        "mcat::bio_biochem::gene_regulation": [
+            ["What is an operon?", "A cluster of genes under one promoter, common in prokaryotes."],
+            ["Is the lac operon inducible or repressible?", "Inducible (turned on by lactose/allolactose)."],
+            ["Is the trp operon inducible or repressible?", "Repressible (tryptophan acts as a corepressor)."],
+            ["What do enhancers do?", "Increase transcription of a gene, even from a distance."],
+            ["How does DNA methylation usually affect expression?", "It generally silences (represses) transcription."],
+            ["How does histone acetylation affect transcription?", "It loosens chromatin and increases transcription."],
+            ["What is euchromatin?", "Loosely packed, transcriptionally active chromatin."],
+            ["What are transcription factors?", "Proteins that bind DNA to regulate transcription."],
+            ["What do microRNAs (miRNAs) do?", "Bind mRNA to block translation or trigger its degradation."],
+            [
+                "What does the lac repressor do when lactose is absent?",
+                "It binds the operator and blocks transcription."
+            ]
+        ],
+        "mcat::bio_biochem::glycolysis": [
+            ["Net ATP yield of glycolysis per glucose?", "2 ATP (4 produced, 2 consumed)."],
+            ["Rate-limiting enzyme of glycolysis?", "Phosphofructokinase-1 (PFK-1)."],
+            ["Where does glycolysis occur?", "In the cytoplasm."],
+            ["What are the products of glycolysis per glucose?", "2 pyruvate, 2 net ATP, and 2 NADH."],
+            ["Does glycolysis require oxygen?", "No; it is anaerobic."],
+            ["What is the fate of pyruvate anaerobically in humans?", "Reduction to lactate, regenerating NAD+."],
+            ["What allosterically inhibits PFK-1?", "High ATP (and citrate)."],
+            [
+                "Which step is the first committed, irreversible step?",
+                "PFK-1 converting fructose-6-P to fructose-1,6-bisphosphate."
+            ],
+            [
+                "What is substrate-level phosphorylation?",
+                "Direct transfer of a phosphate to ADP to make ATP (no ETC needed)."
+            ],
+            ["What enzyme traps glucose in the cell in step 1?", "Hexokinase (making glucose-6-phosphate)."]
+        ],
+        "mcat::bio_biochem::citric_acid_cycle": [
+            ["Where does the citric acid cycle occur in eukaryotes?", "The mitochondrial matrix."],
+            ["What molecule combines with oxaloacetate to enter the cycle?", "Acetyl-CoA."],
+            ["Per turn, how many NADH, FADH2, and GTP are produced?", "3 NADH, 1 FADH2, and 1 GTP (plus 2 CO2)."],
+            ["What is the rate-limiting enzyme of the cycle?", "Isocitrate dehydrogenase."],
+            ["How many turns of the cycle occur per glucose?", "Two (one per pyruvate)."],
+            ["What converts pyruvate to acetyl-CoA?", "The pyruvate dehydrogenase complex."],
+            ["What is the main purpose of the cycle?", "To produce NADH and FADH2 for the electron transport chain."],
+            ["What molecule is regenerated at the end of each turn?", "Oxaloacetate."],
+            ["How many CO2 molecules are released per turn?", "Two."],
+            ["What indirectly makes the cycle require oxygen?", "It needs the ETC to regenerate NAD+ and FAD."]
+        ],
+        "mcat::bio_biochem::oxidative_phosphorylation": [
+            ["Final electron acceptor in the electron transport chain?", "Molecular oxygen (O2)."],
+            ["What does the proton-motive force drive?", "ATP synthesis via ATP synthase."],
+            ["Where is the electron transport chain located?", "The inner mitochondrial membrane."],
+            ["About how many ATP result per glucose from aerobic respiration?", "About 30-32 ATP."],
+            ["What do NADH and FADH2 donate to the chain?", "High-energy electrons."],
+            ["Where do protons accumulate to build the gradient?", "The intermembrane space."],
+            [
+                "What is chemiosmosis?",
+                "ATP synthesis powered by protons flowing down their gradient through ATP synthase."
+            ],
+            [
+                "What happens to the ETC without oxygen?",
+                "It stalls; NADH cannot be reoxidized and aerobic ATP production halts."
+            ],
+            ["Which yields more ATP: NADH or FADH2?", "NADH (it enters the chain earlier)."],
+            ["What is the role of ATP synthase?", "It uses the proton gradient to phosphorylate ADP to ATP."]
+        ],
+        "mcat::bio_biochem::cell_biology": [
+            ["What is the fluid mosaic model?", "A fluid phospholipid bilayer with embedded, mobile proteins."],
+            ["What organelle is the site of protein synthesis?", "The ribosome."],
+            [
+                "What does the rough endoplasmic reticulum do?",
+                "Synthesizes and modifies secreted and membrane proteins."
+            ],
+            ["What is the function of the Golgi apparatus?", "Modifies, sorts, and packages proteins for secretion."],
+            ["What do lysosomes contain?", "Hydrolytic (digestive) enzymes active at low pH."],
+            [
+                "What distinguishes prokaryotes from eukaryotes?",
+                "Prokaryotes lack a membrane-bound nucleus and organelles."
+            ],
+            ["What transport moves solutes against a gradient using ATP?", "Active transport."],
+            ["What does the sodium-potassium pump do per ATP?", "Pumps 3 Na+ out and 2 K+ in."],
+            [
+                "What happens to a cell placed in a hypertonic solution?",
+                "Water leaves and the cell shrinks (crenation)."
+            ],
+            ["Which cytoskeletal element forms the mitotic spindle?", "Microtubules (made of tubulin)."]
+        ],
+        "mcat::chem_phys::atomic_structure": [
+            [
+                "What do the quantum numbers n, l, ml, and ms describe?",
+                "Shell, subshell shape, orbital orientation, and electron spin."
+            ],
+            ["What is the maximum number of electrons in one orbital?", "Two, with opposite spins."],
+            ["What is Hund's rule?", "Electrons fill degenerate orbitals singly before pairing."],
+            ["What is the Pauli exclusion principle?", "No two electrons in an atom share all four quantum numbers."],
+            ["What is an isotope?", "Atoms of an element with the same protons but different neutrons."],
+            ["What defines the atomic number?", "The number of protons."],
+            ["What is the Aufbau principle?", "Electrons fill the lowest-energy orbitals first."],
+            ["How many electrons can a p subshell hold?", "Six."],
+            ["What is the ground state of an atom?", "Its lowest-energy electron configuration."],
+            ["What happens when an excited electron falls to a lower level?", "It emits a photon of energy E = hf."]
+        ],
+        "mcat::chem_phys::periodic_trends": [
+            ["How does atomic radius change left to right across a period?", "It decreases."],
+            ["How does ionization energy change down a group?", "It decreases."],
+            ["How does electronegativity change across a period?", "It increases."],
+            ["Which element is the most electronegative?", "Fluorine."],
+            ["Why does atomic radius increase down a group?", "More electron shells are added."],
+            [
+                "How does electron affinity trend across a period?",
+                "It generally becomes more negative (more energy released)."
+            ],
+            ["Which group has the highest ionization energies?", "The noble gases."],
+            ["What is effective nuclear charge?", "The net positive charge felt by valence electrons."],
+            ["How does metallic character change down a group?", "It increases."],
+            ["Cation vs neutral atom: which is smaller?", "The cation."]
+        ],
+        "mcat::chem_phys::bonding": [
+            ["Ionic vs covalent bond: what is the difference?", "Ionic transfers electrons; covalent shares them."],
+            ["What is a polar covalent bond?", "A covalent bond with unequal electron sharing."],
+            ["VSEPR: what shape has 4 bonding pairs and no lone pairs?", "Tetrahedral (about 109.5 degrees)."],
+            ["What geometry results from 3 bonding pairs and 1 lone pair?", "Trigonal pyramidal."],
+            ["What is the hybridization of a double-bonded carbon?", "sp2."],
+            ["What is the strongest noncovalent intermolecular force?", "Hydrogen bonding."],
+            ["What holds nonpolar molecules together?", "London dispersion forces."],
+            ["How many electrons are shared in a double bond?", "Four (two pairs)."],
+            ["What is a coordinate covalent bond?", "A covalent bond where both electrons come from one atom."],
+            ["Sigma vs pi bond: which forms by head-on overlap?", "The sigma bond (pi bonds overlap side-on)."]
+        ],
+        "mcat::chem_phys::stoichiometry": [
+            ["What is Avogadro's number?", "6.022 x 10^23 particles per mole."],
+            ["What is the limiting reagent?", "The reactant consumed first, which caps the product yield."],
+            ["What is percent yield?", "(actual yield / theoretical yield) x 100%."],
+            ["What is an empirical formula?", "The simplest whole-number ratio of atoms in a compound."],
+            ["How do you find moles from mass?", "Divide the mass by the molar mass."],
+            ["What do coefficients in a balanced equation represent?", "Mole ratios of reactants and products."],
+            ["What is molarity?", "Moles of solute per liter of solution."],
+            ["What is conserved in a balanced chemical equation?", "Mass and atoms (conservation of mass)."],
+            ["What is the molar mass of water?", "About 18 g/mol."],
+            ["If limiting reagent moles double (other in excess), what happens to product?", "It doubles."]
         ],
         "mcat::chem_phys::thermodynamics": [
             ["Sign of delta G for a spontaneous process?", "Negative."],
-            ["Relationship between delta G, delta H, and delta S?", "delta G = delta H - T*delta S."]
+            ["Relationship between delta G, delta H, and delta S?", "delta G = delta H - T*delta S."],
+            ["What is the first law of thermodynamics?", "Energy is conserved; delta U = Q - W."],
+            ["What does a positive delta H indicate?", "An endothermic reaction (absorbs heat)."],
+            ["What does entropy (S) measure?", "The disorder or number of microstates of a system."],
+            ["Relationship between delta G-standard and K?", "delta G-standard = -RT*ln(K)."],
+            ["When is a reaction spontaneous at all temperatures?", "When delta H < 0 and delta S > 0."],
+            ["What is a state function?", "A property that depends only on state, not path (e.g., enthalpy)."],
+            [
+                "What does q = m*c*delta T calculate?",
+                "Heat transferred from mass, specific heat, and temperature change."
+            ],
+            ["What is delta G at equilibrium?", "Zero."]
+        ],
+        "mcat::chem_phys::kinetics": [
+            ["What does the rate-determining step control?", "The overall reaction rate (it is the slowest step)."],
+            ["How does a catalyst speed up a reaction?", "By lowering the activation energy via a new pathway."],
+            ["What does the Arrhenius equation relate?", "The rate constant to temperature and activation energy."],
+            [
+                "For a first-order reaction, what does the rate depend on?",
+                "One reactant's concentration to the first power."
+            ],
+            ["How does raising temperature affect reaction rate?", "It increases the rate (more molecules exceed Ea)."],
+            ["What is activation energy?", "The minimum energy needed for reactants to react."],
+            ["Does a catalyst change delta G or Keq?", "No; it only speeds reaching equilibrium."],
+            ["What is the order of a reaction?", "The sum of the exponents in the rate law."],
+            ["How does a catalyst affect the reverse reaction?", "It speeds the reverse reaction equally."],
+            ["What is the transition state?", "The highest-energy, unstable arrangement at the top of the barrier."]
+        ],
+        "mcat::chem_phys::equilibrium": [
+            ["What does Le Chatelier's principle predict?", "A system shifts to counteract an applied stress."],
+            ["Adding product shifts equilibrium which way?", "Toward reactants (left)."],
+            ["What does a large Keq indicate?", "Products are favored at equilibrium."],
+            ["How does a catalyst affect equilibrium position?", "It does not; it only speeds reaching it."],
+            ["Increasing pressure shifts gas equilibrium toward which side?", "The side with fewer moles of gas."],
+            ["What is the reaction quotient Q used for?", "Comparing to K to predict the direction of shift."],
+            ["If Q < K, which way does the reaction proceed?", "Forward, toward products."],
+            ["What is Ksp?", "The solubility product constant of a sparingly soluble salt."],
+            ["What is the common ion effect?", "An added common ion decreases a salt's solubility."],
+            ["How does heating shift an endothermic reaction?", "Toward products (heat acts as a reactant)."]
+        ],
+        "mcat::chem_phys::acids_bases": [
+            ["What is the pH of a 0.01 M strong acid solution?", "2 (-log(0.01))."],
+            ["At the half-equivalence point of a weak acid titration, pH equals what?", "The pKa."],
+            ["What is the Henderson-Hasselbalch equation?", "pH = pKa + log([A-]/[HA])."],
+            ["What is the relationship between pH and pOH?", "pH + pOH = 14 at 25 C."],
+            ["What defines a Bronsted-Lowry acid?", "A proton (H+) donor."],
+            ["What is Kw at 25 C?", "The water ion product, [H+][OH-] = 1 x 10^-14."],
+            ["What makes a buffer?", "A weak acid together with its conjugate base."],
+            ["Strong vs weak acid: which fully dissociates?", "The strong acid."],
+            ["pH at the equivalence point of a strong acid-strong base titration?", "7."],
+            ["How is pH defined?", "pH = -log[H+]."]
         ],
         "mcat::chem_phys::kinematics": [
             ["Acceleration due to gravity near Earth's surface?", "About 9.8 m/s^2 downward."],
-            ["For a projectile, what is the horizontal acceleration (ignoring air)?", "Zero."]
+            ["For a projectile, what is the horizontal acceleration (ignoring air)?", "Zero."],
+            ["Equation for velocity under constant acceleration?", "v = v0 + a*t."],
+            ["Equation for displacement under constant acceleration?", "d = v0*t + 0.5*a*t^2."],
+            ["At the top of a projectile's arc, what is its vertical velocity?", "Zero."],
+            ["Are horizontal and vertical motions independent in projectiles?", "Yes."],
+            ["Speed vs velocity: what is the difference?", "Velocity is a vector (has direction); speed is scalar."],
+            ["What is the acceleration of an object in free fall?", "g (about 9.8 m/s^2) downward."],
+            ["What does the slope of a velocity-time graph represent?", "Acceleration."],
+            ["What does the area under a velocity-time graph represent?", "Displacement."]
+        ],
+        "mcat::chem_phys::force_energy": [
+            ["State Newton's second law.", "F = m*a (net force equals mass times acceleration)."],
+            ["What is the work-energy theorem?", "Net work done equals the change in kinetic energy."],
+            ["What is the formula for kinetic energy?", "KE = 0.5*m*v^2."],
+            ["What is gravitational potential energy near Earth?", "PE = m*g*h."],
+            ["What is Newton's third law?", "For every action there is an equal and opposite reaction."],
+            ["What is the work done by a force?", "W = F*d*cos(theta)."],
+            ["What is power?", "The rate of doing work (P = W/t = F*v)."],
+            ["What is conserved without nonconservative forces?", "Mechanical energy (KE + PE)."],
+            ["What is the maximum static friction force?", "f = mu_s * N."],
+            ["Centripetal acceleration points in what direction?", "Toward the center of the circular path."]
+        ],
+        "mcat::chem_phys::fluids": [
+            ["What is the continuity equation for fluids?", "A1*v1 = A2*v2 (flow rate is conserved)."],
+            ["What does Bernoulli's principle say about fast-moving fluid?", "It has lower pressure."],
+            ["What is the buoyant force (Archimedes' principle)?", "Equal to the weight of the displaced fluid."],
+            ["What is hydrostatic pressure at depth?", "P = rho*g*h (plus any surface pressure)."],
+            ["What is Pascal's principle?", "Pressure on a confined fluid is transmitted equally throughout."],
+            ["When does an object float?", "When its average density is less than the fluid's."],
+            ["What is specific gravity?", "A substance's density relative to water."],
+            ["In a narrower pipe section, how does fluid speed change?", "It increases (by continuity)."],
+            ["What are the SI units of pressure?", "Pascals (N/m^2)."],
+            ["As fluid velocity increases, what happens to pressure (Bernoulli)?", "Pressure decreases."]
         ],
         "mcat::chem_phys::circuits": [
             ["Ohm's law?", "V = I * R."],
-            ["Power dissipated by a resistor?", "P = I^2 * R = V^2 / R."]
+            ["Power dissipated by a resistor?", "P = I^2 * R = V^2 / R = I*V."],
+            ["In a series circuit, what is the same through each element?", "The current."],
+            ["In a parallel circuit, what is the same across each branch?", "The voltage."],
+            ["How do resistances add in series?", "Directly: R_total = R1 + R2 + ..."],
+            ["How do resistances combine in parallel?", "Reciprocals add: 1/R_total = 1/R1 + 1/R2 + ..."],
+            ["What does a capacitor store?", "Charge and energy in an electric field."],
+            ["What is Kirchhoff's junction (current) law?", "Current in equals current out (charge conservation)."],
+            [
+                "What is Kirchhoff's loop (voltage) law?",
+                "Voltage changes around a loop sum to zero (energy conservation)."
+            ],
+            ["Adding resistors in parallel does what to total resistance?", "Decreases it."]
+        ],
+        "mcat::psych_soc::sensation_perception": [
+            ["What is the absolute threshold?", "The minimum stimulus intensity detectable 50% of the time."],
+            ["Which theory explains color vision via three cone types?", "Trichromatic (Young-Helmholtz) theory."],
+            [
+                "Sensation vs perception: what is the difference?",
+                "Sensation detects stimuli; perception interprets them."
+            ],
+            ["What is Weber's law?", "The just-noticeable difference is a constant proportion of the stimulus."],
+            ["What is transduction?", "Converting physical stimulus energy into neural signals."],
+            ["What does signal detection theory add?", "It factors in noise and decision bias when detecting stimuli."],
+            ["What are the two retinal photoreceptors?", "Rods (dim light) and cones (color and detail)."],
+            ["What is bottom-up processing?", "Perception built from raw sensory input."],
+            ["What is top-down processing?", "Perception guided by expectations and prior knowledge."],
+            ["What is sensory adaptation?", "Reduced sensitivity to a constant, unchanging stimulus."]
+        ],
+        "mcat::psych_soc::cognition": [
+            [
+                "What are Piaget's four stages of cognitive development?",
+                "Sensorimotor, preoperational, concrete operational, formal operational."
+            ],
+            ["What is assimilation (Piaget)?", "Fitting new information into an existing schema."],
+            ["What is accommodation (Piaget)?", "Changing a schema to fit new information."],
+            [
+                "Algorithm vs heuristic: what is the difference?",
+                "An algorithm guarantees a solution; a heuristic is a fast shortcut."
+            ],
+            ["What is confirmation bias?", "Favoring information that confirms existing beliefs."],
+            ["What is functional fixedness?", "Only seeing an object used in its usual way."],
+            ["What is the availability heuristic?", "Judging likelihood by how easily examples come to mind."],
+            ["What is the representativeness heuristic?", "Judging probability by similarity to a prototype."],
+            [
+                "Fluid vs crystallized intelligence?",
+                "Fluid solves novel problems; crystallized is accumulated knowledge."
+            ],
+            ["What is a mental set?", "A tendency to approach problems with a previously successful strategy."]
         ],
         "mcat::psych_soc::memory": [
             ["Which brain structure is critical for forming new long-term memories?", "The hippocampus."],
-            ["What is proactive interference?", "Old information disrupts learning of new information."]
+            ["What is proactive interference?", "Old information disrupts learning of new information."],
+            ["What is retroactive interference?", "New information disrupts recall of old information."],
+            [
+                "What are the three stages of the Atkinson-Shiffrin model?",
+                "Sensory memory, short-term memory, long-term memory."
+            ],
+            [
+                "Explicit vs implicit memory: what is the difference?",
+                "Explicit is conscious (facts/events); implicit is unconscious (skills)."
+            ],
+            ["What is the spacing effect?", "Better retention when study is spread out rather than crammed."],
+            ["What are the two subtypes of explicit memory?", "Semantic (facts) and episodic (personal events)."],
+            [
+                "What is the serial position effect?",
+                "Better recall of the first (primacy) and last (recency) list items."
+            ],
+            ["What does the Ebbinghaus forgetting curve describe?", "The exponential decline of retention over time."],
+            ["What is chunking?", "Grouping items into meaningful units to expand short-term capacity."]
         ],
         "mcat::psych_soc::learning": [
             ["In classical conditioning, what is the CS before conditioning?", "A neutral stimulus."],
-            ["Which reinforcement schedule is most resistant to extinction?", "Variable ratio."]
+            ["Which reinforcement schedule is most resistant to extinction?", "Variable ratio."],
+            [
+                "What is classical conditioning?",
+                "Learning to associate a neutral stimulus with a reflex-eliciting one."
+            ],
+            [
+                "In Pavlov's experiment, what is the unconditioned stimulus?",
+                "The food (it naturally elicits salivation)."
+            ],
+            ["What is operant conditioning?", "Learning driven by consequences (reinforcement and punishment)."],
+            ["What is negative reinforcement?", "Removing an aversive stimulus to increase a behavior."],
+            [
+                "Negative reinforcement vs punishment: what is the difference?",
+                "Reinforcement increases behavior; punishment decreases it."
+            ],
+            ["What is observational learning?", "Learning by watching and imitating others (Bandura's Bobo doll)."],
+            ["What is shaping?", "Reinforcing successive approximations toward a target behavior."],
+            ["What is latent learning?", "Learning that appears only once there is an incentive to show it."]
+        ],
+        "mcat::psych_soc::motivation_emotion": [
+            ["What is the James-Lange theory of emotion?", "Emotion follows the body's physiological response."],
+            ["What is the Cannon-Bard theory?", "Arousal and emotion occur simultaneously and independently."],
+            [
+                "What is the Schachter-Singer (two-factor) theory?",
+                "Emotion = physiological arousal + a cognitive label."
+            ],
+            ["What is the Yerkes-Dodson law?", "Performance peaks at moderate arousal."],
+            ["What is at the base of Maslow's hierarchy?", "Physiological needs."],
+            ["What is drive-reduction theory?", "Behavior reduces internal tension to restore homeostasis."],
+            ["What is intrinsic motivation?", "Doing an activity for its own inherent satisfaction."],
+            ["What brain structure is central to fear?", "The amygdala."],
+            ["What is the overjustification effect?", "External rewards can reduce intrinsic motivation."],
+            ["What are Ekman's universal basic emotions?", "Happiness, sadness, fear, disgust, anger, and surprise."]
+        ],
+        "mcat::psych_soc::identity": [
+            ["What is self-concept?", "The sum of one's beliefs about oneself."],
+            [
+                "What do Erikson's psychosocial stages describe?",
+                "A conflict resolved at each life stage (e.g., identity vs role confusion)."
+            ],
+            ["What is the looking-glass self (Cooley)?", "Forming self-image from how we think others see us."],
+            ["What is Freud's structure of personality?", "The id, ego, and superego."],
+            ["What is self-efficacy (Bandura)?", "One's belief in their ability to succeed at a task."],
+            [
+                "Ideal self vs real self (Rogers): what is the effect of a large gap?",
+                "A large gap lowers self-worth (incongruence)."
+            ],
+            [
+                "What are Kohlberg's three levels of moral development?",
+                "Preconventional, conventional, and postconventional."
+            ],
+            [
+                "What defines identity status in Marcia's theory?",
+                "The presence of crisis (exploration) and commitment."
+            ],
+            ["What is a reference group?", "A group used as a standard for self-evaluation."],
+            ["Role strain vs role conflict: what is role strain?", "Tension among the demands within a single role."]
         ],
         "mcat::psych_soc::social_thinking": [
             [
                 "What is the fundamental attribution error?",
                 "Overattributing others' behavior to disposition over situation."
             ],
-            ["What is the actor-observer bias?", "Attributing our own actions to situation but others' to disposition."]
+            [
+                "What is the actor-observer bias?",
+                "Attributing our own actions to situation but others' to disposition."
+            ],
+            ["What is cognitive dissonance?", "Discomfort from conflicting attitudes/behaviors that motivates change."],
+            [
+                "Conformity vs compliance vs obedience: what drives each?",
+                "Group norms, a request, and an authority's order, respectively."
+            ],
+            ["What did the Milgram experiment show?", "People obey authority even to harm others."],
+            ["What is the bystander effect?", "The presence of others lowers the chance any one person helps."],
+            ["What is diffusion of responsibility?", "Feeling less personal duty to act when others are present."],
+            ["Stereotype vs prejudice vs discrimination?", "A belief, an attitude, and a behavior, respectively."],
+            [
+                "What is the self-serving bias?",
+                "Crediting successes to oneself and blaming failures on outside factors."
+            ],
+            ["What is social facilitation?", "Better performance on well-learned tasks when others are present."]
         ],
-        "mcat::psych_soc::sensation_perception": [
-            ["What is the absolute threshold?", "The minimum stimulus intensity detectable 50% of the time."],
-            ["Which theory explains color vision via three cone types?", "Trichromatic (Young-Helmholtz) theory."]
+        "mcat::psych_soc::social_structure": [
+            [
+                "What are the three major sociological perspectives?",
+                "Functionalism, conflict theory, and symbolic interactionism."
+            ],
+            ["What does functionalism emphasize?", "How social structures work together to maintain stability."],
+            ["What does conflict theory emphasize?", "Competition over limited resources and power inequality."],
+            [
+                "What is the focus of symbolic interactionism?",
+                "How people create meaning through everyday interactions."
+            ],
+            ["What is social stratification?", "The hierarchical ranking of people into social classes."],
+            [
+                "Master status vs ascribed status: what is a master status?",
+                "The status that most dominates a person's social identity."
+            ],
+            ["What is cultural capital?", "Non-financial assets (education, tastes) that aid social mobility."],
+            [
+                "Folkway vs more: what is the difference?",
+                "Folkways are casual norms; mores are morally significant norms."
+            ],
+            ["What is anomie (Durkheim)?", "A state of normlessness during rapid social change."],
+            ["What is a social institution?", "An established structure (family, education) meeting a societal need."]
+        ],
+        "mcat::psych_soc::demographics": [
+            [
+                "What is the demographic transition model?",
+                "The shift from high to low birth and death rates as a society industrializes."
+            ],
+            ["Push vs pull factors in migration?", "Push factors drive people away; pull factors attract them."],
+            ["What is the fertility rate?", "The average number of children born per woman."],
+            ["What is social mobility?", "Movement of individuals or groups between social positions."],
+            ["Intragenerational vs intergenerational mobility?", "Within one lifetime vs across generations."],
+            ["What is urbanization?", "The rising share of a population living in cities."],
+            ["What is a population pyramid?", "A graph of a population's age and sex distribution."],
+            ["What three factors change a population's size?", "Births, deaths, and migration."],
+            ["What is globalization?", "The growing interconnection of economies and cultures worldwide."],
+            [
+                "What causes demographic aging of a population?",
+                "Lower fertility and longer life expectancy raising the median age."
+            ]
+        ],
+        "mcat::psych_soc::biological_behavior": [
+            ["Which division of the nervous system drives 'fight or flight'?", "The sympathetic nervous system."],
+            ["What does the parasympathetic nervous system do?", "Promotes 'rest and digest' functions."],
+            ["Which neurotransmitter is tied to reward and movement?", "Dopamine."],
+            ["What part of a neuron receives incoming signals?", "The dendrites."],
+            ["What is the resting membrane potential of a typical neuron?", "About -70 mV."],
+            ["Which ion's influx triggers the action potential?", "Sodium (Na+)."],
+            ["Which brain region regulates hunger, thirst, and temperature?", "The hypothalamus."],
+            ["What is the 'master gland' of the endocrine system?", "The pituitary gland."],
+            ["What is the function of myelin?", "It insulates axons and speeds action potential conduction."],
+            ["Which lobe contains the primary visual cortex?", "The occipital lobe."]
+        ],
+        "mcat::cars": [
+            [
+                "What does CARS test?",
+                "Reading comprehension and reasoning using ONLY the passage (no outside knowledge)."
+            ],
+            [
+                "Should you use outside knowledge on CARS questions?",
+                "No; answers must be supported by the passage itself."
+            ],
+            ["What should you pin down about a CARS passage first?", "The author's main idea, argument, and tone."],
+            [
+                "How should you treat extreme words like 'always' or 'never' in choices?",
+                "Be cautious; they are often too strong to be supported."
+            ],
+            [
+                "Inference vs detail question: what is the difference?",
+                "Inference requires reasoning beyond the text; detail is stated directly."
+            ],
+            [
+                "Why track the author's tone or attitude?",
+                "Questions often hinge on whether the author agrees or disagrees."
+            ],
+            [
+                "What is the key to strengthen/weaken questions?",
+                "Pick the choice that most directly supports or undermines the argument."
+            ],
+            [
+                "How do you handle an unfamiliar CARS topic?",
+                "Focus on the passage's structure and logic, not prior familiarity."
+            ],
+            [
+                "Why is process of elimination central to CARS?",
+                "The right answer is the best supported; eliminate unsupported choices."
+            ],
+            [
+                "What is the danger of a 'half-right' answer choice?",
+                "One wrong word makes the whole choice wrong; read every part."
+            ]
         ]
     }
 }

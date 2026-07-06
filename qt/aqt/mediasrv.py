@@ -730,6 +730,19 @@ def ante_viva_transcribe() -> bytes:
     return _json.dumps(result or {"text": "", "provider": None}).encode("utf-8")
 
 
+def ante_realtime_secret() -> bytes:
+    """Mint an ephemeral Realtime client secret for the live Back Room.
+
+    The page never sees the real API key — only a short-lived ek_ token bound
+    to the active examination's session config (Sahir persona + semantic VAD
+    with create_response off, so the ledger stays in charge of every turn)."""
+    import json as _json
+
+    from aqt.ante import mint_realtime_secret
+
+    return _json.dumps(mint_realtime_secret(aqt.mw.col)).encode("utf-8")
+
+
 post_handler_list = [
     congrats_info,
     get_deck_configs_for_update,
@@ -747,6 +760,7 @@ post_handler_list = [
     deck_options_ready,
     save_custom_colours,
     ante_viva_transcribe,
+    ante_realtime_secret,
     ante_tutor,
 ]
 
@@ -836,8 +850,34 @@ def _extract_collection_post_request(path: str) -> DynamicRequest | NotFound:
         return NotFound(message=f"{path} not found")
 
 
+def _ante_request_allowed() -> bool:
+    """The den's endpoints carry per-account study data, so they require the
+    per-boot token embedded in the in-app page (dev mode and Bearer-key
+    callers are exempt — dev keeps the plain-browser workflow working)."""
+    if dev_mode or _have_api_access():
+        return True
+    from aqt.ante import ANTE_TOKEN
+
+    supplied = request.args.get("antetoken", "") or request.headers.get(
+        "X-Ante-Token", ""
+    )
+    return bool(supplied) and secrets.compare_digest(supplied, ANTE_TOKEN)
+
+
+def _abort_unless_ante_allowed() -> None:
+    """Ante endpoints serve per-account study data, so they require the den's
+    per-boot token; /_anki/ante itself is the static app shell (no data)."""
+    if (
+        request.path.startswith("/_anki/ante")
+        and request.path != "/_anki/ante"
+        and not _ante_request_allowed()
+    ):
+        abort(403)
+
+
 def _check_dynamic_request_permissions():
     if request.method == "GET":
+        _abort_unless_ante_allowed()
         return
 
     def warn() -> None:
@@ -846,7 +886,9 @@ def _check_dynamic_request_permissions():
         )
 
     # check content type header to ensure this isn't an opaque request from another origin
-    if request.headers["Content-type"] != "application/binary":
+    # (use .get so a missing header is a clean 403, not a KeyError -> 500 HTML page
+    # that callers parsing JSON, like the den's live table, would choke on)
+    if request.headers.get("Content-type") != "application/binary":
         aqt.mw.taskman.run_on_main(warn)
         abort(403)
 
@@ -861,11 +903,13 @@ def _check_dynamic_request_permissions():
         "/_anki/i18nResources",
         "/_anki/congratsInfo",
         # the den runs in the main webview (no API key); its POSTs read
-        # media/questions and write nothing to the collection
+        # media/questions and write nothing to the collection — but they
+        # still require the den's own per-boot token
         "/_anki/anteVivaTranscribe",
+        "/_anki/anteRealtimeSecret",
         "/_anki/anteTutor",
     ):
-        pass
+        _abort_unless_ante_allowed()
     else:
         # other legacy pages may contain third-party JS, so we do not
         # allow them to access our API
@@ -947,21 +991,6 @@ def ante_study() -> Response:
     return _ante_json(build_study_payload)
 
 
-def ante_add_info() -> Response:
-    "Decks / notetypes / fields for the custom Add view."
-    from aqt.ante import build_add_info
-
-    return _ante_json(build_add_info)
-
-
-def ante_library() -> Response:
-    "Searchable card list for the custom Library view."
-    from aqt.ante import build_library_payload
-
-    query = request.args.get("q", "")
-    return _ante_json(lambda col: build_library_payload(col, query))
-
-
 def ante_quiz() -> Response:
     "Next application/transfer item + application-accuracy summary for the Quiz view."
     from aqt.ante import build_quiz_payload
@@ -1019,16 +1048,25 @@ def ante_diagnostic() -> Response:
 
 def ante_asset() -> Response:
     "Serve a bundled den asset (cinematic plates, portraits, dealer voice lines)."
+    import hashlib
+
     from aqt.ante import read_asset
 
     data, mime = read_asset(request.args.get("name", ""))
     if data is None:
         return _text_response(HTTPStatus.NOT_FOUND, "asset not found")
     resp = Response(data, mimetype=mime)
-    # revalidate each load so regenerated film audio/video is picked up without
-    # a stale cache hit (these assets change as the film is re-rendered)
+    # no-cache + a content ETag: every load revalidates (regenerated film
+    # audio/video is picked up immediately) but an unchanged multi-MB loop
+    # answers with a 304 instead of a fresh body — the film re-requests its
+    # plates at every cut, and cold re-downloads there stutter the crossfade.
+    # make_conditional also grants Range support, which QtWebEngine's media
+    # pipeline expects when looping and seeking <video>/<audio>.
     resp.headers["Cache-Control"] = "no-cache"
-    return resp
+    resp.set_etag(hashlib.sha1(data).hexdigest())
+    return resp.make_conditional(
+        request.environ, accept_ranges=True, complete_length=len(data)
+    )
 
 
 def ante_viva() -> Response:
@@ -1058,8 +1096,6 @@ _DYNAMIC_GET_REQUESTS: dict[str, DynamicRequest] = {
     "ante": ante_page,
     "anteData": ante_data,
     "anteStudy": ante_study,
-    "anteAddInfo": ante_add_info,
-    "anteLibrary": ante_library,
     "anteQuiz": ante_quiz,
     "anteFullLength": ante_full_length,
     "anteGradeOpen": ante_grade_open,

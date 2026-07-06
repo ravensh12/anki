@@ -8,7 +8,9 @@ from ante.mastery import MasteryStatus, TopicMastery
 from ante.outline import load_outline
 
 
-def _tm(tag: str, status: MasteryStatus, *, cards=8, recall=0.8, weight=0.3) -> TopicMastery:
+def _tm(
+    tag: str, status: MasteryStatus, *, cards=8, recall=0.8, weight=0.3
+) -> TopicMastery:
     return TopicMastery(
         tag=tag,
         name=tag.rsplit("::", 1)[-1],
@@ -79,9 +81,9 @@ def test_dust_thickens_as_recall_fades():
     strong = dict(m)
     weak[tag] = _tm(tag, MasteryStatus.MASTERED, recall=0.3)
     strong[tag] = _tm(tag, MasteryStatus.MASTERED, recall=0.95)
-    dust_weak = {
-        t["tag"]: t for c in build_world(weak)["cities"] for t in c["tables"]
-    }[tag]["dust"]
+    dust_weak = {t["tag"]: t for c in build_world(weak)["cities"] for t in c["tables"]}[
+        tag
+    ]["dust"]
     dust_strong = {
         t["tag"]: t for c in build_world(strong)["cities"] for t in c["tables"]
     }[tag]["dust"]
@@ -103,7 +105,11 @@ def test_seat_buyin_before_diagnostic():
 
 
 def test_seat_keeps_the_bookend_session():
-    ritual = {"next": "first_light", "morning": {"done": False}, "night": {"done": False}}
+    ritual = {
+        "next": "first_light",
+        "morning": {"done": False},
+        "night": {"done": False},
+    }
     tag = "mcat::bio_biochem::enzymes"
     w = build_world(
         _mastery(),
@@ -139,13 +145,74 @@ def test_seat_headsup_when_a_topic_is_close():
     assert w["seat"]["topic"] == "mcat::cars"
 
 
+def test_due_bookend_game_outranks_headsup_even_with_only_new_cards():
+    # a fresh deck: no review-due cards, but new cards to play, and the midnight
+    # game hasn't been kept yet. The daily game must take the seat, not Sahir.
+    ritual = {"next": "last_light", "morning": {"done": True}, "night": {"done": False}}
+    tag = "mcat::bio_biochem::amino_acids"
+    w = build_world(
+        _mastery(),
+        ritual=ritual,
+        due_count=0,
+        new_count=55,
+        best_next_topic=tag,
+        viva_suggested=[{"topic": "mcat::cars", "name": "CARS"}],
+        diagnostic_taken=True,
+    )
+    assert w["seat"]["kind"] == "session"
+    assert w["seat"]["table"] == tag
+    assert "midnight game" in w["seat"]["label"]
+
+
+def test_headsup_returns_once_both_games_are_kept():
+    # both bookends done -> ritual has no "next" -> Sahir can take the seat
+    ritual = {"next": None, "morning": {"done": True}, "night": {"done": True}}
+    w = build_world(
+        _mastery(),
+        ritual=ritual,
+        due_count=0,
+        new_count=55,
+        viva_suggested=[{"topic": "mcat::cars", "name": "CARS"}],
+        diagnostic_taken=True,
+    )
+    assert w["seat"]["kind"] == "headsup"
+    assert w["seat"]["topic"] == "mcat::cars"
+
+
+def test_missed_morning_after_night_kept_frees_headsup():
+    # night kept, morning slipped (ritual points at tomorrow's first light):
+    # today's owed game is resolved, so heads-up is allowed again.
+    ritual = {
+        "next": "first_light",
+        "morning": {"done": False},
+        "night": {"done": True},
+    }
+    w = build_world(
+        _mastery(),
+        ritual=ritual,
+        due_count=0,
+        new_count=55,
+        viva_suggested=[{"topic": "mcat::cars", "name": "CARS"}],
+        diagnostic_taken=True,
+    )
+    assert w["seat"]["kind"] == "headsup"
+
+
 def test_seat_reel_at_night_then_book():
     w = build_world(
-        _mastery(), due_count=0, dreamseed_ready=True, now_hour=21, diagnostic_taken=True
+        _mastery(),
+        due_count=0,
+        dreamseed_ready=True,
+        now_hour=21,
+        diagnostic_taken=True,
     )
     assert w["seat"]["kind"] == "reel"
     w2 = build_world(
-        _mastery(), due_count=0, dreamseed_ready=False, now_hour=21, diagnostic_taken=True
+        _mastery(),
+        due_count=0,
+        dreamseed_ready=False,
+        now_hour=21,
+        diagnostic_taken=True,
     )
     assert w2["seat"]["kind"] == "book"
 

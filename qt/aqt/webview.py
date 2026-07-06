@@ -132,6 +132,30 @@ class AnkiWebPage(QWebEnginePage):
         self._kind = kind
         self._setupBridge()
         self.open_links_externally = True
+        qconnect(self.permissionRequested, self._on_permission_requested)
+
+    def _on_permission_requested(self, permission: QWebEnginePermission) -> None:
+        # Grant microphone capture to our own served pages (used by the Ante
+        # Back Room's speak-to-answer); we have no prompt UI, so anything else
+        # from anywhere else is denied. "Our own" means loopback AND the media
+        # server's actual port — another local process's page must not inherit
+        # the grant just for being on localhost.
+        from aqt import mw
+
+        origin = permission.origin()
+        is_our_page = (
+            origin.host() in ("127.0.0.1", "localhost")
+            and mw is not None
+            and origin.port() == mw.mediaServer.getPort()
+        )
+        if (
+            is_our_page
+            and permission.permissionType()
+            == QWebEnginePermission.PermissionType.MediaAudioCapture
+        ):
+            permission.grant()
+        else:
+            permission.deny()
 
     def _profileForPage(self, kind: AnkiWebViewKind) -> QWebEngineProfile:
         have_api_access = kind in (

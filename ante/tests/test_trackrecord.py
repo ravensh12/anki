@@ -40,6 +40,15 @@ def test_append_dedupes_within_a_day_but_grows_across_days():
     assert len(hist) == 2
 
 
+def test_append_unchanged_same_day_line_is_a_noop():
+    """An identical line later the same day returns the SAME list object (so the
+    caller writes nothing) and keeps the first-posted timestamp."""
+    hist = [{"ts": 0.0, "projected_total": 508, "low": 503, "high": 512, "confidence": "low"}]
+    out = append_line(hist, _line(508, 503, 512), now=0.5 * SECONDS_PER_DAY)
+    assert out is hist  # unchanged -> caller skips the DB write
+    assert out[-1]["ts"] == 0.0  # earliest posting time preserved
+
+
 def test_evaluate_abstains_without_completed_tests():
     hist = [{"ts": 0.0, "projected_total": 508, "low": 503, "high": 512}]
     tr = evaluate(hist, fl_results={})

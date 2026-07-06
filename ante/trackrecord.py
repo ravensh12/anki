@@ -132,6 +132,11 @@ def append_line(
     }
     hist = list(history or [])
     if hist and (now - float(hist[-1].get("ts", 0))) < min_gap_days * SECONDS_PER_DAY:
+        # same "day": if the line hasn't moved, keep the earlier entry verbatim
+        # (honest first-posted time; avoids a write on every dashboard load).
+        last = hist[-1]
+        if all(last.get(k) == entry[k] for k in ("projected_total", "low", "high")):
+            return history
         hist[-1] = entry
     else:
         hist.append(entry)

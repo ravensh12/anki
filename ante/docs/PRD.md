@@ -264,10 +264,12 @@ Rust engine (rslib)  ── points-at-stake order + GetTopicMastery RPC
 
 ## 13. Out of scope (v1)
 
-- Native iOS/Android apps and two-way sync (planned, not built).
-- A validated, student-calibrated score concordance.
+- A validated, student-calibrated score concordance (we grade the bridge steps
+  and abstain).
 - MCAT content tutoring or section strategy.
 - Multi-exam support (LSAT/GMAT/USMLE) — architecture allows it; not built.
+- A signed/notarized store release (the release CI produces signed builds; the
+  local `just installer` is adhoc-signed — see `docs/installer.md`).
 
 ---
 

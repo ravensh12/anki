@@ -19,15 +19,17 @@ the seat time, because the schedule — not extra hours — does the work.
 
 ## What's in this fork
 
-| Path              | What it is                                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`ante/`](ante/)  | The product: mastery engine, the den web UI (`web/den.html`), AI tutor/studio, seed data, tests, and docs     |
-| [`ios/`](ios/)    | SwiftUI companion app — Tonight / Circuit / Table / Ledger, with native morning & midnight game notifications |
-| `rslib/`          | Engine changes: points-at-stake queue order + `GetTopicMastery` RPC (`rslib/src/scheduler/topics.rs`)         |
-| `qt/aqt/ante*.py` | Desktop integration: serves the den, auth, reminders, and the media studio inside the Anki app                |
-| everything else   | Upstream Anki (see below)                                                                                     |
+| Path                 | What it is                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [`ante/`](ante/)     | The product: mastery engine, the den web UI (`web/den.html`), AI tutor/studio, seed data, tests, and docs     |
+| [`ios/`](ios/)       | SwiftUI companion app — Tonight / Circuit / Table / Ledger, with native morning & midnight game notifications |
+| `rslib/`             | Engine changes: points-at-stake queue order + `GetTopicMastery` RPC (`rslib/src/scheduler/topics.rs`)         |
+| `rslib/ios-ffi/`     | C/FFI bridge that exposes the engine to iOS as an xcframework (`just ios-engine`)                             |
+| `qt/aqt/ante*.py`    | Desktop integration: serves the den, auth, reminders, and the media studio inside the Anki app                |
+| everything else      | Upstream Anki stack (see below)                                                                               |
 
-> This work lives on the **`speedrun`** branch; `main` tracks upstream Anki.
+> **`main`** is the Ante fork. Upstream Anki history is preserved in the repo;
+> see [About Anki](#about-anki-upstream) for the original project and build docs.
 
 ## Quick start
 
@@ -36,6 +38,8 @@ Prereqs: `just`, a Rust toolchain, `n2` (`bash tools/install-n2`).
 ```bash
 just run     # build + launch the desktop app
              # the den: http://localhost:40000/_anki/ante
+
+just ios-engine   # build the shared Rust xcframework for the iOS app (once)
 ```
 
 Where to go next:

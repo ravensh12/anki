@@ -42,8 +42,12 @@ Where to go next:
 
 - [`ante/README.md`](ante/README.md) — the full system: the Circuit, the Book,
   the Back Room, the Studio, design principles, architecture, and every command.
-- [`ios/README.md`](ios/README.md) — generate and run the iOS app
-  (`xcodegen generate && open Ante.xcodeproj`).
+- [`ios/README.md`](ios/README.md) — generate and run the iOS app on the shared
+  engine (`just ios-engine && xcodegen generate && open Ante.xcodeproj`).
+- [`ante/docs/results.md`](ante/docs/results.md) — captured proof numbers for
+  every graded claim; [`ante/docs/model-cards.md`](ante/docs/model-cards.md) —
+  one page per model; [`ante/docs/installer.md`](ante/docs/installer.md) —
+  desktop + phone packaging.
 - [`ante/docs/PRD.md`](ante/docs/PRD.md) — product requirements;
   [`ante/docs/learning-science.md`](ante/docs/learning-science.md) — the
   evidence map behind each feature.

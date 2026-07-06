@@ -234,7 +234,7 @@ Rust engine (rslib)  ── points-at-stake order + GetTopicMastery RPC
 | M4 — Proof                | leakage, `just bench`, A/B harness, demo + docs                                                                                                          | Done        |
 | M5 — Personalization      | onboarding, recalibration, reminders, motivation (v2)                                                                                                    | Done        |
 | M6 — Daily product        | baseline diagnostic, bookends ritual, OS notifications, demo tour, gift-card streak (v3)                                                                 | Done        |
-| M7 — iOS companion        | SwiftUI app + notification scheduler scaffolded; shared-engine xcframework + sync = next                                                                 | In progress |
+| M7 — iOS companion        | SwiftUI app on the **live shared Rust engine** (xcframework via `just ios-engine`) with two-way sync; `MockEngine` only as a labelled fallback              | Done        |
 | M8 — Mnemopolis + Studio  | generative-media Studio (Higgsfield + ElevenLabs, offline engraver); the Palace, the Viva, the living city (dashboard retired), Dream Seed + Documentary | Done        |
 
 ---

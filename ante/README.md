@@ -161,10 +161,16 @@ Rust engine (rslib)  ── points-at-stake order + GetTopicMastery RPC
 | Performance | New exam question right? | `performance.py` (bridge; beats memory baseline; paraphrase test)                  |
 | Readiness   | Score today?             | `readiness.py` (per-topic → section 118–132 → total, range + confidence + reasons) |
 
+One page each on how these work (inputs, method, uncertainty, limits) is in
+[`docs/model-cards.md`](docs/model-cards.md); captured proof numbers for every
+graded claim are in [`docs/results.md`](docs/results.md).
+
 **Give-up rule (enforced):** no line until enough graded reviews **and**
 weighted coverage with no high-weight blind spot. Below the floor the Book
 shows what it can and says it cannot yet post. "A confident number with
-nothing behind it is a guess in a nice font."
+nothing behind it is a guess in a nice font." Past the floor the Book also
+reports **how accurate its past lines turned out to be** against completed
+full-lengths (`trackrecord.py`) — honesty about its own track record.
 
 ## Personalized by your exam date — the tournament clock
 
@@ -224,9 +230,15 @@ as a standalone `.anki2`/`.apkg` for benchmarking.
 
 ```bash
 just seed-deck                    # export the premade MCAT deck (+ .apkg); the app self-seeds it on first run
-just bench out/mcat_seed.anki2    # engine p50/p95/worst per action
+just seed-deck 1400               # a 50k-card deck for scale benchmarking
+just bench out/mcat_seed.anki2    # engine p50/p95/worst per action (+ cold start, RSS)
 just experiment --days 14         # mastery-gating vs ablation vs plain Anki
 just ai-eval --offline --source <chapter.txt>   # AI eval vs keyword/TF-IDF baselines
+just calibrate                    # memory calibration: Brier/log-loss/ECE + reliability.svg
+just paraphrase                   # the paraphrase test (7d): 30 cards x 2 reworded questions
+just leakage-check out/leak_train.json out/leak_test.json   # train/test contamination scan (7e)
+just crash-test                   # 20x SIGKILL mid-review -> zero corruption (7g)
+just installer                    # build the desktop installer -> out/installer/dist/
 
 # the den's cinematic asset library (Higgsfield; curated, checked in):
 PYTHONPATH=. out/pyenv/bin/python -m ante.tools.gen_world --scene all --motion
@@ -264,10 +276,21 @@ In `ante/config.py` (override via `ANTE_<NAME>` env): `STRENGTH_FRACTION`
 
 ## Mobile & sync
 
-Desktop-first for this build; the iOS companion and two-way sync design live
-in [`docs/mobile-and-sync.md`](docs/mobile-and-sync.md) (a self-hosted sync
-server is available via `just sync-server`, with a re-runnable proof in
-`just sync-test`).
+The iOS companion runs the **same modified Rust engine** on-device (built by
+`just ios-engine` into an xcframework) with two-way sync — not a
+re-implementation. Full engine + sync story and honest status:
+[`docs/mobile-and-sync.md`](docs/mobile-and-sync.md). A self-hosted sync server
+is available via `just sync-server`, with a re-runnable proof in `just sync-test`
+and the phone's production path exercised by `just ios-swift-smoke`.
+
+## Packaging & proof
+
+- [`docs/installer.md`](docs/installer.md) — desktop installer (`just installer`)
+  and iOS build/sideload/TestFlight; both run with **AI off**.
+- [`docs/results.md`](docs/results.md) — captured numbers for every graded claim
+  (bench, calibration, experiment, AI eval, leakage, crash, sync), including the
+  ones that did not hit target.
+- [`docs/model-cards.md`](docs/model-cards.md) — one page per model + give-up rule.
 
 ## Honesty notes (what we do NOT claim)
 

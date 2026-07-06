@@ -208,7 +208,8 @@ Rust engine (rslib)  ── points-at-stake order + GetTopicMastery RPC
 - Engine change rationale and merge-risk: `ante/docs/rust-change.md`.
 - Ante logic is an importable package (`ante/`) so pure logic is unit-
   tested without Anki.
-- Mobile deferred; the shared seam is preserved for a future phone client.
+- The iOS companion consumes the **same** Rust engine as an xcframework over the
+  single protobuf seam, with two-way sync: `ante/docs/mobile-and-sync.md`.
 
 ---
 
